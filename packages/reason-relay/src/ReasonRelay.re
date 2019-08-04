@@ -6,6 +6,7 @@ type any;
 type queryNode;
 type fragmentNode;
 type mutationNode;
+type subscriptionNode;
 
 type dataId;
 
@@ -643,3 +644,54 @@ external _commitLocalUpdate:
 
 let commitLocalUpdate = (~environment, ~updater) =>
   _commitLocalUpdate(environment, updater);
+
+module type SubscriptionConfig = {
+  type variables;
+  type response;
+  let node: subscriptionNode;
+};
+
+module Disposable = {
+  type t;
+
+  [@bs.send] external dispose: t => unit = "dispose";
+};
+
+type _subscriptionConfig('response, 'variables) = {
+  .
+  "subscription": subscriptionNode,
+  "variables": 'variables,
+  "onCompleted": option(unit => unit),
+  "onError": option(Js.Exn.t => unit),
+  "onNext": option('response => unit),
+  "updater": option(updaterFn),
+};
+
+[@bs.module "relay-runtime"]
+external requestSubscription:
+  (Environment.t, _subscriptionConfig('response, 'variables)) => Disposable.t =
+  "requestSubscription";
+
+module MakeUseSubscription = (C: SubscriptionConfig) => {
+  let subscribe =
+      (
+        ~environment: Environment.t,
+        ~variables: C.variables,
+        ~onCompleted: option(unit => unit)=?,
+        ~onError: option(Js.Exn.t => unit)=?,
+        ~onNext: option(C.response => unit)=?,
+        ~updater: option(updaterFn)=?,
+        (),
+      ) =>
+    requestSubscription(
+      environment,
+      {
+        "subscription": C.node,
+        "variables": variables,
+        "onCompleted": onCompleted,
+        "onError": onError,
+        "onNext": onNext,
+        "updater": updater,
+      },
+    );
+};

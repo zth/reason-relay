@@ -13,6 +13,7 @@ type any;
 type queryNode;
 type fragmentNode;
 type mutationNode;
+type subscriptionNode;
 
 /**
  * Store and updaters
@@ -355,7 +356,7 @@ module Network: {
 };
 
 /**
- * SUBSCRIPTIONS
+ * STORE
  */
 
 module RecordSource: {
@@ -368,6 +369,9 @@ module Store: {
   let make: RecordSource.t => t;
 };
 
+/**
+ * ENVIRONMENT
+ */
 module Environment: {
   type t;
 
@@ -439,3 +443,33 @@ let commitLocalUpdate:
 
 let fetchQuery:
   (Environment.t, queryNode, 'variables) => Js.Promise.t('response);
+
+/**
+ * SUBSCRIPTIONS
+ */
+module type SubscriptionConfig = {
+  type variables;
+  type response;
+  let node: subscriptionNode;
+};
+
+module Disposable: {
+  type t;
+  let dispose: t => unit;
+};
+
+module MakeUseSubscription:
+  (C: SubscriptionConfig) =>
+   {
+    let subscribe:
+      (
+        ~environment: Environment.t,
+        ~variables: C.variables,
+        ~onCompleted: unit => unit=?,
+        ~onError: Js.Exn.t => unit=?,
+        ~onNext: C.response => unit=?,
+        ~updater: updaterFn=?,
+        unit
+      ) =>
+      Disposable.t;
+  };
