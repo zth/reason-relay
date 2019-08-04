@@ -292,6 +292,23 @@ module MakeUseMutation:
       );
   };
 
+/**
+ * NETWORK
+ */
+
+module Observable: {
+  type t;
+
+  type sink('t) = {
+    next: 't => unit,
+    error: Js.Exn.t => unit,
+    completed: unit => unit,
+    closed: bool,
+  };
+
+  let make: (sink('t) => unit) => t;
+};
+
 module Network: {
   type t;
   type cacheConfig = {
@@ -305,10 +322,41 @@ module Network: {
     "operationKind": string,
     "text": string,
   };
+  type subscribeFn =
+    {
+      .
+      "request": operation,
+      "variables": Js.Json.t,
+      "cacheConfig": cacheConfig,
+    } =>
+    Observable.t;
+
   type fetchFunctionPromise =
     (operation, Js.Json.t, cacheConfig) => Js.Promise.t(Js.Json.t);
-  let makePromiseBased: fetchFunctionPromise => t;
+
+  type fetchFunctionObservable =
+    (operation, Js.Json.t, cacheConfig) => Observable.t;
+
+  let makePromiseBased:
+    (
+      ~fetchFunction: fetchFunctionPromise,
+      ~subscriptionFunction: subscribeFn=?,
+      unit
+    ) =>
+    t;
+
+  let makeObservableBased:
+    (
+      ~observableFunction: fetchFunctionObservable,
+      ~subscriptionFunction: subscribeFn=?,
+      unit
+    ) =>
+    t;
 };
+
+/**
+ * SUBSCRIPTIONS
+ */
 
 module RecordSource: {
   type t;

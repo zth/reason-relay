@@ -416,6 +416,38 @@ module MakeUseMutation = (C: MutationConfig) => {
 /**
  * Misc
  */
+module Observable = {
+  type t;
+
+  type _sink('t) = {
+    .
+    "next": 't => unit,
+    "error": Js.Exn.t => unit,
+    "completed": unit => unit,
+    "closed": bool,
+  };
+
+  type sink('t) = {
+    next: 't => unit,
+    error: Js.Exn.t => unit,
+    completed: unit => unit,
+    closed: bool,
+  };
+
+  [@bs.module "relay-runtime"] [@bs.scope "Observable"]
+  external create: (_sink('t) => unit) => t = "create";
+
+  let make = sinkFn =>
+    create(s =>
+      sinkFn({
+        next: s##next,
+        error: s##error,
+        completed: s##completed,
+        closed: s##closed,
+      })
+    );
+};
+
 module Network = {
   type t;
 
@@ -432,11 +464,35 @@ module Network = {
     "operationKind": string,
   };
 
+  type subscribeFn =
+    {
+      .
+      "request": operation,
+      "variables": Js.Json.t,
+      "cacheConfig": cacheConfig,
+    } =>
+    Observable.t;
+
   type fetchFunctionPromise =
     (operation, Js.Json.t, cacheConfig) => Js.Promise.t(Js.Json.t);
 
+  type fetchFunctionObservable =
+    (operation, Js.Json.t, cacheConfig) => Observable.t;
+
   [@bs.module "relay-runtime"] [@bs.scope "Network"]
-  external makePromiseBased: fetchFunctionPromise => t = "create";
+  external makeFromPromise: (fetchFunctionPromise, option(subscribeFn)) => t =
+    "create";
+
+  let makePromiseBased = (~fetchFunction, ~subscriptionFunction=?, ()) =>
+    makeFromPromise(fetchFunction, subscriptionFunction);
+
+  [@bs.module "relay-runtime"] [@bs.scope "Network"]
+  external makeFromObservable:
+    (fetchFunctionObservable, option(subscribeFn)) => t =
+    "create";
+
+  let makeObservableBased = (~observableFunction, ~subscriptionFunction=?, ()) =>
+    makeFromObservable(observableFunction, subscriptionFunction);
 };
 
 module RecordSource = {
