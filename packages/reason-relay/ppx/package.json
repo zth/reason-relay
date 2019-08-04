@@ -23,7 +23,7 @@
     "bs-platform": "^6.0.3"
   },
   "devDependencies": {
-    "bs-platform": "^6.0.3"
+    "bs-platform": "6.0.3"
   },
   "keywords": [
     "log",
