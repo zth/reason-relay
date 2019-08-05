@@ -436,17 +436,18 @@ module Observable = {
   };
 
   [@bs.module "relay-runtime"] [@bs.scope "Observable"]
-  external create: (_sink('t) => unit) => t = "create";
+  external create: (_sink('t) => option('a)) => t = "create";
 
   let make = sinkFn =>
-    create(s =>
+    create(s => {
       sinkFn({
         next: s##next,
         error: s##error,
         completed: s##completed,
         closed: s##closed,
-      })
-    );
+      });
+      None;
+    });
 };
 
 module Network = {
