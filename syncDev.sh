@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 cd ./packages/reason-relay/ && ./build.sh; cd ../../;
+
+cd ./example/ && yarn && cd ../
 rm -rf ./example/node_modules/reason-relay;
 cp -rf ./packages/reason-relay/dist/ ./example/node_modules/reason-relay;
 

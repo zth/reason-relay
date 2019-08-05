@@ -4,7 +4,7 @@ yarn build;
 # build ppx
 echo "Build PPX...";
 cd ppx;
-esy @ppx build;
+esy @ppx;
 cd ..;
 
 # build language plugin
@@ -22,8 +22,10 @@ cp src/ReasonRelayUtils.re dist/src/;
 cp src/ReasonRelayUtils.rei dist/src/;
 cp ./../../README.md dist/;
 
-# copy ppx
-cp ppx/_build/default/bin/bin.exe dist/ppx;
+# copy ppx and postinstall script
+cp ppx/_build/default/bin/bin.exe dist/ppx-linux;
+cp ppx/prebuilt/ppx-darwin dist/ppx-darwin;
+cp postinstall.js dist/postinstall.js # Empty placeholder first
 
 # copy config files
 cp bsconfig.json dist/;
@@ -32,6 +34,9 @@ cp yarn.lock dist/;
 
 # run yarn
 cd dist; yarn; cd ..;
+
+# copy ppx and post-install
+cp -f scripts/release-postinstall.js dist/postinstall.js
 
 # copy language plugin
 cp -r ./language-plugin/lib dist/language-plugin;

@@ -1,6 +1,6 @@
 {
   "name": "reason-relay",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "src/ReasonRelay.re",
   "license": "MIT",
   "author": "Gabriel Nordeborn",
@@ -22,7 +22,8 @@
     "reason-relay-compiler": "compiler/compiler-cli.js"
   },
   "scripts": {
-    "build": "bsb -clean-world -make-world"
+    "build": "bsb -clean-world -make-world",
+    "postinstall": "node postinstall.js"
   },
   "devDependencies": {
     "bs-platform": "6.0.3",

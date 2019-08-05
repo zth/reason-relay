@@ -4885,6 +4885,11 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
+mkdirp-sync@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/mkdirp-sync/-/mkdirp-sync-0.0.3.tgz#2a7cf5b04f3ad7cba5f41f79a754939fc30d7e16"
+  integrity sha512-p3raJmGXoDqceIMqxAgx/DHesLkC+Ni+qTUpVIXuTuvvVcIihAbcTT68w68HHMqW5yEreNB1dl2EBm4TKtnLoQ==
+
 mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
@@ -5957,6 +5962,19 @@ reason-react@>=0.7.0:
   dependencies:
     react ">=16.8.1"
     react-dom ">=16.8.1"
+
+reason-relay@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/reason-relay/-/reason-relay-0.1.3.tgz#a5d2663c1554b92bf7f382ce918431fe1e190b4e"
+  integrity sha512-onImMLDd29hHmSZqQuMIJfZ2+RmJ5JmrCBwt1fUB7GVS2YhA4Am91zon754qrhWDFgUHNcHJWPZwJbNICtMvMg==
+  dependencies:
+    mkdirp-sync "^0.0.3"
+    reason "^3.3.4"
+
+reason@^3.3.4:
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/reason/-/reason-3.3.4.tgz#a294ef8aa14fa85c6fd8a7db5dcab053f2382f68"
+  integrity sha512-WwXkrcwbUUazf0pEn7Vrd0R7wKOMEPmn4ZBb0ffKCxKiqoUh13E8hnSEhytNM81vl3O3A0ENyZa+Ys0fMnJgnw==
 
 regenerate-unicode-properties@^8.0.2:
   version "8.1.0"

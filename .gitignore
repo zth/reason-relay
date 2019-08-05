@@ -9,3 +9,4 @@ _release
 *.native
 *.install
 *.bs.js
+reason-relay-compiler
