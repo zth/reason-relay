@@ -36,7 +36,8 @@ let fetchQuery: ReasonRelay.Network.fetchFunctionPromise =
          )
     );
 
-let network = ReasonRelay.Network.makePromiseBased(fetchQuery);
+let network =
+  ReasonRelay.Network.makePromiseBased(~fetchFunction=fetchQuery, ());
 
 let makeEnvironment = () =>
   ReasonRelay.Environment.make(
