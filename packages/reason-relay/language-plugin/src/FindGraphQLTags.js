@@ -32,7 +32,7 @@ function parseFile(text, file) {
    */
 
   const matched = text.match(
-    /(?<=\[%relay\.(query|fragment|mutation))([\s\S]*?)(?=];)/g
+    /(?<=\[%relay\.(query|fragment|mutation|subscription))([\s\S]*?)(?=];)/g
   );
 
   if (matched) {
