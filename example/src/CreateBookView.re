@@ -46,7 +46,7 @@ let reducer = (state, action) =>
 [@react.component]
 let make = () => {
   let (addBook, addBookStatus) = CreateMutation.use();
-  let query = Query.use(~variables=(), ~dataFrom=StoreThenNetwork, ());
+  let query = Query.use(~variables=(), ~fetchPolicy=StoreAndNetwork, ());
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
   <div>
@@ -155,19 +155,14 @@ let make = () => {
     </p>
     <p> <h3> {React.string("Existing books")} </h3> </p>
     <p>
-      {switch (query) {
-       | Loading => React.string("Loading...")
-       | Error(_) => React.string("Oops, something failed!")
-       | Data(data) =>
-         data##books
-         |> Array.mapi((index, book) =>
-              <CreateBookViewExistingBookDisplayer
-                book
-                key={string_of_int(index)}
-              />
-            )
-         |> React.array
-       }}
+      {query##books
+       |> Array.mapi((index, book) =>
+            <CreateBookViewExistingBookDisplayer
+              book
+              key={string_of_int(index)}
+            />
+          )
+       |> React.array}
     </p>
   </div>;
 };

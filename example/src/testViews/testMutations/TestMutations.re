@@ -71,50 +71,45 @@ let make = () => {
   let (updateBook, updateBookStatus) = UpdateMutation.use();
 
   <>
-    {switch (query) {
-     | Loading
-     | Error(_) => React.null
-     | Data(data) =>
-       data##books
-       |> Array.map(book =>
-            <div key=book##id>
-              <p> {React.string(book##title)} </p>
-              <p> {React.string(book##author)} </p>
-              <button
-                type_="button"
-                onClick={_ =>
-                  updateBook(
-                    ~variables={
-                      "input": {
-                        "clientMutationId": None,
-                        "id": book##id,
-                        "author": "New author",
-                        "title": book##title,
-                        "status": book##status |> Js.Nullable.toOption,
-                      },
+    {query##books
+     |> Array.map(book =>
+          <div key=book##id>
+            <p> {React.string(book##title)} </p>
+            <p> {React.string(book##author)} </p>
+            <button
+              type_="button"
+              onClick={_ =>
+                updateBook(
+                  ~variables={
+                    "input": {
+                      "clientMutationId": None,
+                      "id": book##id,
+                      "author": "New author",
+                      "title": book##title,
+                      "status": book##status |> Js.Nullable.toOption,
                     },
-                    ~optimisticResponse={
-                      "updateBook": {
-                        "book":
-                          Some({
-                            "id": book##id,
-                            "title": book##title,
-                            "author": "New author",
-                            "status": book##status,
-                          })
-                          |> Js.Nullable.fromOption,
-                      },
+                  },
+                  ~optimisticResponse={
+                    "updateBook": {
+                      "book":
+                        Some({
+                          "id": book##id,
+                          "title": book##title,
+                          "author": "New author",
+                          "status": book##status,
+                        })
+                        |> Js.Nullable.fromOption,
                     },
-                    (),
-                  )
-                  |> ignore
-                }>
-                {React.string("Update " ++ book##title ++ " optimistic")}
-              </button>
-            </div>
-          )
-       |> React.array
-     }}
+                  },
+                  (),
+                )
+                |> ignore
+              }>
+              {React.string("Update " ++ book##title ++ " optimistic")}
+            </button>
+          </div>
+        )
+     |> React.array}
     {switch (updateBookStatus) {
      | Loading => <p> {React.string("Doing mutation...")} </p>
      | _ => React.null

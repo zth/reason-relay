@@ -110,7 +110,7 @@ return {
     "operationKind": "query",
     "name": "BooksOverviewQuery",
     "id": null,
-    "text": "query BooksOverviewQuery {\n  books {\n    id\n    ...BookDisplayer_book\n  }\n}\n\nfragment BookDisplayer_book on Book {\n  ...BookEditor_book\n  title\n  author\n  shelf {\n    ...ShelfDisplayer_shelf\n    id\n  }\n}\n\nfragment BookEditor_book on Book {\n  id\n  title\n  author\n  status\n}\n\nfragment ShelfDisplayer_shelf on Shelf {\n  name\n}\n",
+    "text": "query BooksOverviewQuery {\n  books {\n    id\n    ...BookDisplayer_book\n  }\n}\n\nfragment BookDisplayer_book on Book {\n  ...BookEditor_book\n  title\n  author\n  shelf {\n    ...ShelfDisplayer_shelf\n    id\n  }\n  id\n}\n\nfragment BookEditor_book on Book {\n  id\n  title\n  author\n  status\n}\n\nfragment ShelfDisplayer_shelf on Shelf {\n  name\n}\n",
     "metadata": {}
   }
 };

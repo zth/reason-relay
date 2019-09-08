@@ -31,6 +31,21 @@ let extractTheFragmentName = str =>
   | _ => raise(Could_not_extract_operation_name)
   };
 
+let extractFragmentRefetchableQueryName = str =>
+  switch (str |> extractGraphQLOperation) {
+  | Fragment({
+      name: _,
+      directives: [
+        {
+          name: "refetchable",
+          arguments: [("queryName", `String(queryName))],
+        },
+      ],
+    }) =>
+    Some(queryName)
+  | _ => None
+  };
+
 let extractTheSubscriptionName = str =>
   switch (str |> extractGraphQLOperation) {
   | Operation({optype: Subscription, name: Some(name)}) => name
@@ -78,11 +93,35 @@ let makeModuleNameAst = (~loc, ~moduleName) => {
     Pmod_ident({loc, txt: Lident(getGraphQLModuleName(moduleName))}),
 };
 
-let makeFragment = (~loc, ~moduleName) =>
+let makeFragment = (~loc, ~moduleName, ~refetchableQueryName) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
       [%stri module Operation = [%m makeModuleNameAst(~loc, ~moduleName)]],
+      switch (refetchableQueryName) {
+      | Some(queryName) => [%stri
+          module RefetchableOperation = [%m
+            makeModuleNameAst(~loc, ~moduleName=queryName)
+          ]
+        ]
+      | None =>
+        %stri
+        ()
+      },
       [%stri include Operation.Unions],
+      switch (refetchableQueryName) {
+      | Some(queryName) => [%stri
+          module UseRefetchableFragment =
+            ReasonRelay.MakeUseRefetchableFragment({
+              type fragment = Operation.fragment;
+              type fragmentRef = Operation.fragmentRef;
+              type variables = RefetchableOperation.variables;
+              let fragmentSpec = Operation.node;
+            })
+        ]
+      | None =>
+        %stri
+        ()
+      },
       [%stri
         module UseFragment =
           ReasonRelay.MakeUseFragment({
@@ -94,6 +133,15 @@ let makeFragment = (~loc, ~moduleName) =>
       [%stri
         let use = fRef => UseFragment.use(fRef |> Operation.getFragmentRef)
       ],
+      switch (refetchableQueryName) {
+      | Some(_) => [%stri
+          let useRefetchable = fRef =>
+            UseRefetchableFragment.useRefetchable(fRef |> Operation.getFragmentRef)
+        ]
+      | None =>
+        %stri
+        ()
+      },
     ]),
   );
 
@@ -186,6 +234,9 @@ let fragmentExtension =
     (~loc, ~path as _, expr) =>
     makeFragment(
       ~moduleName=extractOperationStr(~loc, ~expr) |> extractTheFragmentName,
+      ~refetchableQueryName=
+        extractOperationStr(~loc, ~expr)
+        |> extractFragmentRefetchableQueryName,
       ~loc,
     )
   );

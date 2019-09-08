@@ -95,12 +95,7 @@ module BookViewer = {
 let make = () => {
   let query = Query.use(~variables=(), ());
 
-  switch (query) {
-  | Loading => <p> {React.string("Loading...")} </p>
-  | Error(_) => <p> {React.string("Error")} </p>
-  | Data(res) =>
-    res##books
-    |> Array.map(book => <BookViewer key=book##id book />)
-    |> React.array
-  };
+  query##books
+  |> Array.map(book => <BookViewer key=book##id book />)
+  |> React.array;
 };

@@ -12,15 +12,14 @@ module Query = [%relay.query
 [@react.component]
 let make = (~bookId) => {
   let query =
-    Query.use(~variables={"bookId": bookId}, ~dataFrom=StoreOrNetwork, ());
+    Query.use(
+      ~variables={"bookId": bookId},
+      ~fetchPolicy=StoreOrNetwork,
+      (),
+    );
 
-  switch (query) {
-  | Loading => <div> {React.string("Loading...")} </div>
-  | Error(_) => <div> {React.string("Error!")} </div>
-  | Data(data) =>
-    switch (data##book |> Js.Nullable.toOption) {
-    | Some(book) => <BookDisplayer book allowEditMode=true />
-    | None => <div> {React.string("404")} </div>
-    }
+  switch (query##book |> Js.Nullable.toOption) {
+  | Some(book) => <BookDisplayer book allowEditMode=true />
+  | None => <div> {React.string("404")} </div>
   };
 };

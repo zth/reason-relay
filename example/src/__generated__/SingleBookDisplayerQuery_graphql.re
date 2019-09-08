@@ -129,7 +129,7 @@ return {
     "operationKind": "query",
     "name": "SingleBookDisplayerQuery",
     "id": null,
-    "text": "query SingleBookDisplayerQuery(\n  $bookId: ID!\n) {\n  book(id: $bookId) {\n    ...BookDisplayer_book\n    ...BookEditor_book\n    id\n  }\n}\n\nfragment BookDisplayer_book on Book {\n  ...BookEditor_book\n  title\n  author\n  shelf {\n    ...ShelfDisplayer_shelf\n    id\n  }\n}\n\nfragment BookEditor_book on Book {\n  id\n  title\n  author\n  status\n}\n\nfragment ShelfDisplayer_shelf on Shelf {\n  name\n}\n",
+    "text": "query SingleBookDisplayerQuery(\n  $bookId: ID!\n) {\n  book(id: $bookId) {\n    ...BookDisplayer_book\n    ...BookEditor_book\n    id\n  }\n}\n\nfragment BookDisplayer_book on Book {\n  ...BookEditor_book\n  title\n  author\n  shelf {\n    ...ShelfDisplayer_shelf\n    id\n  }\n  id\n}\n\nfragment BookEditor_book on Book {\n  id\n  title\n  author\n  status\n}\n\nfragment ShelfDisplayer_shelf on Shelf {\n  name\n}\n",
     "metadata": {}
   }
 };

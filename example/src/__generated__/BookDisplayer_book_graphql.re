@@ -7,6 +7,7 @@ type fragment = {
     .
     "__$fragment_ref__ShelfDisplayer_shelf": ShelfDisplayer_shelf_graphql.t,
   },
+  "id": Js.Nullable.t(string),
   "__$fragment_ref__BookEditor_book": BookEditor_book_graphql.t,
 };
 
@@ -21,7 +22,15 @@ let node: ReasonRelay.fragmentNode = [%bs.raw
   "kind": "Fragment",
   "name": "BookDisplayer_book",
   "type": "Book",
-  "metadata": null,
+  "metadata": {
+    "refetch": {
+      "connection": null,
+      "operation": require('BookDisplayerRefetchQuery_graphql'),
+      "fragmentPathInResult": [
+        "node"
+      ]
+    }
+  },
   "argumentDefinitions": [],
   "selections": [
     {
@@ -53,6 +62,13 @@ let node: ReasonRelay.fragmentNode = [%bs.raw
           "args": null
         }
       ]
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "id",
+      "args": null,
+      "storageKey": null
     },
     {
       "kind": "FragmentSpread",

@@ -1,5 +1,5 @@
 {
-  "checksum": "35c1d42e9720645b9ab9941ec343dd4a",
+  "checksum": "6e059b268526098e562da38fb3c257ab",
   "root": "reason-relay-ppx@link-dev:./package.json",
   "node": {
     "reason-relay-ppx@link-dev:./package.json": {

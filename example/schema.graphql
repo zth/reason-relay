@@ -1,4 +1,14 @@
-directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on FIELD_DEFINITION | OBJECT | INTERFACE
+
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+}
 
 input AddBookInput {
   clientMutationId: String
@@ -11,7 +21,7 @@ type AddBookPayload {
   book: Book
 }
 
-type Book {
+type Book implements Node {
   id: ID!
   title: String!
   author: String!
@@ -73,6 +83,7 @@ type Query {
   books(status: BookStatus): [Book!]!
   booksPaginated(first: Int, after: String): BookConnection
   fromShelf(shelfId: ID!): [ShelfContent!]
+  node(id: ID): Node
 }
 
 type Shelf {
@@ -100,6 +111,7 @@ type UpdateBookPayload {
   book: Book
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
-

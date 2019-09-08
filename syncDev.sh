@@ -4,6 +4,7 @@ cd ./packages/reason-relay/ && ./build.sh; cd ../../;
 cd ./example/ && yarn && cd ../
 rm -rf ./example/node_modules/reason-relay;
 cp -rf ./packages/reason-relay/dist/ ./example/node_modules/reason-relay;
+cp -f ./packages/reason-relay/ppx/_build/default/bin/bin.exe ./example/node_modules/reason-relay/ppx;
 
 rm -rf ./example/node_modules/reason-relay/node_modules/graphql;
 rm -rf ./example/node_modules/reason-relay/node_modules/react;

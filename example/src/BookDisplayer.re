@@ -1,6 +1,6 @@
 module BookFragment = [%relay.fragment
   {|
-    fragment BookDisplayer_book on Book {
+    fragment BookDisplayer_book on Book @refetchable(queryName: "BookDisplayerRefetchQuery") {
       ...BookEditor_book
       title
       author

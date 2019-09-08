@@ -133,11 +133,10 @@ v7 = {
   "args": null,
   "storageKey": null
 },
-v8 = {
-  "kind": "InlineFragment",
-  "type": "Book",
-  "selections": (v4/*: any*/)
-};
+v8 = [
+  (v2/*: any*/),
+  (v3/*: any*/)
+];
 return {
   "kind": "Request",
   "fragment": {
@@ -158,7 +157,11 @@ return {
         "plural": true,
         "selections": [
           (v7/*: any*/),
-          (v8/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "type": "Book",
+            "selections": (v4/*: any*/)
+          },
           {
             "kind": "InlineFragment",
             "type": "BookCollection",
@@ -172,10 +175,7 @@ return {
                 "args": null,
                 "concreteType": "Book",
                 "plural": true,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/)
-                ]
+                "selections": (v8/*: any*/)
               }
             ]
           }
@@ -199,12 +199,16 @@ return {
         "plural": true,
         "selections": [
           (v7/*: any*/),
-          (v8/*: any*/),
+          (v1/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "type": "Book",
+            "selections": (v8/*: any*/)
+          },
           {
             "kind": "InlineFragment",
             "type": "BookCollection",
             "selections": [
-              (v1/*: any*/),
               {
                 "kind": "LinkedField",
                 "alias": null,
@@ -229,7 +233,7 @@ return {
     "operationKind": "query",
     "name": "TestUnionsEnumsQuery",
     "id": null,
-    "text": "query TestUnionsEnumsQuery(\n  $bookStatus: BookStatus!\n  $shelfId: ID!\n) {\n  books(status: $bookStatus) {\n    id\n    title\n    status\n  }\n  fromShelf(shelfId: $shelfId) {\n    __typename\n    ... on Book {\n      id\n      title\n      status\n    }\n    ... on BookCollection {\n      id\n      books {\n        title\n        status\n        id\n      }\n    }\n  }\n}\n",
+    "text": "query TestUnionsEnumsQuery(\n  $bookStatus: BookStatus!\n  $shelfId: ID!\n) {\n  books(status: $bookStatus) {\n    id\n    title\n    status\n  }\n  fromShelf(shelfId: $shelfId) {\n    __typename\n    ... on Book {\n      id\n      title\n      status\n    }\n    ... on BookCollection {\n      id\n      books {\n        title\n        status\n        id\n      }\n    }\n    ... on Node {\n      id\n    }\n  }\n}\n",
     "metadata": {}
   }
 };
