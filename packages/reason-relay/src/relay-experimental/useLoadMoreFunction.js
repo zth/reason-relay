@@ -1,0 +1,228 @@
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @emails oncall+relay
+ * 
+ * @format
+ */
+'use strict'; // flowlint untyped-import:off
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+
+var Scheduler = require('scheduler'); // flowlint untyped-import:error
+
+
+var getPaginationVariables = require('./getPaginationVariables');
+
+var getValueAtPath = require('./getValueAtPath');
+
+var invariant = require("fbjs/lib/invariant");
+
+var useFetchTrackingRef = require('./useFetchTrackingRef');
+
+var useIsMountedRef = require('./useIsMountedRef');
+
+var useRelayEnvironment = require('./useRelayEnvironment');
+
+var warning = require("fbjs/lib/warning");
+
+var _require = require('react'),
+    useCallback = _require.useCallback,
+    useEffect = _require.useEffect,
+    useState = _require.useState;
+
+var _require2 = require('relay-runtime'),
+    ConnectionInterface = _require2.ConnectionInterface,
+    _require2$__internal = _require2.__internal,
+    fetchQuery = _require2$__internal.fetchQuery,
+    hasRequestInFlight = _require2$__internal.hasRequestInFlight,
+    createOperationDescriptor = _require2.createOperationDescriptor;
+
+function useLoadMoreFunction(args) {
+  var direction = args.direction,
+      fragmentNode = args.fragmentNode,
+      fragmentIdentifier = args.fragmentIdentifier,
+      fragmentOwner = args.fragmentOwner,
+      fragmentData = args.fragmentData,
+      connectionPathInFragmentData = args.connectionPathInFragmentData,
+      fragmentRefPathInResponse = args.fragmentRefPathInResponse,
+      paginationRequest = args.paginationRequest,
+      paginationMetadata = args.paginationMetadata,
+      componentDisplayName = args.componentDisplayName,
+      observer = args.observer,
+      onReset = args.onReset;
+  var environment = useRelayEnvironment();
+
+  var _useFetchTrackingRef = useFetchTrackingRef(),
+      isFetchingRef = _useFetchTrackingRef.isFetchingRef,
+      startFetch = _useFetchTrackingRef.startFetch,
+      disposeFetch = _useFetchTrackingRef.disposeFetch,
+      completeFetch = _useFetchTrackingRef.completeFetch; // $FlowFixMe
+
+
+  var dataID = fragmentData === null || fragmentData === void 0 ? void 0 : fragmentData.id;
+  var isMountedRef = useIsMountedRef();
+
+  var _useState = useState(environment),
+      mirroredEnvironment = _useState[0],
+      setMirroredEnvironment = _useState[1];
+
+  var _useState2 = useState(fragmentIdentifier),
+      mirroredFragmentIdentifier = _useState2[0],
+      setMirroredFragmentIdentifier = _useState2[1];
+
+  var shouldReset = environment !== mirroredEnvironment || fragmentIdentifier !== mirroredFragmentIdentifier;
+
+  if (shouldReset) {
+    disposeFetch();
+    onReset();
+    setMirroredEnvironment(environment);
+    setMirroredFragmentIdentifier(fragmentIdentifier);
+  }
+
+  var _getConnectionState = getConnectionState(direction, fragmentNode, fragmentData, connectionPathInFragmentData),
+      cursor = _getConnectionState.cursor,
+      hasMore = _getConnectionState.hasMore; // Dispose of pagination requests in flight when unmounting
+
+
+  useEffect(function () {
+    return function () {
+      disposeFetch();
+    };
+  }, [disposeFetch]);
+  var loadMore = useCallback(function (count, options) {
+    // TODO(T41131846): Fetch/Caching policies for loadMore
+    // TODO(T41140071): Handle loadMore while refetch is in flight and vice-versa
+    var onComplete = options === null || options === void 0 ? void 0 : options.onComplete;
+
+    if (isMountedRef.current !== true) {
+      // Bail out and warn if we're trying to paginate after the component
+      // has unmounted
+      process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Unexpected fetch on unmounted component for fragment ' + '`%s` in `%s`. It looks like some instances of your component are ' + 'still trying to fetch data but they already unmounted. ' + 'Please make sure you clear all timers, intervals, ' + 'async calls, etc that may trigger a fetch.', fragmentNode.name, componentDisplayName) : void 0;
+      return {
+        dispose: function dispose() {}
+      };
+    }
+
+    var isParentQueryInFlight = fragmentOwner != null && !Array.isArray(fragmentOwner) && hasRequestInFlight(environment, fragmentOwner);
+
+    if (isFetchingRef.current === true || !hasMore || isParentQueryInFlight) {
+      if (fragmentOwner == null) {
+        process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Unexpected fetch while using a null fragment ref ' + 'for fragment `%s` in `%s`. When fetching more items, we expect ' + "initial fragment data to be non-null. Please make sure you're " + 'passing a valid fragment ref to `%s` before paginating.', fragmentNode.name, componentDisplayName, componentDisplayName) : void 0;
+      }
+
+      if (onComplete) {
+        // We make sure to always call onComplete asynchronously to prevent
+        // accidental loops in product code.
+        Scheduler.unstable_next(function () {
+          return onComplete(null);
+        });
+      }
+
+      return {
+        dispose: function dispose() {}
+      };
+    }
+
+    !(fragmentOwner != null && !Array.isArray(fragmentOwner)) ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected to be able to find a non-plural fragment owner for ' + "fragment `%s` when using `%s`. If you're seeing this, " + 'this is likely a bug in Relay.', fragmentNode.name, componentDisplayName) : invariant(false) : void 0;
+    var parentVariables = fragmentOwner.variables;
+    var paginationVariables = getPaginationVariables(direction, count, cursor, parentVariables, paginationMetadata); // TODO (T40777961): Tweak output of @refetchable transform to more
+    // easily tell if we need an $id in the refetch vars
+
+    if (fragmentRefPathInResponse.includes('node')) {
+      // @refetchable fragments are guaranteed to have an `id` selection
+      // if the type is Node or implements Node. Double-check that there
+      // actually is a value at runtime.
+      if (typeof dataID !== 'string') {
+        process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Expected result to have a string  ' + '`id` in order to refetch/paginate, got `%s`.', dataID) : void 0;
+      }
+
+      paginationVariables.id = dataID;
+    }
+
+    var paginationQuery = createOperationDescriptor(paginationRequest, paginationVariables);
+    fetchQuery(environment, paginationQuery, {
+      networkCacheConfig: {
+        force: true
+      }
+    }).subscribe((0, _objectSpread2["default"])({}, observer, {
+      start: function start(subscription) {
+        startFetch(subscription);
+        observer.start && observer.start(subscription);
+      },
+      complete: function complete() {
+        completeFetch();
+        observer.complete && observer.complete();
+        onComplete && onComplete(null);
+      },
+      error: function error(_error) {
+        completeFetch();
+        observer.error && observer.error(_error);
+        onComplete && onComplete(_error);
+      }
+    }));
+    return {
+      dispose: disposeFetch
+    };
+  }, // NOTE: We disable react-hooks-deps warning because all values
+  // inside paginationMetadata are static
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [environment, dataID, direction, cursor, hasMore, startFetch, disposeFetch, completeFetch, isFetchingRef, fragmentNode.name, fragmentOwner, componentDisplayName]);
+  return [loadMore, hasMore, disposeFetch];
+}
+
+function getConnectionState(direction, fragmentNode, fragmentData, connectionPathInFragmentData) {
+  var _pageInfo$END_CURSOR, _pageInfo$START_CURSO;
+
+  var _ConnectionInterface$ = ConnectionInterface.get(),
+      EDGES = _ConnectionInterface$.EDGES,
+      PAGE_INFO = _ConnectionInterface$.PAGE_INFO,
+      HAS_NEXT_PAGE = _ConnectionInterface$.HAS_NEXT_PAGE,
+      HAS_PREV_PAGE = _ConnectionInterface$.HAS_PREV_PAGE,
+      END_CURSOR = _ConnectionInterface$.END_CURSOR,
+      START_CURSOR = _ConnectionInterface$.START_CURSOR;
+
+  var connection = getValueAtPath(fragmentData, connectionPathInFragmentData);
+
+  if (connection == null) {
+    return {
+      cursor: null,
+      hasMore: false
+    };
+  }
+
+  !(typeof connection === 'object') ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected connection in fragment `%s` to have been `null`, or ' + 'a plain object with %s and %s properties. Instead got `%s`.', fragmentNode.name, EDGES, PAGE_INFO, connection) : invariant(false) : void 0;
+  var edges = connection[EDGES];
+  var pageInfo = connection[PAGE_INFO];
+
+  if (edges == null || pageInfo == null) {
+    return {
+      cursor: null,
+      hasMore: false
+    };
+  }
+
+  !Array.isArray(edges) ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected connection in fragment `%s` to have a plural `%s` field. ' + 'Instead got `%s`.', fragmentNode.name, EDGES, edges) : invariant(false) : void 0;
+  !(typeof pageInfo === 'object') ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected connection in fragment `%s` to have a `%s` field. ' + 'Instead got `%s`.', fragmentNode.name, PAGE_INFO, pageInfo) : invariant(false) : void 0;
+  var cursor = direction === 'forward' ? (_pageInfo$END_CURSOR = pageInfo[END_CURSOR]) !== null && _pageInfo$END_CURSOR !== void 0 ? _pageInfo$END_CURSOR : null : (_pageInfo$START_CURSO = pageInfo[START_CURSOR]) !== null && _pageInfo$START_CURSO !== void 0 ? _pageInfo$START_CURSO : null;
+  !(cursor === null || typeof cursor === 'string') ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected page info for connection in fragment `%s` to have a ' + 'valid `%s`. Instead got `%s`.', fragmentNode.name, START_CURSOR, cursor) : invariant(false) : void 0;
+  var hasMore;
+
+  if (direction === 'forward') {
+    hasMore = cursor != null && pageInfo[HAS_NEXT_PAGE] === true;
+  } else {
+    hasMore = cursor != null && pageInfo[HAS_PREV_PAGE] === true;
+  }
+
+  return {
+    cursor: cursor,
+    hasMore: hasMore
+  };
+}
+
+module.exports = useLoadMoreFunction;
