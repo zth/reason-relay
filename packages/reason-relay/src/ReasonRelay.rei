@@ -13,6 +13,7 @@ type any;
 type queryNode;
 type fragmentNode;
 type mutationNode;
+type subscriptionNode;
 
 /**
  * Store and updaters
@@ -212,6 +213,13 @@ module ConnectionHandler: {
 
 module CacheConfig: {
   type t;
+  type config = {
+    force: option(bool),
+    poll: option(int),
+    liveConfigId: option(string),
+    transactionId: option(string),
+  };
+
   let make:
     (
       ~force: option(bool),
@@ -220,6 +228,8 @@ module CacheConfig: {
       ~transactionId: option(string)
     ) =>
     t;
+
+  let getConfig: t => config;
 };
 
 type fetchPolicy =
@@ -306,6 +316,23 @@ module MakeUseMutation:
       );
   };
 
+/**
+ * NETWORK
+ */
+
+module Observable: {
+  type t;
+
+  type sink('t) = {
+    next: 't => unit,
+    error: Js.Exn.t => unit,
+    completed: unit => unit,
+    closed: bool,
+  };
+
+  let make: (sink('t) => unit) => t;
+};
+
 module Network: {
   type t;
 
@@ -315,10 +342,41 @@ module Network: {
     "operationKind": string,
     "text": string,
   };
+  type subscribeFn =
+    {
+      .
+      "request": operation,
+      "variables": Js.Json.t,
+      "cacheConfig": CacheConfig.t,
+    } =>
+    Observable.t;
+
   type fetchFunctionPromise =
     (operation, Js.Json.t, CacheConfig.t) => Js.Promise.t(Js.Json.t);
-  let makePromiseBased: fetchFunctionPromise => t;
+
+  type fetchFunctionObservable =
+    (operation, Js.Json.t, CacheConfig.t) => Observable.t;
+
+  let makePromiseBased:
+    (
+      ~fetchFunction: fetchFunctionPromise,
+      ~subscriptionFunction: subscribeFn=?,
+      unit
+    ) =>
+    t;
+
+  let makeObservableBased:
+    (
+      ~observableFunction: fetchFunctionObservable,
+      ~subscriptionFunction: subscribeFn=?,
+      unit
+    ) =>
+    t;
 };
+
+/**
+ * STORE
+ */
 
 module RecordSource: {
   type t;
@@ -330,6 +388,9 @@ module Store: {
   let make: RecordSource.t => t;
 };
 
+/**
+ * ENVIRONMENT
+ */
 module Environment: {
   type t;
 
@@ -401,3 +462,33 @@ let commitLocalUpdate:
 
 let fetchQuery:
   (Environment.t, queryNode, 'variables) => Js.Promise.t('response);
+
+/**
+ * SUBSCRIPTIONS
+ */
+module type SubscriptionConfig = {
+  type variables;
+  type response;
+  let node: subscriptionNode;
+};
+
+module Disposable: {
+  type t;
+  let dispose: t => unit;
+};
+
+module MakeUseSubscription:
+  (C: SubscriptionConfig) =>
+   {
+    let subscribe:
+      (
+        ~environment: Environment.t,
+        ~variables: C.variables,
+        ~onCompleted: unit => unit=?,
+        ~onError: Js.Exn.t => unit=?,
+        ~onNext: C.response => unit=?,
+        ~updater: updaterFn=?,
+        unit
+      ) =>
+      Disposable.t;
+  };

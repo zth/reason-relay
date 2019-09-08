@@ -83,6 +83,10 @@ type Shelf {
 
 union ShelfContent = Book | BookCollection
 
+type Subscription {
+  bookAdded: Book!
+}
+
 input UpdateBookInput {
   clientMutationId: String
   id: ID!

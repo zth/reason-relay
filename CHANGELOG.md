@@ -1,6 +1,11 @@
 # master
 ...
 
+# subscriptions
+- BREAKING: Changed signature or `Network.makePromiseBased` from `(fetchFunctionPromise => unit) => Network.t` to `(~fetchFunction: fetchFunctionPromise => unit, ~subscriptionFunction: subscribeFunction=?, ()) => Network.t`.
+- Added `Observable` binding.
+- Added `Network.makeObserableBased` for creating network layers that use `Observable` from `relay-runtime`.
+
 # 0.1.3
 - Add pre-built OS X PPX binary in waiting for a better solution involving Azure Pipelines.
 

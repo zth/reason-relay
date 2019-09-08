@@ -132,6 +132,10 @@ const typeDefs = gql`
     deleteBook(input: DeleteBookInput!): DeleteBookPayload!
     updateBook(input: UpdateBookInput!): UpdateBookPayload!
   }
+  
+  type Subscription {
+    bookAdded: Book!
+  }
 `;
 
 const resolvers = {

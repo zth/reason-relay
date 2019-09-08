@@ -26,17 +26,21 @@ const formatGeneratedModule: FormatModule = ({
 }) => {
   const modName = moduleName.split('_graphql')[0];
 
-  const opKind: null | 'fragment' | 'query' | 'mutation' =
+  const opKind: null | 'fragment' | 'query' | 'mutation' | 'subscription' =
     kind === 'Fragment'
       ? 'fragment'
       : modName.endsWith('Query')
-        ? 'query'
-        : modName.endsWith('Mutation')
-          ? 'mutation'
-          : null;
+      ? 'query'
+      : modName.endsWith('Mutation')
+      ? 'mutation'
+      : modName.endsWith('Subscription')
+      ? 'subscription'
+      : null;
 
   if (!opKind) {
-    throw new Error('Something went wrong, uninterpreted module type: "' + moduleName + '"');
+    throw new Error(
+      'Something went wrong, uninterpreted module type: "' + moduleName + '"'
+    );
   }
 
   return printCode(`

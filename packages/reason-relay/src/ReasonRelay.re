@@ -6,6 +6,7 @@ type any;
 type queryNode;
 type fragmentNode;
 type mutationNode;
+type subscriptionNode;
 
 type dataId;
 
@@ -243,17 +244,7 @@ module ConnectionHandler = {
 /**
  * QUERY
  */
-module CacheConfig: {
-  type t;
-  let make:
-    (
-      ~force: option(bool),
-      ~poll: option(int),
-      ~liveConfigId: option(string),
-      ~transactionId: option(string)
-    ) =>
-    t;
-} = {
+module CacheConfig = {
   type t = {
     .
     "force": option(bool),
@@ -261,12 +252,25 @@ module CacheConfig: {
     "liveConfigId": option(string),
     "transactionId": option(string),
   };
+  type config = {
+    force: option(bool),
+    poll: option(int),
+    liveConfigId: option(string),
+    transactionId: option(string),
+  };
 
   let make = (~force, ~poll, ~liveConfigId, ~transactionId) => {
     "force": force,
     "poll": poll,
     "liveConfigId": liveConfigId,
     "transactionId": transactionId,
+  };
+
+  let getConfig = t => {
+    force: t##force,
+    poll: t##poll,
+    liveConfigId: t##liveConfigId,
+    transactionId: t##transactionId,
   };
 };
 
@@ -434,6 +438,39 @@ module MakeUseMutation = (C: MutationConfig) => {
 /**
  * Misc
  */
+module Observable = {
+  type t;
+
+  type _sink('t) = {
+    .
+    "next": 't => unit,
+    "error": Js.Exn.t => unit,
+    "completed": unit => unit,
+    "closed": bool,
+  };
+
+  type sink('t) = {
+    next: 't => unit,
+    error: Js.Exn.t => unit,
+    completed: unit => unit,
+    closed: bool,
+  };
+
+  [@bs.module "relay-runtime"] [@bs.scope "Observable"]
+  external create: (_sink('t) => option('a)) => t = "create";
+
+  let make = sinkFn =>
+    create(s => {
+      sinkFn({
+        next: s##next,
+        error: s##error,
+        completed: s##completed,
+        closed: s##closed,
+      });
+      None;
+    });
+};
+
 module Network = {
   type t;
 
@@ -444,11 +481,35 @@ module Network = {
     "operationKind": string,
   };
 
+  type subscribeFn =
+    {
+      .
+      "request": operation,
+      "variables": Js.Json.t,
+      "cacheConfig": CacheConfig.t,
+    } =>
+    Observable.t;
+
   type fetchFunctionPromise =
     (operation, Js.Json.t, CacheConfig.t) => Js.Promise.t(Js.Json.t);
 
+  type fetchFunctionObservable =
+    (operation, Js.Json.t, CacheConfig.t) => Observable.t;
+
   [@bs.module "relay-runtime"] [@bs.scope "Network"]
-  external makePromiseBased: fetchFunctionPromise => t = "create";
+  external makeFromPromise: (fetchFunctionPromise, option(subscribeFn)) => t =
+    "create";
+
+  let makePromiseBased = (~fetchFunction, ~subscriptionFunction=?, ()) =>
+    makeFromPromise(fetchFunction, subscriptionFunction);
+
+  [@bs.module "relay-runtime"] [@bs.scope "Network"]
+  external makeFromObservable:
+    (fetchFunctionObservable, option(subscribeFn)) => t =
+    "create";
+
+  let makeObservableBased = (~observableFunction, ~subscriptionFunction=?, ()) =>
+    makeFromObservable(observableFunction, subscriptionFunction);
 };
 
 module RecordSource = {
@@ -599,3 +660,54 @@ external _commitLocalUpdate:
 
 let commitLocalUpdate = (~environment, ~updater) =>
   _commitLocalUpdate(environment, updater);
+
+module type SubscriptionConfig = {
+  type variables;
+  type response;
+  let node: subscriptionNode;
+};
+
+module Disposable = {
+  type t;
+
+  [@bs.send] external dispose: t => unit = "dispose";
+};
+
+type _subscriptionConfig('response, 'variables) = {
+  .
+  "subscription": subscriptionNode,
+  "variables": 'variables,
+  "onCompleted": option(unit => unit),
+  "onError": option(Js.Exn.t => unit),
+  "onNext": option('response => unit),
+  "updater": option(updaterFn),
+};
+
+[@bs.module "relay-runtime"]
+external requestSubscription:
+  (Environment.t, _subscriptionConfig('response, 'variables)) => Disposable.t =
+  "requestSubscription";
+
+module MakeUseSubscription = (C: SubscriptionConfig) => {
+  let subscribe =
+      (
+        ~environment: Environment.t,
+        ~variables: C.variables,
+        ~onCompleted: option(unit => unit)=?,
+        ~onError: option(Js.Exn.t => unit)=?,
+        ~onNext: option(C.response => unit)=?,
+        ~updater: option(updaterFn)=?,
+        (),
+      ) =>
+    requestSubscription(
+      environment,
+      {
+        "subscription": C.node,
+        "variables": variables,
+        "onCompleted": onCompleted,
+        "onError": onError,
+        "onNext": onNext,
+        "updater": updater,
+      },
+    );
+};

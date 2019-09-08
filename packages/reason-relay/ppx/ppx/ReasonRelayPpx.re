@@ -31,6 +31,12 @@ let extractTheFragmentName = str =>
   | _ => raise(Could_not_extract_operation_name)
   };
 
+let extractTheSubscriptionName = str =>
+  switch (str |> extractGraphQLOperation) {
+  | Operation({optype: Subscription, name: Some(name)}) => name
+  | _ => raise(Could_not_extract_operation_name)
+  };
+
 let getGraphQLModuleName = opName => opName ++ "_graphql";
 
 let extractOperationStr = (~loc, ~expr) =>
@@ -143,6 +149,23 @@ let makeMutation = (~loc, ~moduleName) =>
     ]),
   );
 
+let makeSubscription = (~loc, ~moduleName) =>
+  Ast_helper.Mod.mk(
+    Pmod_structure([
+      [%stri module Operation = [%m makeModuleNameAst(~loc, ~moduleName)]],
+      [%stri include Operation.Unions],
+      [%stri
+        module Subscription =
+          ReasonRelay.MakeUseSubscription({
+            type variables = Operation.variables;
+            type response = Operation.response;
+            let node = Operation.node;
+          })
+      ],
+      [%stri let subscribe = Subscription.subscribe],
+    ]),
+  );
+
 let queryExtension =
   Extension.declare(
     "relay.query",
@@ -179,8 +202,26 @@ let mutationExtension =
     )
   );
 
+let subscriptionExtension =
+  Extension.declare(
+    "relay.subscription",
+    Extension.Context.module_expr,
+    Ast_pattern.__,
+    (~loc, ~path as _, expr) =>
+    makeSubscription(
+      ~moduleName=
+        extractOperationStr(~loc, ~expr) |> extractTheSubscriptionName,
+      ~loc,
+    )
+  );
+
 let () =
   Driver.register_transformation(
-    ~extensions=[queryExtension, fragmentExtension, mutationExtension],
+    ~extensions=[
+      queryExtension,
+      fragmentExtension,
+      mutationExtension,
+      subscriptionExtension,
+    ],
     "reason-relay",
   );
