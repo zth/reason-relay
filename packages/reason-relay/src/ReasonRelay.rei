@@ -210,15 +210,23 @@ module ConnectionHandler: {
  * QUERY
  */
 
-type queryResponse('data) =
-  | Loading
-  | Error(Js.Exn.t)
-  | Data('data);
-type dataFrom =
-  | NetworkOnly
-  | StoreThenNetwork
+module CacheConfig: {
+  type t;
+  let make:
+    (
+      ~force: option(bool),
+      ~poll: option(int),
+      ~liveConfigId: option(string),
+      ~transactionId: option(string)
+    ) =>
+    t;
+};
+
+type fetchPolicy =
+  | StoreOnly
   | StoreOrNetwork
-  | StoreOnly;
+  | StoreAndNetwork
+  | NetworkOnly;
 
 module type MakeUseQueryConfig = {
   type response;
@@ -232,8 +240,14 @@ module MakeUseQuery:
     type response = C.response;
     type variables = C.variables;
     let use:
-      (~variables: variables, ~dataFrom: dataFrom=?, unit) =>
-      queryResponse(response);
+      (
+        ~variables: variables,
+        ~fetchPolicy: fetchPolicy=?,
+        ~fetchKey: string=?,
+        ~networkCacheConfig: CacheConfig.t=?,
+        unit
+      ) =>
+      response;
   };
 
 /**
@@ -294,11 +308,7 @@ module MakeUseMutation:
 
 module Network: {
   type t;
-  type cacheConfig = {
-    .
-    "force": Js.Nullable.t(bool),
-    "poll": Js.Nullable.t(int),
-  };
+
   type operation = {
     .
     "name": string,
@@ -306,7 +316,7 @@ module Network: {
     "text": string,
   };
   type fetchFunctionPromise =
-    (operation, Js.Json.t, cacheConfig) => Js.Promise.t(Js.Json.t);
+    (operation, Js.Json.t, CacheConfig.t) => Js.Promise.t(Js.Json.t);
   let makePromiseBased: fetchFunctionPromise => t;
 };
 

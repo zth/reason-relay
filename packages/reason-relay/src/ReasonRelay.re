@@ -243,33 +243,52 @@ module ConnectionHandler = {
 /**
  * QUERY
  */
+module CacheConfig: {
+  type t;
+  let make:
+    (
+      ~force: option(bool),
+      ~poll: option(int),
+      ~liveConfigId: option(string),
+      ~transactionId: option(string)
+    ) =>
+    t;
+} = {
+  type t = {
+    .
+    "force": option(bool),
+    "poll": option(int),
+    "liveConfigId": option(string),
+    "transactionId": option(string),
+  };
 
-type queryResponse('data) =
-  | Loading
-  | Error(Js.Exn.t)
-  | Data('data);
+  let make = (~force, ~poll, ~liveConfigId, ~transactionId) => {
+    "force": force,
+    "poll": poll,
+    "liveConfigId": liveConfigId,
+    "transactionId": transactionId,
+  };
+};
 
-type dataFrom =
-  | NetworkOnly
-  | StoreThenNetwork
+type fetchPolicy =
+  | StoreOnly
   | StoreOrNetwork
-  | StoreOnly;
+  | StoreAndNetwork
+  | NetworkOnly;
 
-[@bs.module "relay-hooks"]
+[@bs.module "./relay-experimental"]
 external _useQuery:
-  {
-    .
-    "query": queryNode,
-    "variables": 'variables,
-    "dataFrom": option(string),
-  } =>
-  {
-    .
-    "props": Js.Nullable.t('props),
-    "error": Js.Nullable.t(Js.Exn.t),
-    "retry": Js.Nullable.t(unit => unit),
-    "cached": bool,
-  } =
+  (
+    queryNode,
+    'variables,
+    {
+      .
+      "fetchKey": option(string),
+      "fetchPolicy": option(string),
+      "networkCacheConfig": option(CacheConfig.t),
+    }
+  ) =>
+  'queryResponse =
   "useQuery";
 
 module type MakeUseQueryConfig = {
@@ -283,32 +302,31 @@ module MakeUseQuery = (C: MakeUseQueryConfig) => {
   type variables = C.variables;
 
   let use:
-    (~variables: variables, ~dataFrom: dataFrom=?, unit) =>
-    queryResponse(response) =
-    (~variables, ~dataFrom=?, ()) => {
-      let q =
-        _useQuery({
-          "dataFrom":
-            switch (dataFrom) {
-            | Some(StoreThenNetwork) => Some("STORE_THEN_NETWORK")
-            | Some(NetworkOnly) => Some("NETWORK_ONLY")
-            | Some(StoreOrNetwork) => Some("STORE_OR_NETWORK")
-            | Some(StoreOnly) => Some("STORE_ONLY")
+    (
+      ~variables: variables,
+      ~fetchPolicy: fetchPolicy=?,
+      ~fetchKey: string=?,
+      ~networkCacheConfig: CacheConfig.t=?,
+      unit
+    ) =>
+    response =
+    (~variables, ~fetchPolicy=?, ~fetchKey=?, ~networkCacheConfig=?, ()) =>
+      _useQuery(
+        C.query,
+        variables,
+        {
+          "fetchKey": fetchKey,
+          "fetchPolicy":
+            switch (fetchPolicy) {
+            | Some(StoreOnly) => Some("store-only")
+            | Some(StoreOrNetwork) => Some("store-or-network")
+            | Some(StoreAndNetwork) => Some("store-and-network")
+            | Some(NetworkOnly) => Some("network-only")
             | None => None
             },
-          "query": C.query,
-          "variables": variables,
-        });
-
-      let res =
-        switch (q##props |> toOpt, q##error |> toOpt) {
-        | (None, None) => Loading
-        | (Some(data), None) => Data(data)
-        | (_, Some(err)) => Error(err)
-        };
-
-      res;
-    };
+          "networkCacheConfig": networkCacheConfig,
+        },
+      );
 };
 
 /**
@@ -419,12 +437,6 @@ module MakeUseMutation = (C: MutationConfig) => {
 module Network = {
   type t;
 
-  type cacheConfig = {
-    .
-    "force": Js.Nullable.t(bool),
-    "poll": Js.Nullable.t(int),
-  };
-
   type operation = {
     .
     "text": string,
@@ -433,7 +445,7 @@ module Network = {
   };
 
   type fetchFunctionPromise =
-    (operation, Js.Json.t, cacheConfig) => Js.Promise.t(Js.Json.t);
+    (operation, Js.Json.t, CacheConfig.t) => Js.Promise.t(Js.Json.t);
 
   [@bs.module "relay-runtime"] [@bs.scope "Network"]
   external makePromiseBased: fetchFunctionPromise => t = "create";
