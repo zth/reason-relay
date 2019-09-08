@@ -280,6 +280,15 @@ type fetchPolicy =
   | StoreAndNetwork
   | NetworkOnly;
 
+let mapFetchPolicy = fetchPolicy =>
+  switch (fetchPolicy) {
+  | Some(StoreOnly) => Some("store-only")
+  | Some(StoreOrNetwork) => Some("store-or-network")
+  | Some(StoreAndNetwork) => Some("store-and-network")
+  | Some(NetworkOnly) => Some("network-only")
+  | None => None
+  };
+
 [@bs.module "./relay-experimental"]
 external _useQuery:
   (
@@ -320,14 +329,7 @@ module MakeUseQuery = (C: MakeUseQueryConfig) => {
         variables,
         {
           "fetchKey": fetchKey,
-          "fetchPolicy":
-            switch (fetchPolicy) {
-            | Some(StoreOnly) => Some("store-only")
-            | Some(StoreOrNetwork) => Some("store-or-network")
-            | Some(StoreAndNetwork) => Some("store-and-network")
-            | Some(NetworkOnly) => Some("network-only")
-            | None => None
-            },
+          "fetchPolicy": fetchPolicy |> mapFetchPolicy,
           "networkCacheConfig": networkCacheConfig,
         },
       );
@@ -336,7 +338,7 @@ module MakeUseQuery = (C: MakeUseQueryConfig) => {
 /**
  * FRAGMENT
  */
-[@bs.module "relay-hooks"]
+[@bs.module "./relay-experimental"]
 external _useFragment: (fragmentNode, 'fragmentRef) => 'fragmentData =
   "useFragment";
 
@@ -349,6 +351,56 @@ module type MakeUseFragmentConfig = {
 module MakeUseFragment = (C: MakeUseFragmentConfig) => {
   let use = (fr: C.fragmentRef): C.fragment =>
     _useFragment(C.fragmentSpec, fr);
+};
+
+/** Refetchable */
+[@bs.module "./relay-experimental"]
+external _useRefetchableFragment:
+  (fragmentNode, 'fragmentRef) =>
+  (
+    'fragmentData,
+    (
+      'variables,
+      {
+        .
+        "fetchPolicy": option(string),
+        "onComplete": option(Js.Nullable.t(Js.Exn.t) => unit),
+      }
+    ) =>
+    unit,
+  ) =
+  "useRefetchableFragment";
+
+module type MakeUseRefetchableFragmentConfig = {
+  type fragment;
+  type fragmentRef;
+  type variables;
+  let fragmentSpec: fragmentNode;
+};
+
+module MakeUseRefetchableFragment = (C: MakeUseRefetchableFragmentConfig) => {
+  let useRefetchable = (fr: C.fragmentRef) => {
+    let (fragmentData, refetchFn) =
+      _useRefetchableFragment(C.fragmentSpec, fr);
+    (
+      fragmentData,
+      (~variables: C.variables, ~fetchPolicy=?, ~onComplete=?, ()) =>
+        refetchFn(
+          variables,
+          {
+            "fetchPolicy": fetchPolicy |> mapFetchPolicy,
+            "onComplete":
+              Some(
+                maybeExn =>
+                  switch (onComplete, maybeExn |> Js.Nullable.toOption) {
+                  | (Some(onComplete), maybeExn) => onComplete(maybeExn)
+                  | _ => ()
+                  },
+              ),
+          },
+        ),
+    );
+  };
 };
 
 /**

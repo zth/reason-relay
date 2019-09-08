@@ -273,6 +273,31 @@ module type MakeUseFragmentConfig = {
 module MakeUseFragment:
   (C: MakeUseFragmentConfig) => {let use: C.fragmentRef => C.fragment;};
 
+/** Refetchable */
+module type MakeUseRefetchableFragmentConfig = {
+  type fragment;
+  type variables;
+  type fragmentRef;
+  let fragmentSpec: fragmentNode;
+};
+
+module MakeUseRefetchableFragment:
+  (C: MakeUseRefetchableFragmentConfig) =>
+   {
+    let useRefetchable:
+      C.fragmentRef =>
+      (
+        C.fragment,
+        (
+          ~variables: C.variables,
+          ~fetchPolicy: fetchPolicy=?,
+          ~onComplete: option(Js.Exn.t) => unit=?,
+          unit
+        ) =>
+        unit,
+      );
+  };
+
 /**
  * MUTATION
  */
