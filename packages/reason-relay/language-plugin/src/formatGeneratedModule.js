@@ -14,6 +14,31 @@
 import type { FormatModule } from '../RelayLanguagePluginInterface';
 import { printCode } from './generator/Printer.gen';
 
+/**
+ * Right now, we need to post-process the generated JS some. We do the following here:
+ * - Alter all require()-operations to point at our generated files. This is because
+ *   Relay by default outputs haste-style require calls for @refetchable operations,
+ *   and that we're not currently allowed to alter the generated module names, before
+ *   a PR for that lands.
+ *
+ *   We do this here via a hacky regexp because it's likely a good long while before
+ *   any of those PRs lands in Relay.
+ */
+
+function processConcreteText(concreteText: string): string {
+  let requireRegexp = /(require\(')([A-Za-z_.0-9]+)('\))/g;
+  let str = concreteText;
+
+  let result;
+
+  while ((result = requireRegexp.exec(concreteText)) !== null) {
+    let [fullStr, _, moduleName] = result;
+    str = str.replace(fullStr, `require('./${moduleName}.bs.js')`);
+  }
+
+  return str;
+}
+
 const formatGeneratedModule: FormatModule = ({
   moduleName,
   documentType,
@@ -46,7 +71,7 @@ const formatGeneratedModule: FormatModule = ({
   return printCode(`
 ${typeText || ''}
 
-let node: ReasonRelay.${opKind}Node = [%bs.raw {| ${concreteText} |}];
+let node: ReasonRelay.${opKind}Node = [%bs.raw {| ${processConcreteText(concreteText)} |}];
 `);
 };
 

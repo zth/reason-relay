@@ -25,7 +25,7 @@ let node: ReasonRelay.fragmentNode = [%bs.raw
   "metadata": {
     "refetch": {
       "connection": null,
-      "operation": require('BookDisplayerRefetchQuery_graphql'),
+      "operation": require('./BookDisplayerRefetchQuery_graphql.bs.js'),
       "fragmentPathInResult": [
         "node"
       ]
