@@ -1,8 +1,6 @@
 {
   "name": "reason-relay-ppx",
   "version": "0.1.1",
-  "description": "Logging implementation for ReasonML/BuckleScript",
-  "author": "Alex Fedoseev <alex.fedoseev@gmail.com>",
   "license": "MIT",
   "esy": {
     "build": "dune build -p #{self.name}",

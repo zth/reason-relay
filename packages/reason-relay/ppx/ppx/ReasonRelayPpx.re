@@ -46,6 +46,49 @@ let extractFragmentRefetchableQueryName = str =>
   | _ => None
   };
 
+/**
+ * Neither of these (strHasConnection, selectionSetHasConnection) seem to work,
+ * or something else is up. TODO fix, but broken currently.
+ */
+let strHasConnection = str =>
+  switch (Str.search_forward(Str.regexp("/@connection/g"), str, 0)) {
+  | exception Not_found => false
+  | _ => true
+  };
+
+let rec selectionSetHasConnection = selections =>
+  switch (
+    selections
+    |> List.find_opt(sel =>
+         switch (sel) {
+         | Graphql_parser.Field({directives, selection_set}) =>
+           switch (
+             directives
+             |> List.find_opt((dir: Graphql_parser.directive) =>
+                  switch (dir) {
+                  | {name: "connection"} => true
+                  | _ => false
+                  }
+                )
+           ) {
+           | Some(_) => true
+           | None => selectionSetHasConnection(selection_set)
+           }
+         | _ => false
+         }
+       )
+  ) {
+  | Some(_) => true
+  | None => false
+  };
+
+let fragmentHasConnectionNotation = str =>
+  switch (str |> extractGraphQLOperation) {
+  | Fragment({name: _, selection_set}) =>
+    selectionSetHasConnection(selection_set)
+  | _ => false
+  };
+
 let extractTheSubscriptionName = str =>
   switch (str |> extractGraphQLOperation) {
   | Operation({optype: Subscription, name: Some(name)}) => name
@@ -93,7 +136,7 @@ let makeModuleNameAst = (~loc, ~moduleName) => {
     Pmod_ident({loc, txt: Lident(getGraphQLModuleName(moduleName))}),
 };
 
-let makeFragment = (~loc, ~moduleName, ~refetchableQueryName) =>
+let makeFragment = (~loc, ~moduleName, ~refetchableQueryName, ~hasConnection) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
       [%stri module Operation = [%m makeModuleNameAst(~loc, ~moduleName)]],
@@ -122,6 +165,17 @@ let makeFragment = (~loc, ~moduleName, ~refetchableQueryName) =>
         %stri
         ()
       },
+      hasConnection
+        ? [%stri
+          module UsePaginationFragment =
+            ReasonRelay.MakeUsePaginationFragment({
+              type fragment = Operation.fragment;
+              type fragmentRef = Operation.fragmentRef;
+              type variables = RefetchableOperation.variables;
+              let fragmentSpec = Operation.node;
+            })
+        ]
+        : [%stri ()],
       [%stri
         module UseFragment =
           ReasonRelay.MakeUseFragment({
@@ -133,10 +187,28 @@ let makeFragment = (~loc, ~moduleName, ~refetchableQueryName) =>
       [%stri
         let use = fRef => UseFragment.use(fRef |> Operation.getFragmentRef)
       ],
+      hasConnection
+        ? [%stri
+          let useLegacyPagination = fRef =>
+            UsePaginationFragment.useLegacyPagination(
+              fRef |> Operation.getFragmentRef,
+            )
+        ]
+        : [%stri ()],
+      hasConnection
+        ? [%stri
+          let useBlockingPagination = fRef =>
+            UsePaginationFragment.useBlockingPagination(
+              fRef |> Operation.getFragmentRef,
+            )
+        ]
+        : [%stri ()],
       switch (refetchableQueryName) {
       | Some(_) => [%stri
           let useRefetchable = fRef =>
-            UseRefetchableFragment.useRefetchable(fRef |> Operation.getFragmentRef)
+            UseRefetchableFragment.useRefetchable(
+              fRef |> Operation.getFragmentRef,
+            )
         ]
       | None =>
         %stri
@@ -231,14 +303,25 @@ let fragmentExtension =
     "relay.fragment",
     Extension.Context.module_expr,
     Ast_pattern.__,
-    (~loc, ~path as _, expr) =>
-    makeFragment(
-      ~moduleName=extractOperationStr(~loc, ~expr) |> extractTheFragmentName,
-      ~refetchableQueryName=
-        extractOperationStr(~loc, ~expr)
-        |> extractFragmentRefetchableQueryName,
-      ~loc,
-    )
+    (~loc, ~path as _, expr) => {
+      let operationStr = extractOperationStr(~loc, ~expr);
+      let refetchableQueryName =
+        operationStr |> extractFragmentRefetchableQueryName;
+
+      makeFragment(
+        ~moduleName=operationStr |> extractTheFragmentName,
+        ~refetchableQueryName,
+        ~hasConnection=
+          switch (
+            refetchableQueryName,
+            operationStr |> strHasConnection,
+          ) {
+          | (Some(_), true) => true
+          | _ => false
+          },
+        ~loc,
+      );
+    },
   );
 
 let mutationExtension =
