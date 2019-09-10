@@ -244,6 +244,12 @@ module ConnectionHandler = {
 /**
  * QUERY
  */
+module Disposable = {
+  type t;
+
+  [@bs.send] external dispose: t => unit = "dispose";
+};
+
 module CacheConfig = {
   type t = {
     .
@@ -354,21 +360,41 @@ module MakeUseFragment = (C: MakeUseFragmentConfig) => {
 };
 
 /** Refetchable */
+type refetchFn('variables) =
+  (
+    ~variables: 'variables,
+    ~fetchPolicy: fetchPolicy=?,
+    ~onComplete: option(Js.Exn.t) => unit=?,
+    unit
+  ) =>
+  unit;
+
+type refetchFnRaw('variables) =
+  (
+    'variables,
+    {
+      .
+      "fetchPolicy": option(string),
+      "onComplete": option(Js.Nullable.t(Js.Exn.t) => unit),
+    }
+  ) =>
+  unit;
+
+let makeRefetchableFnOpts = (~fetchPolicy, ~onComplete) => {
+  "fetchPolicy": fetchPolicy |> mapFetchPolicy,
+  "onComplete":
+    Some(
+      maybeExn =>
+        switch (onComplete, maybeExn |> Js.Nullable.toOption) {
+        | (Some(onComplete), maybeExn) => onComplete(maybeExn)
+        | _ => ()
+        },
+    ),
+};
+
 [@bs.module "./relay-experimental"]
 external _useRefetchableFragment:
-  (fragmentNode, 'fragmentRef) =>
-  (
-    'fragmentData,
-    (
-      'variables,
-      {
-        .
-        "fetchPolicy": option(string),
-        "onComplete": option(Js.Nullable.t(Js.Exn.t) => unit),
-      }
-    ) =>
-    unit,
-  ) =
+  (fragmentNode, 'fragmentRef) => ('fragmentData, refetchFnRaw('variables)) =
   "useRefetchableFragment";
 
 module type MakeUseRefetchableFragmentConfig = {
@@ -387,19 +413,121 @@ module MakeUseRefetchableFragment = (C: MakeUseRefetchableFragmentConfig) => {
       (~variables: C.variables, ~fetchPolicy=?, ~onComplete=?, ()) =>
         refetchFn(
           variables,
-          {
-            "fetchPolicy": fetchPolicy |> mapFetchPolicy,
-            "onComplete":
-              Some(
-                maybeExn =>
-                  switch (onComplete, maybeExn |> Js.Nullable.toOption) {
-                  | (Some(onComplete), maybeExn) => onComplete(maybeExn)
-                  | _ => ()
-                  },
-              ),
-          },
+          makeRefetchableFnOpts(~fetchPolicy, ~onComplete),
         ),
     );
+  };
+};
+
+/** Pagination */
+module type MakeUsePaginationFragmentConfig = {
+  type fragment;
+  type variables;
+  type fragmentRef;
+  let fragmentSpec: fragmentNode;
+};
+
+type paginationLoadMoreFn =
+  (~count: int, ~onComplete: option(option(Js.Exn.t) => unit)) =>
+  Disposable.t;
+
+type paginationBlockingFragmentReturn('fragmentData, 'variables) = {
+  data: 'fragmentData,
+  loadNext: paginationLoadMoreFn,
+  loadPrevious: paginationLoadMoreFn,
+  hasNext: bool,
+  hasPrevious: bool,
+  refetch: refetchFn('variables),
+};
+
+type paginationBlockingFragmentReturnRaw('fragmentData, 'variables) = {
+  .
+  "data": 'fragmentData,
+  "loadNext": paginationLoadMoreFn,
+  "loadPrevious": paginationLoadMoreFn,
+  "hasNext": bool,
+  "hasPrevious": bool,
+  "refetch": refetchFnRaw('variables),
+};
+
+type paginationLegacyFragmentReturn('fragmentData, 'variables) = {
+  data: 'fragmentData,
+  loadNext: paginationLoadMoreFn,
+  loadPrevious: paginationLoadMoreFn,
+  hasNext: bool,
+  hasPrevious: bool,
+  isLoadingNext: bool,
+  isLoadingPrevious: bool,
+  refetch: refetchFn('variables),
+};
+
+type paginationLegacyFragmentReturnRaw('fragmentData, 'variables) = {
+  .
+  "data": 'fragmentData,
+  "loadNext": paginationLoadMoreFn,
+  "loadPrevious": paginationLoadMoreFn,
+  "hasNext": bool,
+  "hasPrevious": bool,
+  "isLoadingNext": bool,
+  "isLoadingPrevious": bool,
+  "refetch": refetchFnRaw('variables),
+};
+
+[@bs.module "./relay-experimental"]
+external _useLegacyPaginationFragment:
+  (fragmentNode, 'fragmentRef) =>
+  paginationLegacyFragmentReturnRaw('fragmentData, 'variables) =
+  "useLegacyPaginationFragment";
+
+[@bs.module "./relay-experimental"]
+external _useBlockingPaginationFragment:
+  (fragmentNode, 'fragmentRef) =>
+  paginationBlockingFragmentReturnRaw('fragmentData, 'variables) =
+  "useBlockingPaginationFragment";
+
+module MakeUsePaginationFragment = (C: MakeUsePaginationFragmentConfig) => {
+  let useBlockingPagination =
+      (fr: C.fragmentRef)
+      : paginationBlockingFragmentReturn(C.fragment, C.variables) => {
+    let p = _useBlockingPaginationFragment(C.fragmentSpec, fr);
+    {
+      data: p##data,
+      loadNext: p##loadNext,
+      loadPrevious: p##loadPrevious,
+      hasNext: p##hasNext,
+      hasPrevious: p##hasPrevious,
+      refetch: (~variables: C.variables, ~fetchPolicy=?, ~onComplete=?, ()) =>
+        (),
+      /*
+       TODO: Make this work!
+       p##refetch(
+            variables,
+            makeRefetchableFnOpts(~onComplete, ~fetchPolicy),
+          ),*/
+    };
+  };
+
+  let useLegacyPagination =
+      (fr: C.fragmentRef)
+      : paginationLegacyFragmentReturn(C.fragment, C.variables) => {
+    let p = _useLegacyPaginationFragment(C.fragmentSpec, fr);
+    {
+      data: p##data,
+      loadNext: p##loadNext,
+      loadPrevious: p##loadPrevious,
+      hasNext: p##hasNext,
+      hasPrevious: p##hasPrevious,
+      isLoadingNext: p##isLoadingNext,
+      isLoadingPrevious: p##isLoadingPrevious,
+      refetch: (~variables: C.variables, ~fetchPolicy=?, ~onComplete=?, ()) =>
+        (),
+      /*
+       TODO: Make this work!
+       p##refetch(
+            variables,
+            makeRefetchableFnOpts(~onComplete, ~fetchPolicy),
+          ),*/
+    };
   };
 };
 
@@ -717,12 +845,6 @@ module type SubscriptionConfig = {
   type variables;
   type response;
   let node: subscriptionNode;
-};
-
-module Disposable = {
-  type t;
-
-  [@bs.send] external dispose: t => unit = "dispose";
 };
 
 type _subscriptionConfig('response, 'variables) = {

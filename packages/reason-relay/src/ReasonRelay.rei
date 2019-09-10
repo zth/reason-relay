@@ -211,6 +211,11 @@ module ConnectionHandler: {
  * QUERY
  */
 
+module Disposable: {
+  type t;
+  let dispose: t => unit;
+};
+
 module CacheConfig: {
   type t;
   type config = {
@@ -274,6 +279,15 @@ module MakeUseFragment:
   (C: MakeUseFragmentConfig) => {let use: C.fragmentRef => C.fragment;};
 
 /** Refetchable */
+type refetchFn('variables) =
+  (
+    ~variables: 'variables,
+    ~fetchPolicy: fetchPolicy=?,
+    ~onComplete: option(Js.Exn.t) => unit=?,
+    unit
+  ) =>
+  unit;
+
 module type MakeUseRefetchableFragmentConfig = {
   type fragment;
   type variables;
@@ -285,17 +299,50 @@ module MakeUseRefetchableFragment:
   (C: MakeUseRefetchableFragmentConfig) =>
    {
     let useRefetchable:
+      C.fragmentRef => (C.fragment, refetchFn(C.variables));
+  };
+
+/** Pagination */
+module type MakeUsePaginationFragmentConfig = {
+  type fragment;
+  type variables;
+  type fragmentRef;
+  let fragmentSpec: fragmentNode;
+};
+
+type paginationLoadMoreFn =
+  (~count: int, ~onComplete: option(option(Js.Exn.t) => unit)) =>
+  Disposable.t;
+
+type paginationBlockingFragmentReturn('fragmentData, 'variables) = {
+  data: 'fragmentData,
+  loadNext: paginationLoadMoreFn,
+  loadPrevious: paginationLoadMoreFn,
+  hasNext: bool,
+  hasPrevious: bool,
+  refetch: refetchFn('variables),
+};
+
+type paginationLegacyFragmentReturn('fragmentData, 'variables) = {
+  data: 'fragmentData,
+  loadNext: paginationLoadMoreFn,
+  loadPrevious: paginationLoadMoreFn,
+  hasNext: bool,
+  hasPrevious: bool,
+  isLoadingNext: bool,
+  isLoadingPrevious: bool,
+  refetch: refetchFn('variables),
+};
+
+module MakeUsePaginationFragment:
+  (C: MakeUsePaginationFragmentConfig) =>
+   {
+    let useBlockingPagination:
       C.fragmentRef =>
-      (
-        C.fragment,
-        (
-          ~variables: C.variables,
-          ~fetchPolicy: fetchPolicy=?,
-          ~onComplete: option(Js.Exn.t) => unit=?,
-          unit
-        ) =>
-        unit,
-      );
+      paginationBlockingFragmentReturn(C.fragment, C.variables);
+
+    let useLegacyPagination:
+      C.fragmentRef => paginationLegacyFragmentReturn(C.fragment, C.variables);
   };
 
 /**
@@ -495,11 +542,6 @@ module type SubscriptionConfig = {
   type variables;
   type response;
   let node: subscriptionNode;
-};
-
-module Disposable: {
-  type t;
-  let dispose: t => unit;
 };
 
 module MakeUseSubscription:
