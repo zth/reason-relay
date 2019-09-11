@@ -10,7 +10,7 @@
  */
 'use strict';
 
-var ReactRelayContext = require('react-relay/ReactRelayContext');
+var ReactRelayContext = require('react-relay').ReactRelayContext;
 
 var invariant = require("fbjs/lib/invariant");
 

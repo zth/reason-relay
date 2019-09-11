@@ -346,7 +346,7 @@ var debugFunctions;
 if (process.env.NODE_ENV !== "production") {
   debugFunctions = {
     getInitialIDAndType: function getInitialIDAndType(memoRefetchVariables, fragmentRefPathInResponse, environment) {
-      var RelayModernRecord = require('relay-runtime/store/RelayModernRecord');
+      var RelayModernRecord = require('relay-runtime/lib/RelayModernRecord');
 
       var id = memoRefetchVariables === null || memoRefetchVariables === void 0 ? void 0 : memoRefetchVariables.id;
 
@@ -368,7 +368,7 @@ if (process.env.NODE_ENV !== "production") {
       };
     },
     checkSameTypeAfterRefetch: function checkSameTypeAfterRefetch(previousIDAndType, environment, fragmentNode, componentDisplayName) {
-      var RelayModernRecord = require('relay-runtime/store/RelayModernRecord');
+      var RelayModernRecord = require('relay-runtime/lib/RelayModernRecord');
 
       if (!previousIDAndType) {
         return;
@@ -387,7 +387,7 @@ if (process.env.NODE_ENV !== "production") {
         return;
       }
 
-      var _require5 = require('relay-runtime/store/RelayStoreUtils'),
+      var _require5 = require('relay-runtime'),
           ID_KEY = _require5.ID_KEY; // $FlowExpectedError
 
 
