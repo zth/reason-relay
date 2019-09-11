@@ -1,13 +1,7 @@
 {
   "name": "reason-relay-ppx",
   "version": "0.1.1",
-  "description": "Logging implementation for ReasonML/BuckleScript",
-  "author": "Alex Fedoseev <alex.fedoseev@gmail.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/minima-app/bs-log.git"
-  },
   "scripts": {
     "start": "bsb -clean-world -make-world -w",
     "build": "bsb -clean-world -make-world",
@@ -24,13 +18,5 @@
   },
   "devDependencies": {
     "bs-platform": "6.0.3"
-  },
-  "keywords": [
-    "log",
-    "logging",
-    "reason",
-    "reasonml",
-    "ocaml",
-    "bucklescript"
-  ]
+  }
 }

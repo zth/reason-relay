@@ -21,6 +21,7 @@ cp src/ReasonRelay.rei dist/src/;
 cp src/ReasonRelayUtils.re dist/src/;
 cp src/ReasonRelayUtils.rei dist/src/;
 cp ./../../README.md dist/;
+cp -rf src/vendor dist/src/vendor;
 
 # copy ppx and postinstall script
 cp ppx/_build/default/bin/bin.exe dist/ppx-linux;
