@@ -1,28 +1,39 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow strict-local
- * @format
- */
+const RelayReasonGenerator = require("./RelayReasonGenerator");
 
-'use strict';
+const formatGeneratedModule = require("./formatGeneratedModule");
 
-const RelayReasonGenerator = require('./RelayReasonGenerator');
+const { find } = require("./FindGraphQLTags");
+const path = require("path");
+const fs = require("fs");
 
-const formatGeneratedModule = require('./formatGeneratedModule');
+function getFileFilter(baseDir) {
+  return file => {
+    const filePath = path.join(baseDir, file.relPath);
+    let text = "";
+    try {
+      text = fs.readFileSync(filePath, "utf8");
+    } catch {
+      // eslint-disable no-console
+      console.warn(
+        `RelaySourceModuleParser: Unable to read the file "${filePath}". Looks like it was removed.`
+      );
+      return false;
+    }
+    return text.indexOf("[%relay.") >= 0;
+  };
+}
 
-const { find } = require('./FindGraphQLTags');
-
-// $FlowFixMe
-import type { PluginInterface } from '../RelayLanguagePluginInterface';
-
-module.exports = (): PluginInterface => ({
-  inputExtensions: ['re'],
-  outputExtension: 're',
+module.exports = () => ({
+  inputExtensions: ["re"],
+  outputExtension: "re",
   typeGenerator: RelayReasonGenerator,
   formatModule: formatGeneratedModule,
-  findGraphQLTags: find
+  findGraphQLTags: find,
+  isGeneratedFile: fileName =>
+    fileName.endsWith("_graphql.re") || fileName.endsWith("_graphql.bs.js"),
+  getFileFilter,
+  keepFileInGeneratedFolder: fileName => fileName.endsWith(".bs.js"),
+  getRefetchOperationModuleImportPath: operationName =>
+    `./${operationName}_graphql.bs.js`,
+  getModuleName: operationName => `${operationName}_graphql`
 });

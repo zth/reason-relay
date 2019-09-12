@@ -2525,15 +2525,17 @@ function () {
               return;
             }
 
-            if (!_this3.onlyValidate || !keepFileInGeneratedFolder || !keepFileInGeneratedFolder(actualFile)) {
-              try {
-                _this3._filesystem.unlinkSync(path.join(firstLevelPath, actualFile));
-              } catch (_unused) {
-                throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
+            if (!keepFileInGeneratedFolder || !keepFileInGeneratedFolder(actualFile)) {
+              if (!_this3.onlyValidate) {
+                try {
+                  _this3._filesystem.unlinkSync(path.join(firstLevelPath, actualFile));
+                } catch (_unused) {
+                  throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
+                }
               }
-            }
 
-            _this3.changes.deleted.push(actualFile);
+              _this3.changes.deleted.push(actualFile);
+            }
           });
         });
       } else {
@@ -2542,15 +2544,17 @@ function () {
             return;
           }
 
-          if (!_this3.onlyValidate) {
-            try {
-              _this3._filesystem.unlinkSync(path.join(_this3._dir, actualFile));
-            } catch (_unused2) {
-              throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
+          if (!keepFileInGeneratedFolder || !keepFileInGeneratedFolder(actualFile)) {
+            if (!_this3.onlyValidate) {
+              try {
+                _this3._filesystem.unlinkSync(path.join(_this3._dir, actualFile));
+              } catch (_unused2) {
+                throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
+              }
             }
-          }
 
-          _this3.changes.deleted.push(actualFile);
+            _this3.changes.deleted.push(actualFile);
+          }
         });
       }
     });
