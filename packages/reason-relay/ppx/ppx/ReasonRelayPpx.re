@@ -10,7 +10,7 @@ exception Could_not_extract_operation;
 
 /**
  * This function takes a GraphQL document as a string (typically extracted from the [%relay.<operation>] nodes),
- * uses Graphql_parser to parse the string into a GraphQL definitions, and then extracts the _first_ operation
+ * uses Graphql_parser to parse the string into a list of GraphQL definitions, and then extracts the _first_ operation
  * of the document only. This is because Relay disallows multiple operations in the same definition.
  */
 let extractGraphQLOperation = str =>
@@ -74,7 +74,7 @@ let extractTheSubscriptionName = str =>
  * So, this functions makes sure that @refetchable is defined and the queryName arg exists, and if so, extracts and
  * returns "SomeFragmentRefetchQuery" as an option string.
  * 
- * Right now, only one directive is allowed a fragment, which might need to change in the future.
+ * Right now, only one directive is allowed per fragment, which might need to change in the future.
  */
 let extractFragmentRefetchableQueryName = str =>
   switch (str |> extractGraphQLOperation) {
