@@ -346,7 +346,8 @@ var debugFunctions;
 if (process.env.NODE_ENV !== "production") {
   debugFunctions = {
     getInitialIDAndType: function getInitialIDAndType(memoRefetchVariables, fragmentRefPathInResponse, environment) {
-      var RelayModernRecord = require('relay-runtime').Record;
+      var _require5 = require('relay-runtime'),
+          Record = _require5.Record;
 
       var id = memoRefetchVariables === null || memoRefetchVariables === void 0 ? void 0 : memoRefetchVariables.id;
 
@@ -356,7 +357,7 @@ if (process.env.NODE_ENV !== "production") {
 
       var recordSource = environment.getStore().getSource();
       var record = recordSource.get(id);
-      var typename = record && RelayModernRecord.getType(record);
+      var typename = record && Record.getType(record);
 
       if (typename == null) {
         return null;
@@ -368,7 +369,8 @@ if (process.env.NODE_ENV !== "production") {
       };
     },
     checkSameTypeAfterRefetch: function checkSameTypeAfterRefetch(previousIDAndType, environment, fragmentNode, componentDisplayName) {
-      var RelayModernRecord = require('relay-runtime').Record;
+      var _require6 = require('relay-runtime'),
+          Record = _require6.Record;
 
       if (!previousIDAndType) {
         return;
@@ -376,7 +378,7 @@ if (process.env.NODE_ENV !== "production") {
 
       var recordSource = environment.getStore().getSource();
       var record = recordSource.get(previousIDAndType.id);
-      var typename = record && RelayModernRecord.getType(record);
+      var typename = record && Record.getType(record);
 
       if (typename !== previousIDAndType.typename) {
         process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Call to `refetch` returned data with a different ' + '__typename: was `%s`, now `%s`, on `%s` in `%s`. ' + 'Please make sure the server correctly implements' + 'unique id requirement.', previousIDAndType.typename, typename, fragmentNode.name, componentDisplayName) : void 0;
@@ -387,8 +389,8 @@ if (process.env.NODE_ENV !== "production") {
         return;
       }
 
-      var _require5 = require('relay-runtime'),
-          ID_KEY = _require5.ID_KEY; // $FlowExpectedError
+      var _require7 = require('relay-runtime'),
+          ID_KEY = _require7.ID_KEY; // $FlowExpectedError
 
 
       var resultID = refetchedFragmentRef[ID_KEY];

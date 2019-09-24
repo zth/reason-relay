@@ -16,7 +16,7 @@ var invariant = require("fbjs/lib/invariant");
 
 var useRelayEnvironment = require('./useRelayEnvironment');
 
-var useStaticPropWarning = require('./useStaticPropWarning');
+var useStaticFragmentNodeWarning = require('./useStaticFragmentNodeWarning');
 
 var _require = require('relay-runtime'),
     getObservableForRequestInFlight = _require.__internal.getObservableForRequestInFlight,
@@ -29,8 +29,8 @@ var useEffect = React.useEffect,
 
 function useIsParentQueryInFlight(fragmentInput, fragmentRef) {
   var environment = useRelayEnvironment();
-  useStaticPropWarning(fragmentInput, 'first argument of useIsParentQueryInFlight()');
   var fragmentNode = getFragment(fragmentInput);
+  useStaticFragmentNodeWarning(fragmentNode, 'first argument of useIsParentQueryInFlight()');
   var observable = useMemo(function () {
     // $FlowFixMe - TODO T39154660 Use FragmentPointer type instead of mixed
     var fragmentOwnerOrOwners = getFragmentOwner(fragmentNode, fragmentRef);

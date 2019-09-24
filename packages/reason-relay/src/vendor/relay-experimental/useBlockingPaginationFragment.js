@@ -27,7 +27,7 @@ var useLoadMoreFunction = require('./useLoadMoreFunction');
 
 var useRefetchableFragmentNode = require('./useRefetchableFragmentNode');
 
-var useStaticPropWarning = require('./useStaticPropWarning');
+var useStaticFragmentNodeWarning = require('./useStaticFragmentNodeWarning');
 
 var warning = require("fbjs/lib/warning");
 
@@ -44,8 +44,8 @@ var _require2 = require('relay-runtime'),
 
 function useBlockingPaginationFragment(fragmentInput, parentFragmentRef) {
   var componentDisplayName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'useBlockingPaginationFragment()';
-  useStaticPropWarning(fragmentInput, "first argument of ".concat(componentDisplayName));
   var fragmentNode = getFragment(fragmentInput);
+  useStaticFragmentNodeWarning(fragmentNode, "first argument of ".concat(componentDisplayName));
 
   var _getPaginationMetadat = getPaginationMetadata(fragmentNode, componentDisplayName),
       connectionPathInFragmentData = _getPaginationMetadat.connectionPathInFragmentData,

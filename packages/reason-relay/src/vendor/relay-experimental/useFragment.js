@@ -12,14 +12,14 @@
 
 var useFragmentNode = require('./useFragmentNode');
 
-var useStaticPropWarning = require('./useStaticPropWarning');
+var useStaticFragmentNodeWarning = require('./useStaticFragmentNodeWarning');
 
 var _require = require('relay-runtime'),
     getFragment = _require.getFragment;
 
 function useFragment(fragmentInput, fragmentRef) {
-  useStaticPropWarning(fragmentInput, 'first argument of useFragment()');
   var fragmentNode = getFragment(fragmentInput);
+  useStaticFragmentNodeWarning(fragmentNode, 'first argument of useFragment()');
 
   var _useFragmentNode = useFragmentNode(fragmentNode, fragmentRef, 'useFragment()'),
       data = _useFragmentNode.data;

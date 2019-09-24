@@ -394,7 +394,12 @@ function () {
           var observerComplete = observer === null || observer === void 0 ? void 0 : observer.complete;
           observerComplete && observerComplete();
         },
-        unsubscribe: observer === null || observer === void 0 ? void 0 : observer.unsubscribe
+        unsubscribe: function unsubscribe(subscription) {
+          _this3._cache["delete"](cacheKey);
+
+          var observerUnsubscribe = observer === null || observer === void 0 ? void 0 : observer.unsubscribe;
+          observerUnsubscribe && observerUnsubscribe(subscription);
+        }
       });
 
       var _cacheEntry = this._cache.get(cacheKey);

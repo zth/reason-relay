@@ -12,7 +12,8 @@
 
 var React = require('react');
 
-var ReactRelayContext = require('react-relay').ReactRelayContext;
+var _require = require('react-relay'),
+    ReactRelayContext = _require.ReactRelayContext;
 
 var useMemo = React.useMemo;
 

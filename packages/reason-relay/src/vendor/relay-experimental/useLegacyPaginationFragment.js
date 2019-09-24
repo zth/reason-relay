@@ -20,7 +20,7 @@ var useLoadMoreFunction = require('./useLoadMoreFunction');
 
 var useRefetchableFragmentNode = require('./useRefetchableFragmentNode');
 
-var useStaticPropWarning = require('./useStaticPropWarning');
+var useStaticFragmentNodeWarning = require('./useStaticFragmentNodeWarning');
 
 var _require = require('react'),
     useCallback = _require.useCallback,
@@ -32,9 +32,9 @@ var _require2 = require('relay-runtime'),
     getFragmentOwner = _require2.getFragmentOwner;
 
 function useLegacyPaginationFragment(fragmentInput, parentFragmentRef) {
-  useStaticPropWarning(fragmentInput, 'first argument of useLegacyPaginationFragment()');
-  var componentDisplayName = 'useLegacyPaginationFragment()';
   var fragmentNode = getFragment(fragmentInput);
+  useStaticFragmentNodeWarning(fragmentNode, 'first argument of useLegacyPaginationFragment()');
+  var componentDisplayName = 'useLegacyPaginationFragment()';
 
   var _getPaginationMetadat = getPaginationMetadata(fragmentNode, componentDisplayName),
       connectionPathInFragmentData = _getPaginationMetadat.connectionPathInFragmentData,

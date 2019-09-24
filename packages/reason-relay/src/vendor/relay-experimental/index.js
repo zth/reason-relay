@@ -12,6 +12,8 @@
 
 var MatchContainer = require('./MatchContainer');
 
+var ProfilerContext = require('./ProfilerContext');
+
 var RelayEnvironmentProvider = require('./RelayEnvironmentProvider');
 
 var fetchQuery = require('./fetchQuery');
@@ -30,6 +32,7 @@ var useRelayEnvironment = require('./useRelayEnvironment');
 
 module.exports = {
   MatchContainer: MatchContainer,
+  ProfilerContext: ProfilerContext,
   RelayEnvironmentProvider: RelayEnvironmentProvider,
   fetchQuery: fetchQuery,
   useQuery: useQuery,

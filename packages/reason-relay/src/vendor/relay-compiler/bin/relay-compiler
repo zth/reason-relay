@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Relay v5.0.0
+ * Relay v6.0.0
  *
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -114,12 +114,6 @@ module.exports = require("@babel/runtime/helpers/objectSpread");
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("fbjs/lib/invariant");
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -412,6 +406,12 @@ module.exports = {
 };
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("fbjs/lib/invariant");
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -431,9 +431,9 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCombinedError = _require.createCombinedError,
     eachWithErrors = _require.eachWithErrors;
 
@@ -642,6 +642,7 @@ function () {
         nextNode = this._traverseChildren(prevNode, ['selections']);
         break;
 
+      case 'ConnectionField':
       case 'LinkedField':
         nextNode = this._traverseChildren(prevNode, ['args', 'directives', 'selections']);
 
@@ -651,8 +652,8 @@ function () {
 
         break;
 
-      case 'ConnectionField':
-        nextNode = this._traverseChildren(prevNode, ['args', 'directives', 'selections']);
+      case 'Connection':
+        nextNode = this._traverseChildren(prevNode, ['args', 'selections']);
 
         if (!nextNode.selections.length) {
           nextNode = null;
@@ -705,7 +706,7 @@ function () {
 
       default:
         prevNode;
-         true ?  true ? invariant(false, 'GraphQLIRTransformer: Unknown kind `%s`.', prevNode.kind) : undefined : undefined;
+         true ?  true ?  true ?  true ? invariant(false, 'GraphQLIRTransformer: Unknown kind `%s`.', prevNode.kind) : undefined : undefined : undefined : undefined;
     }
 
     return nextNode;
@@ -722,7 +723,7 @@ function () {
         return;
       }
 
-      !Array.isArray(prevItems) ?  true ? invariant(false, 'GraphQLIRTransformer: Expected data for `%s` to be an array, got `%s`.', key, prevItems) : undefined : void 0;
+      !Array.isArray(prevItems) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRTransformer: Expected data for `%s` to be an array, got `%s`.', key, prevItems) : undefined : undefined : undefined : void 0;
 
       var nextItems = _this._map(prevItems);
 
@@ -767,7 +768,7 @@ function () {
   };
 
   _proto._getState = function _getState() {
-    !this._states.length ?  true ? invariant(false, 'GraphQLIRTransformer: Expected a current state to be set but found none. ' + 'This is usually the result of mismatched number of pushState()/popState() ' + 'calls.') : undefined : void 0;
+    !this._states.length ?  true ?  true ?  true ? invariant(false, 'GraphQLIRTransformer: Expected a current state to be set but found none. ' + 'This is usually the result of mismatched number of pushState()/popState() ' + 'calls.') : undefined : undefined : undefined : void 0;
     return this._states[this._states.length - 1];
   };
 
@@ -800,7 +801,7 @@ module.exports = require("@babel/runtime/helpers/toConsumableArray");
  */
 
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var nullthrows = __webpack_require__(54);
 
@@ -844,7 +845,7 @@ function canHaveSelections(type) {
 
 function hasID(schema, type) {
   var unmodifiedType = getRawType(type);
-  !(unmodifiedType instanceof GraphQLObjectType || unmodifiedType instanceof GraphQLInterfaceType) ?  true ? invariant(false, 'GraphQLSchemaUtils.hasID(): Expected a concrete type or interface, ' + 'got type `%s`.', type) : undefined : void 0;
+  !(unmodifiedType instanceof GraphQLObjectType || unmodifiedType instanceof GraphQLInterfaceType) ?  true ?  true ?  true ? invariant(false, 'GraphQLSchemaUtils.hasID(): Expected a concrete type or interface, ' + 'got type `%s`.', type) : undefined : undefined : undefined : void 0;
   var idType = schema.getType(ID_TYPE);
   var idField = unmodifiedType.getFields()[ID];
   return idField && getRawType(idField.type) === idType;
@@ -966,7 +967,7 @@ function isClientDefinedField(field, compilerContext, parentType) {
 }
 
 function assertTypeWithFields(type) {
-  !(type instanceof GraphQLObjectType || type instanceof GraphQLInterfaceType) ?  true ? invariant(false, 'GraphQLSchemaUtils: Expected type `%s` to be an object or interface type.', type) : undefined : void 0;
+  !(type instanceof GraphQLObjectType || type instanceof GraphQLInterfaceType) ?  true ?  true ?  true ? invariant(false, 'GraphQLSchemaUtils: Expected type `%s` to be an object or interface type.', type) : undefined : undefined : undefined : void 0;
   return type;
 }
 
@@ -1022,7 +1023,7 @@ module.exports = {
 
 var _asyncToGenerator = __webpack_require__(10);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 /**
  * The compiler profiler builds a "call graph" of high level operations as a
  * means of tracking time spent over the course of running the compiler.
@@ -1266,8 +1267,8 @@ function end(traceIdx) {
     return;
   }
 
-  !(trace.ph === 'B') ?  true ? invariant(false, 'Begin trace phase') : undefined : void 0;
-  !(stack.pop() === trace) ?  true ? invariant(false, 'GraphQLCompilerProfiler: The profile trace %s ended before nested traces. ' + 'If it is async, try using Profile.waitFor or Profile.profileWait.', trace.name) : undefined : void 0;
+  !(trace.ph === 'B') ?  true ?  true ?  true ? invariant(false, 'Begin trace phase') : undefined : undefined : undefined : void 0;
+  !(stack.pop() === trace) ?  true ?  true ?  true ? invariant(false, 'GraphQLCompilerProfiler: The profile trace %s ended before nested traces. ' + 'If it is async, try using Profile.waitFor or Profile.profileWait.', trace.name) : undefined : undefined : undefined : void 0;
   var prevTrace = traces[traces.length - 1];
 
   if (trace === prevTrace) {
@@ -1321,19 +1322,19 @@ module.exports = require("@babel/runtime/helpers/asyncToGenerator");
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = require("crypto");
+module.exports = require("relay-runtime");
 
 /***/ }),
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = require("fs");
+module.exports = require("crypto");
 
 /***/ }),
 /* 13 */
 /***/ (function(module, exports) {
 
-module.exports = require("relay-runtime");
+module.exports = require("fs");
 
 /***/ }),
 /* 14 */
@@ -1343,6 +1344,57 @@ module.exports = require("immutable");
 
 /***/ }),
 /* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ * @format
+ */
+
+
+var visit = __webpack_require__(1).visit;
+
+var NodeKeys = {
+  Argument: ['value'],
+  ClientExtension: ['selections'],
+  Condition: ['condition', 'selections'],
+  Defer: ['selections', 'if'],
+  Connection: ['args', 'selections'],
+  ConnectionField: ['args', 'directives', 'selections'],
+  Directive: ['args'],
+  Fragment: ['argumentDefinitions', 'directives', 'selections'],
+  FragmentSpread: ['args', 'directives'],
+  InlineDataFragmentSpread: ['selections'],
+  InlineFragment: ['directives', 'selections'],
+  LinkedField: ['args', 'directives', 'selections'],
+  Literal: [],
+  LocalArgumentDefinition: [],
+  ModuleImport: ['selections'],
+  Request: ['fragment', 'root'],
+  Root: ['argumentDefinitions', 'directives', 'selections'],
+  RootArgumentDefinition: [],
+  ScalarField: ['args', 'directives'],
+  SplitOperation: ['selections'],
+  Stream: ['selections', 'if', 'initialCount'],
+  Variable: []
+};
+
+function visitIR(root, visitor) {
+  return visit(root, visitor, NodeKeys);
+}
+
+module.exports = {
+  visit: visitIR
+};
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1371,56 +1423,6 @@ function getLiteralArgumentValues(args) {
 }
 
 module.exports = getLiteralArgumentValues;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- * @format
- */
-
-
-var visit = __webpack_require__(1).visit;
-
-var NodeKeys = {
-  Argument: ['value'],
-  ClientExtension: ['selections'],
-  Condition: ['condition', 'selections'],
-  Defer: ['selections', 'if'],
-  ConnectionField: ['args', 'directives', 'selections'],
-  Directive: ['args'],
-  Fragment: ['argumentDefinitions', 'directives', 'selections'],
-  FragmentSpread: ['args', 'directives'],
-  InlineDataFragmentSpread: ['selections'],
-  InlineFragment: ['directives', 'selections'],
-  LinkedField: ['args', 'directives', 'selections'],
-  Literal: [],
-  LocalArgumentDefinition: [],
-  ModuleImport: ['selections'],
-  Request: ['fragment', 'root'],
-  Root: ['argumentDefinitions', 'directives', 'selections'],
-  RootArgumentDefinition: [],
-  ScalarField: ['args', 'directives'],
-  SplitOperation: ['selections'],
-  Stream: ['selections', 'if', 'initialCount'],
-  Variable: []
-};
-
-function visitIR(root, visitor) {
-  return visit(root, visitor, NodeKeys);
-}
-
-module.exports = {
-  visit: visitIR
-};
 
 /***/ }),
 /* 17 */
@@ -1609,9 +1611,9 @@ module.exports = require("util");
 
 var Profiler = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createUserError = _require.createUserError;
 
 var _require2 = __webpack_require__(14),
@@ -1649,14 +1651,14 @@ function () {
 
   _proto.replace = function replace(node) {
     return this._update(this._documents.update(node.name, function (existing) {
-      !existing ?  true ? invariant(false, 'GraphQLCompilerContext: Expected to replace existing node %s, but' + 'one was not found in the context.', node.name) : undefined : void 0;
+      !existing ?  true ?  true ?  true ? invariant(false, 'GraphQLCompilerContext: Expected to replace existing node %s, but' + 'one was not found in the context.', node.name) : undefined : undefined : undefined : void 0;
       return node;
     }));
   };
 
   _proto.add = function add(node) {
     return this._update(this._documents.update(node.name, function (existing) {
-      !!existing ?  true ? invariant(false, 'GraphQLCompilerContext: Duplicate document named `%s`. GraphQL ' + 'fragments and roots must have unique names.', node.name) : undefined : void 0;
+      !!existing ?  true ?  true ?  true ? invariant(false, 'GraphQLCompilerContext: Duplicate document named `%s`. GraphQL ' + 'fragments and roots must have unique names.', node.name) : undefined : undefined : undefined : void 0;
       return node;
     }));
   };
@@ -1795,97 +1797,12 @@ module.exports = GraphQLCompilerContext;
 
 /***/ }),
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- * @format
- */
-
-/**
- * Marks a string of code as code to be replaced later.
- */
-
-function moduleDependency(code) {
-  return "@@MODULE_START@@".concat(code, "@@MODULE_END@@");
-}
-/**
- * After JSON.stringify'ing some code that contained parts marked with `mark()`,
- * this post-processes the JSON to convert the marked code strings to raw code.
- *
- * Example:
- *   CodeMarker.postProcess(
- *     JSON.stringify({code: CodeMarker.mark('alert(1)')})
- *   )
- */
-
-
-function postProcess(json, printModule) {
-  return json.replace(/"@@MODULE_START@@(.*?)@@MODULE_END@@"/g, function (_, moduleName) {
-    return printModule(moduleName);
-  });
-}
-/**
- * Transforms a value such that any transitive CodeMarker strings are replaced
- * with the value of the named module in the given module map.
- */
-
-
-function transform(node, moduleMap) {
-  if (node == null) {
-    return node;
-  } else if (Array.isArray(node)) {
-    return node.map(function (item) {
-      return transform(item, moduleMap);
-    });
-  } else if (typeof node === 'object') {
-    var next = {};
-    Object.keys(node).forEach(function (key) {
-      next[key] = transform(node[key], moduleMap);
-    });
-    return next;
-  } else if (typeof node === 'string') {
-    var match = /^@@MODULE_START@@(.*?)@@MODULE_END@@$/.exec(node);
-
-    if (match != null) {
-      var moduleName = match[1];
-
-      if (moduleMap.hasOwnProperty(moduleName)) {
-        return moduleMap[moduleName];
-      } else {
-        throw new Error("Could not find a value for CodeMarker value '".concat(moduleName, "', ") + 'make sure to supply one in the module mapping.');
-      }
-    } else if (node.indexOf('@@MODULE_START') >= 0) {
-      throw new Error("Found unprocessed CodeMarker value '".concat(node, "'."));
-    }
-
-    return node;
-  } else {
-    // mixed
-    return node;
-  }
-}
-
-module.exports = {
-  moduleDependency: moduleDependency,
-  postProcess: postProcess,
-  transform: transform
-};
-
-/***/ }),
-/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = require("nullthrows");
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1906,9 +1823,9 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var GraphQLCompilerContext = __webpack_require__(19);
 
-var GraphQLIRVisitor = __webpack_require__(16);
+var GraphQLIRVisitor = __webpack_require__(15);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError;
 
 var _require2 = __webpack_require__(1),
@@ -2243,19 +2160,19 @@ function visit(context, transformed, argumentDefinitions, node) {
 module.exports = inferRootArgumentDefinitions;
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = require("@babel/types");
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = require("@babel/runtime/helpers/defineProperty");
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2278,9 +2195,9 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var Profiler = __webpack_require__(8);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var path = __webpack_require__(9);
 
@@ -2292,12 +2209,12 @@ function () {
 
     var _options$filesystem, _options$shards;
 
-    this._filesystem = (_options$filesystem = options.filesystem) !== null && _options$filesystem !== void 0 ? _options$filesystem : __webpack_require__(12);
+    this._filesystem = (_options$filesystem = options.filesystem) !== null && _options$filesystem !== void 0 ? _options$filesystem : __webpack_require__(13);
     this.onlyValidate = options.onlyValidate;
     this._shards = (_options$shards = options.shards) !== null && _options$shards !== void 0 ? _options$shards : 1;
 
     if (this._filesystem.existsSync(dir)) {
-      !this._filesystem.statSync(dir).isDirectory() ?  true ? invariant(false, 'Expected `%s` to be a directory.', dir) : undefined : void 0;
+      !this._filesystem.statSync(dir).isDirectory() ?  true ?  true ?  true ? invariant(false, 'Expected `%s` to be a directory.', dir) : undefined : undefined : undefined : void 0;
     }
 
     if (!this.onlyValidate) {
@@ -2318,7 +2235,7 @@ function () {
           var shardDir = path.join(dir, this._getShardName(shard));
 
           if (this._filesystem.existsSync(shardDir)) {
-            !this._filesystem.statSync(dir).isDirectory() ?  true ? invariant(false, 'Expected `%s` to be a directory.', dir) : undefined : void 0;
+            !this._filesystem.statSync(dir).isDirectory() ?  true ?  true ?  true ? invariant(false, 'Expected `%s` to be a directory.', dir) : undefined : undefined : undefined : void 0;
           } else {
             this._filesystem.mkdirSync(shardDir);
           }
@@ -2361,32 +2278,37 @@ function () {
     return changes.created.length > 0 || changes.updated.length > 0 || changes.deleted.length > 0;
   };
 
+  CodegenDirectory.formatChanges = function formatChanges(changes, options) {
+    var output = [];
+
+    function formatFiles(label, files) {
+      if (files.length > 0) {
+        output.push(label + ':');
+        files.forEach(function (file) {
+          output.push(' - ' + file);
+        });
+      }
+    }
+
+    if (options.onlyValidate) {
+      formatFiles('Missing', changes.created);
+      formatFiles('Out of date', changes.updated);
+      formatFiles('Extra', changes.deleted);
+    } else {
+      formatFiles('Created', changes.created);
+      formatFiles('Updated', changes.updated);
+      formatFiles('Deleted', changes.deleted);
+      output.push("Unchanged: ".concat(changes.unchanged.length, " files"));
+    }
+
+    return output.join('\n');
+  };
+
   CodegenDirectory.printChanges = function printChanges(changes, options) {
     Profiler.run('CodegenDirectory.printChanges', function () {
-      var output = [];
+      var output = CodegenDirectory.formatChanges(changes, options); // eslint-disable-next-line no-console
 
-      function printFiles(label, files) {
-        if (files.length > 0) {
-          output.push(label + ':');
-          files.forEach(function (file) {
-            output.push(' - ' + file);
-          });
-        }
-      }
-
-      if (options.onlyValidate) {
-        printFiles('Missing', changes.created);
-        printFiles('Out of date', changes.updated);
-        printFiles('Extra', changes.deleted);
-      } else {
-        printFiles('Created', changes.created);
-        printFiles('Updated', changes.updated);
-        printFiles('Deleted', changes.deleted);
-        output.push("Unchanged: ".concat(changes.unchanged.length, " files"));
-      } // eslint-disable-next-line no-console
-
-
-      console.log(output.join('\n'));
+      console.log(output);
     });
   };
 
@@ -2499,7 +2421,7 @@ function () {
    */
   ;
 
-  _proto.deleteExtraFiles = function deleteExtraFiles(keepFileInGeneratedFolder) {
+  _proto.deleteExtraFiles = function deleteExtraFiles(isGeneratedFile) {
     var _this3 = this;
 
     Profiler.run('CodegenDirectory.deleteExtraFiles', function () {
@@ -2521,40 +2443,44 @@ function () {
           }
 
           _this3._filesystem.readdirSync(firstLevelPath).forEach(function (actualFile) {
+            if (isGeneratedFile && isGeneratedFile(actualFile)) {
+              return;
+            }
+
             if (_this3._files.has(actualFile)) {
               return;
             }
 
-            if (!keepFileInGeneratedFolder || !keepFileInGeneratedFolder(actualFile)) {
-              if (!_this3.onlyValidate) {
-                try {
-                  _this3._filesystem.unlinkSync(path.join(firstLevelPath, actualFile));
-                } catch (_unused) {
-                  throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
-                }
-              }
-
-              _this3.changes.deleted.push(actualFile);
-            }
-          });
-        });
-      } else {
-        _this3._filesystem.readdirSync(_this3._dir).forEach(function (actualFile) {
-          if (actualFile.startsWith('.') || _this3._files.has(actualFile)) {
-            return;
-          }
-
-          if (!keepFileInGeneratedFolder || !keepFileInGeneratedFolder(actualFile)) {
             if (!_this3.onlyValidate) {
               try {
-                _this3._filesystem.unlinkSync(path.join(_this3._dir, actualFile));
-              } catch (_unused2) {
+                _this3._filesystem.unlinkSync(path.join(firstLevelPath, actualFile));
+              } catch (_unused) {
                 throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
               }
             }
 
             _this3.changes.deleted.push(actualFile);
+          });
+        });
+      } else {
+        _this3._filesystem.readdirSync(_this3._dir).forEach(function (actualFile) {
+          if (isGeneratedFile && isGeneratedFile(actualFile)) {
+            return;
           }
+
+          if (actualFile.startsWith('.') || _this3._files.has(actualFile)) {
+            return;
+          }
+
+          if (!_this3.onlyValidate) {
+            try {
+              _this3._filesystem.unlinkSync(path.join(_this3._dir, actualFile));
+            } catch (_unused2) {
+              throw new Error('CodegenDirectory: Failed to delete `' + actualFile + '` in `' + _this3._dir + '`.');
+            }
+          }
+
+          _this3.changes.deleted.push(actualFile);
         });
       }
     });
@@ -2579,7 +2505,7 @@ function () {
   };
 
   _proto._addGenerated = function _addGenerated(filename) {
-    !!this._files.has(filename) ?  true ? invariant(false, 'CodegenDirectory: Tried to generate `%s` twice in `%s`.', filename, this._dir) : undefined : void 0;
+    !!this._files.has(filename) ?  true ?  true ?  true ? invariant(false, 'CodegenDirectory: Tried to generate `%s` twice in `%s`.', filename, this._dir) : undefined : undefined : undefined : void 0;
 
     this._files.add(filename);
   };
@@ -2590,7 +2516,7 @@ function () {
 module.exports = CodegenDirectory;
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2665,7 +2591,7 @@ function () {
 module.exports = ASTCache;
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2762,7 +2688,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2785,16 +2711,16 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var Profiler = __webpack_require__(8);
 
-var partitionArray = __webpack_require__(29);
+var partitionArray = __webpack_require__(28);
 
-var _require = __webpack_require__(30),
+var _require = __webpack_require__(29),
     DEFAULT_HANDLE_KEY = _require.DEFAULT_HANDLE_KEY;
 
 var _require2 = __webpack_require__(7),
     getNullableType = _require2.getNullableType,
     isExecutableDefinitionAST = _require2.isExecutableDefinitionAST;
 
-var _require3 = __webpack_require__(4),
+var _require3 = __webpack_require__(3),
     createCombinedError = _require3.createCombinedError,
     createCompilerError = _require3.createCompilerError,
     createUserError = _require3.createUserError,
@@ -4120,7 +4046,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4160,7 +4086,7 @@ function partitionArray(array, predicate) {
 module.exports = partitionArray;
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4180,7 +4106,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4195,9 +4121,9 @@ module.exports = {
  */
 
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var _require = __webpack_require__(30),
+var _require = __webpack_require__(29),
     DEFAULT_HANDLE_KEY = _require.DEFAULT_HANDLE_KEY;
 
 var _require2 = __webpack_require__(1),
@@ -4230,7 +4156,7 @@ function print(node) {
 
     default:
       node;
-       true ?  true ? invariant(false, 'GraphQLIRPrinter: Unsupported IR node `%s`.', node.kind) : undefined : undefined;
+       true ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Unsupported IR node `%s`.', node.kind) : undefined : undefined : undefined : undefined;
   }
 }
 
@@ -4266,7 +4192,7 @@ function printSelection(selection, indent, options) {
   var parentDirectives = (_ref2 = options === null || options === void 0 ? void 0 : options.parentDirectives) !== null && _ref2 !== void 0 ? _ref2 : '';
   var isClientExtension = (options === null || options === void 0 ? void 0 : options.isClientExtension) === true;
 
-  if (selection.kind === 'LinkedField') {
+  if (selection.kind === 'LinkedField' || selection.kind === 'ConnectionField') {
     str = printField(selection, {
       parentDirectives: parentDirectives,
       isClientExtension: isClientExtension
@@ -4274,15 +4200,7 @@ function printSelection(selection, indent, options) {
     str += printSelections(selection, indent + INDENT, {
       isClientExtension: isClientExtension
     });
-  } else if (selection.kind === 'ConnectionField') {
-    str = printField(selection, {
-      parentDirectives: parentDirectives,
-      isClientExtension: isClientExtension
-    });
-    str += printSelections(selection, indent + INDENT, {
-      isClientExtension: isClientExtension
-    });
-  } else if (selection.kind === 'ModuleImport') {
+  } else if (selection.kind === 'ModuleImport' || selection.kind === 'Connection') {
     str = selection.selections.map(function (matchSelection) {
       return printSelection(matchSelection, indent, {
         parentDirectives: parentDirectives,
@@ -4323,7 +4241,7 @@ function printSelection(selection, indent, options) {
   } else if (selection.kind === 'Condition') {
     var value = printValue(selection.condition); // For Flow
 
-    !(value != null) ?  true ? invariant(false, 'GraphQLIRPrinter: Expected a variable for condition, got a literal `null`.') : undefined : void 0;
+    !(value != null) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Expected a variable for condition, got a literal `null`.') : undefined : undefined : undefined : void 0;
     var condStr = selection.passingValue ? ' @include' : ' @skip';
     condStr += '(if: ' + value + ')';
     condStr += parentDirectives; // For multi-selection conditions, pushes the condition down to each
@@ -4396,7 +4314,7 @@ function printSelection(selection, indent, options) {
       });
     }
   } else if (selection.kind === 'ClientExtension') {
-    !(isClientExtension === false) ?  true ? invariant(false, 'GraphQLIRPrinter: Did not expect to encounter a ClientExtension node ' + 'as a descendant of another ClientExtension node.') : undefined : void 0;
+    !(isClientExtension === false) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Did not expect to encounter a ClientExtension node ' + 'as a descendant of another ClientExtension node.') : undefined : undefined : undefined : void 0;
     str = '# Client-only selections:\n' + indent + INDENT + selection.selections.map(function (sel) {
       return printSelection(sel, indent, {
         parentDirectives: parentDirectives,
@@ -4405,7 +4323,7 @@ function printSelection(selection, indent, options) {
     }).join('\n' + indent + INDENT);
   } else {
     selection;
-     true ?  true ? invariant(false, 'GraphQLIRPrinter: Unknown selection kind `%s`.', selection.kind) : undefined : undefined;
+     true ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Unknown selection kind `%s`.', selection.kind) : undefined : undefined : undefined : undefined;
   }
 
   return str;
@@ -4495,7 +4413,7 @@ function printValue(value, type) {
   if (value.kind === 'Variable') {
     return '$' + value.variableName;
   } else if (value.kind === 'ObjectValue') {
-    !(type instanceof GraphQLInputObjectType) ?  true ? invariant(false, 'GraphQLIRPrinter: Need an InputObject type to print objects.') : undefined : void 0;
+    !(type instanceof GraphQLInputObjectType) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Need an InputObject type to print objects.') : undefined : undefined : undefined : void 0;
     var typeFields = type.getFields();
     var pairs = value.fields.map(function (field) {
       var innerValue = printValue(field.value, typeFields[field.name].type);
@@ -4503,7 +4421,7 @@ function printValue(value, type) {
     }).filter(Boolean);
     return '{' + pairs.join(', ') + '}';
   } else if (value.kind === 'ListValue') {
-    !(type instanceof GraphQLList) ?  true ? invariant(false, 'GraphQLIRPrinter: Need a type in order to print arrays.') : undefined : void 0;
+    !(type instanceof GraphQLList) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Need a type in order to print arrays.') : undefined : undefined : undefined : void 0;
     var innerType = type.ofType;
     return "[".concat(value.items.map(function (i) {
       return printValue(i, innerType);
@@ -4535,7 +4453,7 @@ function printLiteral(value, type) {
       result = value;
     }
 
-    !(typeof result === 'string') ?  true ? invariant(false, 'GraphQLIRPrinter: Expected value of type %s to be a valid enum value, got `%s`.', type.name, JSON.stringify(value)) : undefined : void 0;
+    !(typeof result === 'string') ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Expected value of type %s to be a valid enum value, got `%s`.', type.name, JSON.stringify(value)) : undefined : undefined : undefined : void 0;
     return result;
   } else if (type === GraphQLID || type === GraphQLInt) {
     // For backwards compatibility, print integer and ID values as-is
@@ -4547,7 +4465,7 @@ function printLiteral(value, type) {
 
     return JSON.stringify(_result);
   } else if (Array.isArray(value)) {
-    !(type instanceof GraphQLList) ?  true ? invariant(false, 'GraphQLIRPrinter: Need a type in order to print arrays.') : undefined : void 0;
+    !(type instanceof GraphQLList) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Need a type in order to print arrays.') : undefined : undefined : undefined : void 0;
     var itemType = type.ofType;
     return '[' + value.map(function (item) {
       return printLiteral(item, itemType);
@@ -4558,7 +4476,7 @@ function printLiteral(value, type) {
     return printLiteral(value, type.ofType);
   } else if (typeof value === 'object' && value != null) {
     var fields = [];
-    !(type instanceof GraphQLInputObjectType) ?  true ? invariant(false, 'GraphQLIRPrinter: Need an InputObject type to print objects.') : undefined : void 0;
+    !(type instanceof GraphQLInputObjectType) ?  true ?  true ?  true ? invariant(false, 'GraphQLIRPrinter: Need an InputObject type to print objects.') : undefined : undefined : undefined : void 0;
     var typeFields = type.getFields();
 
     for (var key in value) {
@@ -4582,6 +4500,91 @@ module.exports = {
 };
 
 /***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ * @format
+ */
+
+/**
+ * Marks a string of code as code to be replaced later.
+ */
+
+function moduleDependency(code) {
+  return "@@MODULE_START@@".concat(code, "@@MODULE_END@@");
+}
+/**
+ * After JSON.stringify'ing some code that contained parts marked with `mark()`,
+ * this post-processes the JSON to convert the marked code strings to raw code.
+ *
+ * Example:
+ *   CodeMarker.postProcess(
+ *     JSON.stringify({code: CodeMarker.mark('alert(1)')})
+ *   )
+ */
+
+
+function postProcess(json, printModule) {
+  return json.replace(/"@@MODULE_START@@(.*?)@@MODULE_END@@"/g, function (_, moduleName) {
+    return printModule(moduleName);
+  });
+}
+/**
+ * Transforms a value such that any transitive CodeMarker strings are replaced
+ * with the value of the named module in the given module map.
+ */
+
+
+function transform(node, moduleMap) {
+  if (node == null) {
+    return node;
+  } else if (Array.isArray(node)) {
+    return node.map(function (item) {
+      return transform(item, moduleMap);
+    });
+  } else if (typeof node === 'object') {
+    var next = {};
+    Object.keys(node).forEach(function (key) {
+      next[key] = transform(node[key], moduleMap);
+    });
+    return next;
+  } else if (typeof node === 'string') {
+    var match = /^@@MODULE_START@@(.*?)@@MODULE_END@@$/.exec(node);
+
+    if (match != null) {
+      var moduleName = match[1];
+
+      if (moduleMap.hasOwnProperty(moduleName)) {
+        return moduleMap[moduleName];
+      } else {
+        throw new Error("Could not find a value for CodeMarker value '".concat(moduleName, "', ") + 'make sure to supply one in the module mapping.');
+      }
+    } else if (node.indexOf('@@MODULE_START') >= 0) {
+      throw new Error("Found unprocessed CodeMarker value '".concat(node, "'."));
+    }
+
+    return node;
+  } else {
+    // mixed
+    return node;
+  }
+}
+
+module.exports = {
+  moduleDependency: moduleDependency,
+  postProcess: postProcess,
+  transform: transform
+};
+
+/***/ }),
 /* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4597,28 +4600,39 @@ module.exports = {
  */
 
 
+var _interopRequireDefault = __webpack_require__(0);
+
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
+
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
+
 var IRTransformer = __webpack_require__(5);
 
-var getLiteralArgumentValues = __webpack_require__(15);
-
 var _require = __webpack_require__(7),
-    getNullableType = _require.getNullableType;
+    getNullableType = _require.getNullableType,
+    getRawType = _require.getRawType;
 
-var _require2 = __webpack_require__(4),
+var _require2 = __webpack_require__(3),
     createUserError = _require2.createUserError;
 
 var _require3 = __webpack_require__(1),
-    GraphQLList = _require3.GraphQLList;
+    GraphQLID = _require3.GraphQLID,
+    GraphQLInterfaceType = _require3.GraphQLInterfaceType,
+    GraphQLList = _require3.GraphQLList,
+    GraphQLNonNull = _require3.GraphQLNonNull,
+    GraphQLObjectType = _require3.GraphQLObjectType;
 
-var SCHEMA_EXTENSION = "\n  directive @connection_resolver(resolver: String!, label: String) on FIELD\n";
+var _require4 = __webpack_require__(11),
+    ConnectionInterface = _require4.ConnectionInterface;
+
+var SCHEMA_EXTENSION = "\n  directive @connection_resolver(label: String!) on FIELD\n";
 
 /**
- * This transform rewrites LinkedField nodes with @connection_resolver and rewrites them
- * into `ConnectionField` nodes.
+ * This transform rewrites LinkedField nodes with @connection_resolver and
+ * rewrites their edges/pageInfo selections to be wrapped in a Connection node.
  */
 function connectionFieldTransform(context) {
   return IRTransformer.transform(context, {
-    // TODO: type IRTransformer to allow changing result type
     LinkedField: visitLinkedField,
     ScalarField: visitScalarField
   }, function (node) {
@@ -4630,8 +4644,6 @@ function connectionFieldTransform(context) {
 }
 
 function visitLinkedField(field, state) {
-  var _getLiteralStringArgu;
-
   var transformed = this.traverse(field, state);
   var connectionDirective = transformed.directives.find(function (directive) {
     return directive.name === 'connection_resolver';
@@ -4645,29 +4657,23 @@ function visitLinkedField(field, state) {
     throw createUserError("@connection_resolver fields must return a single value, not a list, found '" + "".concat(String(transformed.type), "'"), [transformed.loc]);
   }
 
-  var _getLiteralArgumentVa = getLiteralArgumentValues(connectionDirective.args),
-      resolver = _getLiteralArgumentVa.resolver;
+  var labelArg = connectionDirective.args.find(function (_ref3) {
+    var name = _ref3.name;
+    return name === 'label';
+  });
+  var label = getLiteralStringArgument(connectionDirective, 'label');
 
-  if (typeof resolver !== 'string') {
+  if (typeof label !== 'string' || label !== state.documentName && label.indexOf(state.documentName + '$') !== 0) {
     var _ref;
 
-    var resolverArg = transformed.args.find(function (arg) {
-      return arg.name === 'resolver';
-    });
-    throw createUserError("Expected @connection_resolver field to specify a 'resolver' as a literal string. " + 'The resolver should be the name of a JS module to use at runtime ' + "to derive the field's value.", [(_ref = resolverArg === null || resolverArg === void 0 ? void 0 : resolverArg.loc) !== null && _ref !== void 0 ? _ref : connectionDirective.loc]);
+    throw createUserError('Invalid usage of @connection_resolver, expected a static string ' + "'label'. Labels may be the document name ('".concat(state.documentName, "') ") + "or be prefixed with the document name ('".concat(state.documentName, "$<name>')"), [(_ref = labelArg === null || labelArg === void 0 ? void 0 : labelArg.loc) !== null && _ref !== void 0 ? _ref : connectionDirective.loc]);
   }
 
-  var rawLabel = (_getLiteralStringArgu = getLiteralStringArgument(connectionDirective, 'label')) !== null && _getLiteralStringArgu !== void 0 ? _getLiteralStringArgu : transformed.alias;
-  var label = transformLabel(state.documentName, 'connection', rawLabel);
   var previousDirective = state.labels.get(label);
 
   if (previousDirective != null) {
     var _ref2;
 
-    var labelArg = connectionDirective.args.find(function (_ref3) {
-      var name = _ref3.name;
-      return name === 'label';
-    });
     var prevLabelArg = previousDirective.args.find(function (_ref4) {
       var name = _ref4.name;
       return name === 'label';
@@ -4682,6 +4688,89 @@ function visitLinkedField(field, state) {
   }
 
   state.labels.set(label, connectionDirective);
+
+  var _ConnectionInterface$ = ConnectionInterface.get(),
+      EDGES = _ConnectionInterface$.EDGES,
+      PAGE_INFO = _ConnectionInterface$.PAGE_INFO;
+
+  var edgeField;
+  var pageInfoField;
+  var selections = [];
+  transformed.selections.forEach(function (selection) {
+    if (!(selection.kind === 'LinkedField' || selection.kind === 'ScalarField')) {
+      throw createUserError('Invalid use of @connection_resolver, selections on the connection ' + 'must be linked or scalar fields.', [selection.loc]);
+    }
+
+    if (selection.kind === 'LinkedField') {
+      if (selection.name === EDGES) {
+        edgeField = selection;
+      } else if (selection.name === PAGE_INFO) {
+        pageInfoField = selection;
+      } else {
+        selections.push(selection);
+      }
+    } else {
+      selections.push(selection);
+    }
+  });
+
+  if (edgeField == null || pageInfoField == null) {
+    throw createUserError("Invalid use of @connection_resolver, fields '".concat(EDGES, "' and ") + "'".concat(PAGE_INFO, "' must be  fetched."), [connectionDirective.loc]);
+  }
+
+  var connectionType = getRawType(transformed.type);
+  var edgesFieldDef = connectionType instanceof GraphQLObjectType ? connectionType.getFields().edges : null;
+  var edgesType = edgesFieldDef != null ? getRawType(edgesFieldDef.type) : null;
+  var nodeFieldDef = edgesType != null && edgesType instanceof GraphQLObjectType ? edgesType.getFields().node : null;
+  var nodeType = nodeFieldDef != null ? getRawType(nodeFieldDef.type) : null;
+
+  if (edgesType == null || nodeType == null || !(nodeType instanceof GraphQLObjectType || nodeType instanceof GraphQLInterfaceType)) {
+    throw createUserError('Invalid usage of @connection_resolver, expected field to have shape ' + "'field { edges { node { ...} } }'.", [transformed.loc]);
+  }
+
+  edgeField = (0, _objectSpread2["default"])({}, edgeField, {
+    selections: [].concat((0, _toConsumableArray2["default"])(edgeField.selections), [{
+      alias: '__id',
+      args: [],
+      directives: [],
+      handles: null,
+      kind: 'ScalarField',
+      loc: edgeField.loc,
+      metadata: null,
+      name: '__id',
+      type: new GraphQLNonNull(GraphQLID)
+    }, {
+      alias: 'node',
+      args: [],
+      directives: [],
+      handles: null,
+      kind: 'LinkedField',
+      loc: edgeField.loc,
+      metadata: null,
+      name: 'node',
+      selections: [{
+        alias: '__id',
+        args: [],
+        directives: [],
+        handles: null,
+        kind: 'ScalarField',
+        loc: edgeField.loc,
+        metadata: null,
+        name: '__id',
+        type: new GraphQLNonNull(GraphQLID)
+      }],
+      type: nodeType
+    }])
+  });
+  selections.push({
+    args: transformed.args,
+    kind: 'Connection',
+    label: label,
+    loc: transformed.loc,
+    name: transformed.name,
+    selections: [edgeField, pageInfoField],
+    type: transformed.type
+  });
   return {
     alias: transformed.alias,
     args: transformed.args,
@@ -4689,12 +4778,10 @@ function visitLinkedField(field, state) {
       return directive !== connectionDirective;
     }),
     kind: 'ConnectionField',
-    label: label,
     loc: transformed.loc,
-    metadata: transformed.metadata,
+    metadata: null,
     name: transformed.name,
-    resolver: resolver,
-    selections: transformed.selections,
+    selections: selections,
     type: transformed.type
   };
 }
@@ -4705,7 +4792,7 @@ function visitScalarField(field) {
   });
 
   if (connectionDirective != null) {
-    throw createUserError('The @connection_resolver direction is not supported on scalar fields, only fields returning an object/interface/union', [connectionDirective.loc]);
+    throw createUserError('The @connection_resolver direction is not supported on scalar fields, ' + 'only fields returning an object/interface/union', [connectionDirective.loc]);
   }
 
   return field;
@@ -4728,10 +4815,6 @@ function getLiteralStringArgument(directive, argName) {
   }
 
   return value;
-}
-
-function transformLabel(parentName, directive, label) {
-  return "".concat(parentName, "$").concat(directive, "$").concat(label);
 }
 
 module.exports = {
@@ -4767,7 +4850,7 @@ var areEqual = __webpack_require__(67);
 
 var getIdentifierForSelection = __webpack_require__(34);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError,
     createUserError = _require.createUserError;
 
@@ -4790,6 +4873,8 @@ function flattenTransformImpl(context, options) {
   var visitorFn = memoizedFlattenSelection(new Map());
   return GraphQLIRTransformer.transform(context, {
     Condition: visitorFn,
+    Connection: visitorFn,
+    ConnectionField: visitorFn,
     Defer: visitorFn,
     Fragment: visitorFn,
     InlineFragment: visitorFn,
@@ -4955,16 +5040,33 @@ function flattenSelectionsInto(flattenedSelections, node, state, type) {
           handles: mergeHandles(selection, flattenedSelection)
         }));
       }
-    } else if (flattenedSelection.kind === 'InlineDataFragmentSpread') {
-      throw createCompilerError('FlattenTransform: did not expect an InlineDataFragmentSpread node. ' + 'Only expecting InlineDataFragmentSpread in reader ASTs and this ' + 'transform to run only on normalization ASTs.', [selection.loc]);
     } else if (flattenedSelection.kind === 'ConnectionField') {
       if (selection.kind !== 'ConnectionField') {
         throw createCompilerError("FlattenTransform: Expected a ConnectionField, got a '".concat(selection.kind, "'"), [selection.loc]);
       }
 
-      assertUniqueArgsForAlias(selection, flattenedSelection);
+      assertUniqueArgsForAlias(selection, flattenedSelection); // NOTE: not using object spread here as this code is pretty hot
+
+      flattenedSelections.set(nodeIdentifier, {
+        kind: 'ConnectionField',
+        alias: flattenedSelection.alias,
+        args: flattenedSelection.args,
+        directives: flattenedSelection.directives,
+        loc: flattenedSelection.loc,
+        metadata: flattenedSelection.metadata,
+        name: flattenedSelection.name,
+        selections: mergeSelections(flattenedSelection, selection, state, selection.type),
+        type: flattenedSelection.type
+      });
+    } else if (flattenedSelection.kind === 'InlineDataFragmentSpread') {
+      throw createCompilerError('FlattenTransform: did not expect an InlineDataFragmentSpread node. ' + 'Only expecting InlineDataFragmentSpread in reader ASTs and this ' + 'transform to run only on normalization ASTs.', [selection.loc]);
+    } else if (flattenedSelection.kind === 'Connection') {
+      if (selection.kind !== 'Connection') {
+        throw createCompilerError("FlattenTransform: Expected a Connection, got a '".concat(selection.kind, "'"), [selection.loc]);
+      }
+
       flattenedSelections.set(nodeIdentifier, (0, _objectSpread2["default"])({
-        kind: 'ConnectionField'
+        kind: 'Connection'
       }, flattenedSelection, {
         selections: mergeSelections(flattenedSelection, selection, state, selection.type)
       }));
@@ -5077,9 +5179,9 @@ module.exports = {
  */
 
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var _require = __webpack_require__(31),
+var _require = __webpack_require__(30),
     printArguments = _require.printArguments,
     printDirectives = _require.printDirectives;
 
@@ -5089,10 +5191,10 @@ var _require = __webpack_require__(31),
  * variable and passing value for conditions.
  */
 function getIdentifierForSelection(node) {
-  if (node.kind === 'LinkedField' || node.kind === 'ScalarField') {
+  if (node.kind === 'LinkedField' || node.kind === 'ScalarField' || node.kind === 'ConnectionField') {
     return 'Field: ' + node.directives.length === 0 ? node.alias : node.alias + printDirectives(node.directives);
-  } else if (node.kind === 'ConnectionField') {
-    return 'ConnectionField:' + node.label;
+  } else if (node.kind === 'Connection') {
+    return 'Connection:' + node.label;
   } else if (node.kind === 'FragmentSpread') {
     return 'FragmentSpread:' + node.args.length === 0 ? node.name : node.name + printArguments(node.args);
   } else if (node.kind === 'ModuleImport') {
@@ -5110,7 +5212,7 @@ function getIdentifierForSelection(node) {
   } else if (node.kind === 'Condition') {
     return 'Condition:' + (node.condition.kind === 'Variable' ? '$' + node.condition.variableName : String(node.condition.value)) + String(node.passingValue);
   } else {
-     true ?  true ? invariant(false, 'getIdentifierForSelection: Unexpected kind `%s`.', node.kind) : undefined : undefined;
+     true ?  true ?  true ?  true ? invariant(false, 'getIdentifierForSelection: Unexpected kind `%s`.', node.kind) : undefined : undefined : undefined : undefined;
   }
 }
 
@@ -5142,7 +5244,7 @@ var ConnectionFieldTransform = __webpack_require__(32);
 
 var FlattenTransform = __webpack_require__(33);
 
-var IRVisitor = __webpack_require__(16);
+var IRVisitor = __webpack_require__(15);
 
 var Profiler = __webpack_require__(8);
 
@@ -5157,35 +5259,38 @@ var RelayRelayDirectiveTransform = __webpack_require__(40);
 var _require = __webpack_require__(7),
     isAbstractType = _require.isAbstractType;
 
-var _require2 = __webpack_require__(41),
-    anyTypeAlias = _require2.anyTypeAlias,
-    declareExportOpaqueType = _require2.declareExportOpaqueType,
-    exactObjectTypeAnnotation = _require2.exactObjectTypeAnnotation,
-    exportType = _require2.exportType,
-    exportTypes = _require2.exportTypes,
-    importTypes = _require2.importTypes,
-    intersectionTypeAnnotation = _require2.intersectionTypeAnnotation,
-    lineComments = _require2.lineComments,
-    readOnlyArrayOfType = _require2.readOnlyArrayOfType,
-    readOnlyObjectTypeProperty = _require2.readOnlyObjectTypeProperty,
-    unionTypeAnnotation = _require2.unionTypeAnnotation;
+var _require2 = __webpack_require__(3),
+    createUserError = _require2.createUserError;
 
-var _require3 = __webpack_require__(80),
-    transformInputType = _require3.transformInputType,
-    transformScalarType = _require3.transformScalarType;
+var _require3 = __webpack_require__(41),
+    anyTypeAlias = _require3.anyTypeAlias,
+    declareExportOpaqueType = _require3.declareExportOpaqueType,
+    exactObjectTypeAnnotation = _require3.exactObjectTypeAnnotation,
+    exportType = _require3.exportType,
+    exportTypes = _require3.exportTypes,
+    importTypes = _require3.importTypes,
+    intersectionTypeAnnotation = _require3.intersectionTypeAnnotation,
+    lineComments = _require3.lineComments,
+    readOnlyArrayOfType = _require3.readOnlyArrayOfType,
+    readOnlyObjectTypeProperty = _require3.readOnlyObjectTypeProperty,
+    unionTypeAnnotation = _require3.unionTypeAnnotation;
+
+var _require4 = __webpack_require__(80),
+    transformInputType = _require4.transformInputType,
+    transformScalarType = _require4.transformScalarType;
 
 var babelGenerator = __webpack_require__(81)["default"];
 
-var t = __webpack_require__(23);
+var t = __webpack_require__(22);
 
-var _require4 = __webpack_require__(1),
-    GraphQLInputObjectType = _require4.GraphQLInputObjectType,
-    GraphQLNonNull = _require4.GraphQLNonNull,
-    GraphQLString = _require4.GraphQLString;
+var _require5 = __webpack_require__(1),
+    GraphQLInputObjectType = _require5.GraphQLInputObjectType,
+    GraphQLNonNull = _require5.GraphQLNonNull,
+    GraphQLString = _require5.GraphQLString;
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var nullthrows = __webpack_require__(21);
+var nullthrows = __webpack_require__(20);
 
 var MODULE_IMPORT_FIELD = 'MODULE_IMPORT_FIELD';
 
@@ -5394,6 +5499,7 @@ function createVisitor(options) {
     existingFragmentNames: options.existingFragmentNames,
     generatedFragments: new Set(),
     generatedInputObjectTypes: {},
+    hasConnectionResolver: false,
     optionalInputFields: options.optionalInputFields,
     usedEnums: {},
     usedFragments: new Set(),
@@ -5422,7 +5528,13 @@ function createVisitor(options) {
         }
 
         var refetchableFragmentName = getRefetchableQueryParentFragmentName(state, node.metadata);
-        var babelNodes = [].concat((0, _toConsumableArray2["default"])(refetchableFragmentName ? generateFragmentRefsForRefetchable(refetchableFragmentName) : getFragmentImports(state)), (0, _toConsumableArray2["default"])(getEnumDefinitions(state)), (0, _toConsumableArray2["default"])(inputObjectTypes), [inputVariablesType, responseType]);
+        var importedTypes;
+
+        if (state.hasConnectionResolver) {
+          importedTypes = ['ConnectionReference'];
+        }
+
+        var babelNodes = [].concat((0, _toConsumableArray2["default"])(refetchableFragmentName ? generateFragmentRefsForRefetchable(refetchableFragmentName) : getFragmentImports(state)), (0, _toConsumableArray2["default"])(importedTypes ? importTypes(importedTypes, 'relay-runtime') : []), (0, _toConsumableArray2["default"])(getEnumDefinitions(state)), (0, _toConsumableArray2["default"])(inputObjectTypes), [inputVariablesType, responseType]);
 
         if (rawResponseType) {
           var _iteratorNormalCompletion3 = true;
@@ -5488,7 +5600,12 @@ function createVisitor(options) {
         var baseType = selectionsToBabel(selections, state, unmasked, unmasked ? undefined : getOldFragmentTypeName(node.name));
         var type = isPluralFragment ? readOnlyArrayOfType(baseType) : baseType;
         var importedTypes = ['FragmentReference'];
-        return t.program([].concat((0, _toConsumableArray2["default"])(getFragmentImports(state)), (0, _toConsumableArray2["default"])(getEnumDefinitions(state)), [importTypes(importedTypes, 'relay-runtime')], (0, _toConsumableArray2["default"])(fragmentTypes), [exportType(node.name, type), exportType(dataTypeName, dataType), exportType(refTypeName, isPluralFragment ? readOnlyArrayOfType(refType) : refType)]));
+
+        if (state.hasConnectionResolver) {
+          importedTypes.push('ConnectionReference');
+        }
+
+        return t.program([].concat((0, _toConsumableArray2["default"])(getFragmentImports(state)), (0, _toConsumableArray2["default"])(getEnumDefinitions(state)), [importTypes(importedTypes.sort(), 'relay-runtime')], (0, _toConsumableArray2["default"])(fragmentTypes), [exportType(node.name, type), exportType(dataTypeName, dataType), exportType(refTypeName, isPluralFragment ? readOnlyArrayOfType(refType) : refType)]));
       },
       InlineFragment: function InlineFragment(node) {
         var typeCondition = node.typeCondition;
@@ -5506,7 +5623,10 @@ function createVisitor(options) {
       ScalarField: function ScalarField(node) {
         return visitScalarField(node, state);
       },
-      ConnectionField: visitConnectionField,
+      Connection: function Connection(node) {
+        return visitConnection(node, state);
+      },
+      ConnectionField: visitLinkedField,
       LinkedField: visitLinkedField,
       ModuleImport: function ModuleImport(node) {
         return [{
@@ -5551,18 +5671,32 @@ function visitScalarField(node, state) {
   }];
 }
 
-function visitConnectionField(node) {
+function visitConnection(node, state) {
+  var _edgesProperty$value, _edgesProperty$value$, _edgesProperty$value$2;
+
+  state.hasConnectionResolver = true;
+  /* $FlowFixMe: selections have already been transformed */
+
+  var babel = selectionsToBabel(node.selections, state, false, null);
+
+  if (babel == null || typeof babel !== 'object' || babel.type !== 'ObjectTypeAnnotation' || !Array.isArray(babel.properties)) {
+    throw createUserError('Cannot generate flow types for connection field, expected an edges ' + 'selection.', [node.loc]);
+  }
+
+  var edgesProperty = babel.properties.find(function (prop) {
+    return prop != null && typeof prop === 'object' && prop.type === 'ObjectTypeProperty' && prop.key != null && typeof prop.key === 'object' && prop.key.name === 'edges';
+  });
+  var edgeTypeParams = edgesProperty === null || edgesProperty === void 0 ? void 0 : (_edgesProperty$value = edgesProperty.value) === null || _edgesProperty$value === void 0 ? void 0 : (_edgesProperty$value$ = _edgesProperty$value.typeAnnotation) === null || _edgesProperty$value$ === void 0 ? void 0 : (_edgesProperty$value$2 = _edgesProperty$value$.typeParameters) === null || _edgesProperty$value$2 === void 0 ? void 0 : _edgesProperty$value$2.params;
+  var edgeType = Array.isArray(edgeTypeParams) ? edgeTypeParams[0] : null;
+
+  if (edgeType == null) {
+    throw createUserError('Cannot generate flow types for connection field, expected an edges ' + 'selection.', [node.loc]);
+  }
+
   return [{
-    key: node.alias,
-    schemaName: node.name,
-    nodeType: node.type,
-    nodeSelections: selectionsToMap(flattenArray( // $FlowFixMe
-    node.selections),
-    /*
-     * append concreteType to key so overlapping fields with different
-     * concreteTypes don't get overwritten by each other
-     */
-    true)
+    key: '__connection',
+    conditional: true,
+    value: t.genericTypeAnnotation(t.identifier('ConnectionReference'), t.typeParameterInstantiation([edgeType]))
   }];
 }
 
@@ -5689,7 +5823,10 @@ function createRawResponseTypeVisitor(state) {
       ScalarField: function ScalarField(node) {
         return visitScalarField(node, state);
       },
-      ConnectionField: visitConnectionField,
+      Connection: function Connection(node) {
+        return visitConnection(node, state);
+      },
+      ConnectionField: visitLinkedField,
       LinkedField: visitLinkedField,
       ClientExtension: function ClientExtension(node) {
         return flattenArray(
@@ -5714,7 +5851,7 @@ function createRawResponseTypeVisitor(state) {
         return visitRawResposneModuleImport(node, state);
       },
       FragmentSpread: function FragmentSpread(node) {
-         true ?  true ? invariant(false, 'A fragment spread is found when traversing the AST, ' + 'make sure you are passing the codegen IR') : undefined : undefined;
+         true ?  true ?  true ?  true ? invariant(false, 'A fragment spread is found when traversing the AST, ' + 'make sure you are passing the codegen IR') : undefined : undefined : undefined : undefined;
       }
     }
   };
@@ -5768,7 +5905,7 @@ function flattenArray(arrayOfArrays) {
 function generateInputObjectTypes(state) {
   return Object.keys(state.generatedInputObjectTypes).map(function (typeIdentifier) {
     var inputObjectType = state.generatedInputObjectTypes[typeIdentifier];
-    !(typeof inputObjectType !== 'string') ?  true ? invariant(false, 'RelayCompilerFlowGenerator: Expected input object type to have been' + ' defined before calling `generateInputObjectTypes`') : undefined : void 0;
+    !(typeof inputObjectType !== 'string') ?  true ?  true ?  true ? invariant(false, 'RelayCompilerFlowGenerator: Expected input object type to have been' + ' defined before calling `generateInputObjectTypes`') : undefined : undefined : undefined : void 0;
     return exportType(typeIdentifier, inputObjectType);
   });
 }
@@ -6007,11 +6144,11 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var IRTransformer = __webpack_require__(5);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var joinArgumentDefinitions = __webpack_require__(78);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createUserError = _require.createUserError;
 
 /**
@@ -6048,7 +6185,7 @@ function visitFragmentSpread(fragmentSpread, state) {
     return fragmentSpread;
   }
 
-  !(fragmentSpread.args.length === 0) ?  true ? invariant(false, 'RelayMaskTransform: Cannot unmask fragment spread `%s` with ' + 'arguments. Use the `ApplyFragmentArgumentTransform` before flattening', fragmentSpread.name) : undefined : void 0;
+  !(fragmentSpread.args.length === 0) ?  true ?  true ?  true ? invariant(false, 'RelayMaskTransform: Cannot unmask fragment spread `%s` with ' + 'arguments. Use the `ApplyFragmentArgumentTransform` before flattening', fragmentSpread.name) : undefined : undefined : undefined : void 0;
   var context = this.getContext();
   var fragment = context.getFragment(fragmentSpread.name);
   var result = {
@@ -6140,14 +6277,14 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var IRTransformer = __webpack_require__(5);
 
-var getLiteralArgumentValues = __webpack_require__(15);
+var getLiteralArgumentValues = __webpack_require__(16);
 
 var getNormalizationOperationName = __webpack_require__(38);
 
 var _require = __webpack_require__(7),
     getRawType = _require.getRawType;
 
-var _require2 = __webpack_require__(4),
+var _require2 = __webpack_require__(3),
     createUserError = _require2.createUserError;
 
 var _require3 = __webpack_require__(1),
@@ -6161,7 +6298,7 @@ var _require3 = __webpack_require__(1),
     GraphQLString = _require3.GraphQLString,
     getNullableType = _require3.getNullableType;
 
-var _require4 = __webpack_require__(13),
+var _require4 = __webpack_require__(11),
     getModuleComponentKey = _require4.getModuleComponentKey,
     getModuleOperationKey = _require4.getModuleOperationKey;
 
@@ -6537,19 +6674,19 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
-var GraphQLIRVisitor = __webpack_require__(16);
+var GraphQLIRVisitor = __webpack_require__(15);
 
 var GraphQLSchemaUtils = __webpack_require__(7);
 
-var getLiteralArgumentValues = __webpack_require__(15);
+var getLiteralArgumentValues = __webpack_require__(16);
 
-var inferRootArgumentDefinitions = __webpack_require__(22);
+var inferRootArgumentDefinitions = __webpack_require__(21);
 
 var isEquivalentType = __webpack_require__(79);
 
-var nullthrows = __webpack_require__(21);
+var nullthrows = __webpack_require__(20);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCombinedError = _require.createCombinedError,
     createCompilerError = _require.createCompilerError,
     createUserError = _require.createUserError,
@@ -6950,7 +7087,7 @@ function buildRefetchOperationOnNodeType(schema, fragment, queryName) {
   var nodeType = schema.getType(NODE_TYPE_NAME);
   var nodeField = queryType.getFields()[NODE_FIELD_NAME];
 
-  if (!(nodeType instanceof GraphQLInterfaceType && nodeField != null && nodeField.type instanceof GraphQLInterfaceType && isEquivalentType(nodeField.type, nodeType) && nodeField.args.length === 1 && nodeField.args[0].name === 'id' && isEquivalentType(getNullableType(nodeField.args[0].type), GraphQLID) && ( // the fragment must be on Node or on a type that implements Node
+  if (!(nodeType instanceof GraphQLInterfaceType && nodeField != null && nodeField.type instanceof GraphQLInterfaceType && isEquivalentType(nodeField.type, nodeType) && nodeField.args.length === 1 && isEquivalentType(getNullableType(nodeField.args[0].type), GraphQLID) && ( // the fragment must be on Node or on a type that implements Node
   fragment.type instanceof GraphQLObjectType && fragment.type.getInterfaces().some(function (interfaceType) {
     return isEquivalentType(interfaceType, nodeType);
   }) || isAbstractType(fragment.type) && getImplementations(fragment.type, schema).every(function (possibleType) {
@@ -6958,19 +7095,24 @@ function buildRefetchOperationOnNodeType(schema, fragment, queryName) {
       return isEquivalentType(interfaceType, nodeType);
     });
   })))) {
-    throw createUserError("Invalid use of @refetchable on fragment '".concat(fragment.name, "', check that your schema defines a 'Node { id: ID }' interface and has a 'node(id: ID): Node' field on the query type (the id argument may also be non-null)."), [fragment.loc]);
-  }
+    throw createUserError("Invalid use of @refetchable on fragment '".concat(fragment.name, "', check ") + 'that your schema defines a `Node { id: ID }` interface and has a ' + '`node(id: ID): Node` field on the query type (the id argument may ' + 'also be non-null).', [fragment.loc]);
+  } // name and type of the node(_: ID) field parameter
 
+
+  var idArgName = nodeField.args[0].name;
+  var idArgType = nodeField.args[0].type; // name and type of the query variable
+
+  var idVariableType = new GraphQLNonNull(GraphQLID);
+  var idVariableName = 'id';
   var argumentDefinitions = buildOperationArgumentDefinitions(fragment.argumentDefinitions);
   var idArgument = argumentDefinitions.find(function (argDef) {
-    return argDef.name === 'id';
+    return argDef.name === idVariableName;
   });
 
   if (idArgument != null) {
-    throw createUserError("Invalid use of @refetchable on fragment '".concat(fragment.name, "', this fragment already has an '$id' variable in scope."), [idArgument.loc]);
+    throw createUserError("Invalid use of @refetchable on fragment `".concat(fragment.name, "`, this ") + 'fragment already has an `$id` variable in scope.', [idArgument.loc]);
   }
 
-  var idArgType = new GraphQLNonNull(GraphQLID);
   var argumentDefinitionsWithId = [].concat((0, _toConsumableArray2["default"])(argumentDefinitions), [{
     defaultValue: null,
     kind: 'LocalArgumentDefinition',
@@ -6978,8 +7120,8 @@ function buildRefetchOperationOnNodeType(schema, fragment, queryName) {
       kind: 'Derived',
       source: fragment.loc
     },
-    name: 'id',
-    type: idArgType
+    name: idVariableName,
+    type: idVariableType
   }]);
   return {
     path: [NODE_FIELD_NAME],
@@ -7002,7 +7144,7 @@ function buildRefetchOperationOnNodeType(schema, fragment, queryName) {
             kind: 'Derived',
             source: fragment.loc
           },
-          name: 'id',
+          name: idArgName,
           type: idArgType,
           value: {
             kind: 'Variable',
@@ -7010,8 +7152,8 @@ function buildRefetchOperationOnNodeType(schema, fragment, queryName) {
               kind: 'Derived',
               source: fragment.loc
             },
-            variableName: 'id',
-            type: idArgType
+            variableName: idVariableName,
+            type: idVariableType
           }
         }],
         directives: [],
@@ -7107,12 +7249,12 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var IRTransformer = __webpack_require__(5);
 
-var getLiteralArgumentValues = __webpack_require__(15);
+var getLiteralArgumentValues = __webpack_require__(16);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var RELAY = 'relay';
-var SCHEMA_EXTENSION = "\ndirective @relay(\n  # Marks a connection field as containing nodes without 'id' fields.\n  # This is used to silence the warning when diffing connections.\n  isConnectionWithoutNodeID: Boolean,\n\n  # Marks a fragment as intended for pattern matching (as opposed to fetching).\n  # Used in Classic only.\n  pattern: Boolean,\n\n  # Marks a fragment as being backed by a GraphQLList.\n  plural: Boolean,\n\n  # Marks a fragment spread which should be unmasked if provided false\n  mask: Boolean = true,\n\n  # Selectively pass variables down into a fragment. Only used in Classic.\n  variables: [String!],\n) on FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | FIELD\n";
+var SCHEMA_EXTENSION = "\ndirective @relay(\n  # Marks a fragment as being backed by a GraphQLList.\n  plural: Boolean,\n\n  # Marks a fragment spread which should be unmasked if provided false\n  mask: Boolean = true,\n) on FRAGMENT_DEFINITION | FRAGMENT_SPREAD\n";
 /**
  * A transform that extracts `@relay(plural: Boolean)` directives and converts
  * them to metadata that can be accessed at runtime.
@@ -7150,8 +7292,8 @@ function visitRelayMetadata(metadataFn) {
 function fragmentMetadata(_ref2) {
   var mask = _ref2.mask,
       plural = _ref2.plural;
-  !(plural === undefined || typeof plural === 'boolean') ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "plural" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : void 0;
-  !(mask === undefined || typeof mask === 'boolean') ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "mask" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : void 0;
+  !(plural === undefined || typeof plural === 'boolean') ?  true ?  true ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "plural" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : undefined : undefined : void 0;
+  !(mask === undefined || typeof mask === 'boolean') ?  true ?  true ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "mask" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : undefined : undefined : void 0;
   return {
     mask: mask,
     plural: plural
@@ -7160,7 +7302,7 @@ function fragmentMetadata(_ref2) {
 
 function fragmentSpreadMetadata(_ref3) {
   var mask = _ref3.mask;
-  !(mask === undefined || typeof mask === 'boolean') ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "mask" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : void 0;
+  !(mask === undefined || typeof mask === 'boolean') ?  true ?  true ?  true ? invariant(false, 'RelayRelayDirectiveTransform: Expected the "mask" argument to @relay ' + 'to be a boolean literal if specified.') : undefined : undefined : undefined : void 0;
   return {
     mask: mask
   };
@@ -7188,9 +7330,9 @@ module.exports = {
  */
 
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var t = __webpack_require__(23);
+var t = __webpack_require__(22);
 
 /**
  * type NAME = any;
@@ -7258,7 +7400,7 @@ function importTypes(names, module) {
 
 
 function intersectionTypeAnnotation(types) {
-  !(types.length > 0) ?  true ? invariant(false, 'RelayFlowBabelFactories: cannot create an intersection of 0 types') : undefined : void 0;
+  !(types.length > 0) ?  true ?  true ?  true ? invariant(false, 'RelayFlowBabelFactories: cannot create an intersection of 0 types') : undefined : undefined : undefined : void 0;
   return types.length === 1 ? types[0] : t.intersectionTypeAnnotation(types);
 }
 
@@ -7304,7 +7446,7 @@ function stringLiteralTypeAnnotation(value) {
 
 
 function unionTypeAnnotation(types) {
-  !(types.length > 0) ?  true ? invariant(false, 'RelayFlowBabelFactories: cannot create a union of 0 types') : undefined : void 0;
+  !(types.length > 0) ?  true ?  true ?  true ? invariant(false, 'RelayFlowBabelFactories: cannot create a union of 0 types') : undefined : undefined : undefined : void 0;
   return types.length === 1 ? types[0] : t.unionTypeAnnotation(types);
 }
 
@@ -7500,7 +7642,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _asyncToGenerator = __webpack_require__(10);
 
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(24));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(23));
 
 var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
@@ -7522,11 +7664,11 @@ var RelaySourceModuleParser = __webpack_require__(96);
 
 var WatchmanClient = __webpack_require__(17);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
-var fs = __webpack_require__(12);
+var fs = __webpack_require__(13);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var path = __webpack_require__(9);
 
@@ -7831,7 +7973,7 @@ function getRelayFileWriter(baseDir, languagePlugin, noFutureProofEnums, outputD
           function () {
             var _persistQuery = _asyncToGenerator(function* (text) {
               var id = yield persistImplmentation(text);
-              !(typeof id === 'string') ?  true ? invariant(false, 'Expected persist function to return a string, got `%s`.', id) : undefined : void 0;
+              !(typeof id === 'string') ?  true ?  true ?  true ? invariant(false, 'Expected persist function to return a string, got `%s`.', id) : undefined : undefined : undefined : void 0;
               queryMap.set(id, text);
               return id;
             });
@@ -7855,7 +7997,6 @@ function getRelayFileWriter(baseDir, languagePlugin, noFutureProofEnums, outputD
               queryTransforms: queryTransforms
             },
             customScalars: customScalars || {},
-            keepFileInGeneratedFolder: languagePlugin.keepFileInGeneratedFolder,
             formatModule: languagePlugin.formatModule,
             optionalInputFieldsForFlow: [],
             schemaExtensions: schemaExtensions,
@@ -7877,6 +8018,22 @@ function getRelayFileWriter(baseDir, languagePlugin, noFutureProofEnums, outputD
 
         if (queryMap != null && persistedQueryPath != null) {
           var object = {};
+
+          if (fs.existsSync(persistedQueryPath)) {
+            try {
+              var prevText = fs.readFileSync(persistedQueryPath, 'utf8');
+              var prevData = JSON.parse(prevText);
+
+              if (prevData != null && typeof prevData === 'object') {
+                object = prevData;
+              } else {
+                console.error("Invalid data in persisted query file '".concat(persistedQueryPath, "', expected an object."));
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }
+
           var _iteratorNormalCompletion = true;
           var _didIteratorError = false;
           var _iteratorError = undefined;
@@ -7884,9 +8041,9 @@ function getRelayFileWriter(baseDir, languagePlugin, noFutureProofEnums, outputD
           try {
             for (var _iterator = queryMap.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var _step$value = _step.value,
-                  key = _step$value[0],
-                  value = _step$value[1];
-              object[key] = value;
+                  id = _step$value[0],
+                  _text = _step$value[1];
+              object[id] = _text;
             }
           } catch (err) {
             _didIteratorError = true;
@@ -7982,7 +8139,7 @@ var _asyncToGenerator = __webpack_require__(10);
 
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
-var CodegenDirectory = __webpack_require__(25);
+var CodegenDirectory = __webpack_require__(24);
 
 var CodegenWatcher = __webpack_require__(46);
 
@@ -7990,7 +8147,7 @@ var GraphQLWatchmanClient = __webpack_require__(17);
 
 var Profiler = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var path = __webpack_require__(9);
 
@@ -8240,7 +8397,7 @@ function () {
 
         if (baseParsers) {
           baseParsers.forEach(function (baseParserName) {
-            !_this5.parsers[baseParserName] ?  true ? invariant(false, 'Trying to access an uncompiled base parser config: %s', baseParserName) : undefined : void 0;
+            !_this5.parsers[baseParserName] ?  true ?  true ?  true ? invariant(false, 'Trying to access an uncompiled base parser config: %s', baseParserName) : undefined : undefined : undefined : void 0;
             baseDocuments = baseDocuments.merge(_this5.parsers[baseParserName].documents());
           });
         }
@@ -8290,7 +8447,7 @@ function () {
 
                 var _filePath2 = dir.getPath(filename);
 
-                !isGeneratedFile(_filePath2) ?  true ? invariant(false, 'CodegenRunner: %s returned false for isGeneratedFile, ' + 'but was in generated directory', _filePath2) : undefined : void 0;
+                !isGeneratedFile(_filePath2) ?  true ?  true ?  true ? invariant(false, 'CodegenRunner: %s returned false for isGeneratedFile, ' + 'but was in generated directory', _filePath2) : undefined : undefined : undefined : void 0;
               }
             } catch (err) {
               _didIteratorError3 = true;
@@ -8329,9 +8486,11 @@ function () {
         }
 
         var combinedChanges = CodegenDirectory.combineChanges(Array.from(outputDirectories.values()));
-        CodegenDirectory.printChanges(combinedChanges, {
+
+        _this5._reporter.reportMessage(CodegenDirectory.formatChanges(combinedChanges, {
           onlyValidate: _this5.onlyValidate
-        });
+        }));
+
         return CodegenDirectory.hasChanges(combinedChanges) ? 'HAS_CHANGES' : 'NO_CHANGES';
       } catch (e) {
         _this5._reporter.reportError('CodegenRunner.write', e);
@@ -8380,7 +8539,7 @@ function () {
       /*#__PURE__*/
       function () {
         var _ref4 = _asyncToGenerator(function* (files) {
-          !_this6.parsers[parserName] ?  true ? invariant(false, 'Trying to watch an uncompiled parser config: %s', parserName) : undefined : void 0;
+          !_this6.parsers[parserName] ?  true ?  true ?  true ? invariant(false, 'Trying to watch an uncompiled parser config: %s', parserName) : undefined : undefined : undefined : void 0;
 
           if (firstChange) {
             firstChange = false;
@@ -8457,9 +8616,9 @@ var GraphQLWatchmanClient = __webpack_require__(17);
 
 var Profiler = __webpack_require__(8);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
-var fs = __webpack_require__(12);
+var fs = __webpack_require__(13);
 
 var path = __webpack_require__(9);
 
@@ -8821,9 +8980,9 @@ module.exports = require("chalk");
  */
 
 
-var ASTCache = __webpack_require__(26);
+var ASTCache = __webpack_require__(25);
 
-var fs = __webpack_require__(12);
+var fs = __webpack_require__(13);
 
 var path = __webpack_require__(9);
 
@@ -8874,27 +9033,27 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var ASTConvert = __webpack_require__(53);
 
-var CodegenDirectory = __webpack_require__(25);
-
 var CompilerContext = __webpack_require__(19);
 
 var Profiler = __webpack_require__(8);
 
-var RelayParser = __webpack_require__(28);
+var RelayParser = __webpack_require__(27);
 
-var RelayValidator = __webpack_require__(27);
+var RelayValidator = __webpack_require__(26);
 
 var SchemaUtils = __webpack_require__(7);
 
+var CodegenDirectory = __webpack_require__(24);
+
 var compileRelayArtifacts = __webpack_require__(56);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
 var graphql = __webpack_require__(1);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var nullthrows = __webpack_require__(21);
+var nullthrows = __webpack_require__(20);
 
 var path = __webpack_require__(9);
 
@@ -8934,12 +9093,7 @@ function compileAll(_ref) {
   var compilerContext = new CompilerContext(baseSchema, extendedSchema).addAll(definitions);
   var transformedTypeContext = compilerContext.applyTransforms(typeGenerator.transforms, reporter);
   var transformedQueryContext = compilerContext.applyTransforms([].concat((0, _toConsumableArray2["default"])(compilerTransforms.commonTransforms), (0, _toConsumableArray2["default"])(compilerTransforms.queryTransforms)), reporter);
-  var artifacts = compileRelayArtifacts({
-    context: compilerContext,
-    transforms: compilerTransforms,
-    reporter: reporter,
-    languagePlugin: languagePlugin
-  });
+  var artifacts = compileRelayArtifacts(compilerContext, compilerTransforms, reporter);
   return {
     artifacts: artifacts,
     definitions: definitions,
@@ -8951,7 +9105,6 @@ function compileAll(_ref) {
 function writeAll(_ref2) {
   var writerConfig = _ref2.config,
       onlyValidate = _ref2.onlyValidate,
-      keepFileInGeneratedFolder = _ref2.keepFileInGeneratedFolder,
       baseDocuments = _ref2.baseDocuments,
       documents = _ref2.documents,
       baseSchema = _ref2.schema,
@@ -9009,7 +9162,7 @@ function writeAll(_ref2) {
       var artifact = nullthrows(artifactMap.get(definitionName));
       var sourceName = getReaderSourceDefinitionName(artifact);
       var definitionMeta = definitionsMeta.get(sourceName);
-      !definitionMeta ?  true ? invariant(false, 'RelayFileWriter: Could not determine source for definition: `%s`.', definitionName) : undefined : void 0;
+      !definitionMeta ?  true ?  true ?  true ? invariant(false, 'RelayFileWriter: Could not determine source for definition: `%s`.', definitionName) : undefined : undefined : undefined : void 0;
       return definitionMeta;
     };
 
@@ -9032,7 +9185,8 @@ function writeAll(_ref2) {
 
     var addCodegenDir = function addCodegenDir(dirPath) {
       var codegenDir = new CodegenDirectory(dirPath, {
-        onlyValidate: onlyValidate
+        onlyValidate: onlyValidate,
+        filesystem: writerConfig.filesystem
       });
       allOutputDirectories.set(dirPath, codegenDir);
       return codegenDir;
@@ -9114,7 +9268,8 @@ function writeAll(_ref2) {
             optionalInputFields: writerConfig.optionalInputFieldsForFlow,
             useHaste: writerConfig.useHaste,
             useSingleArtifactDirectory: !!writerConfig.outputDir,
-            noFutureProofEnums: writerConfig.noFutureProofEnums
+            noFutureProofEnums: writerConfig.noFutureProofEnums,
+            normalizationIR: definition.kind === 'Request' ? definition.root : undefined
           }) : '';
           var sourceHash = Profiler.run('hashGraphQL', function () {
             return md5(graphql.print(getDefinitionMeta(nodeName).ast));
@@ -9133,7 +9288,7 @@ function writeAll(_ref2) {
           var configDirectory = writerConfig.outputDir;
           generateExtraFiles(function (dir) {
             var outputDirectory = dir || configDirectory;
-            !outputDirectory ?  true ? invariant(false, 'RelayFileWriter: cannot generate extra files without specifying ' + 'an outputDir in the config or passing it in.') : undefined : void 0;
+            !outputDirectory ?  true ?  true ?  true ? invariant(false, 'RelayFileWriter: cannot generate extra files without specifying ' + 'an outputDir in the config or passing it in.') : undefined : undefined : undefined : void 0;
             var outputDir = allOutputDirectories.get(outputDirectory);
 
             if (!outputDir) {
@@ -9146,7 +9301,7 @@ function writeAll(_ref2) {
       }
 
       allOutputDirectories.forEach(function (dir) {
-        dir.deleteExtraFiles(keepFileInGeneratedFolder);
+        dir.deleteExtraFiles(languagePlugin.isGeneratedFile);
       });
 
       if (sourceControl && !onlyValidate) {
@@ -9197,7 +9352,7 @@ module.exports = {
 
 var Profiler = __webpack_require__(8);
 
-var RelayValidator = __webpack_require__(27);
+var RelayValidator = __webpack_require__(26);
 
 var _require = __webpack_require__(7),
     isExecutableDefinitionAST = _require.isExecutableDefinitionAST,
@@ -9440,7 +9595,7 @@ module.exports = nullthrows;
 var _require = __webpack_require__(7),
     getRawType = _require.getRawType;
 
-var _require2 = __webpack_require__(4),
+var _require2 = __webpack_require__(3),
     createCompilerError = _require2.createCompilerError;
 
 var _require3 = __webpack_require__(1),
@@ -9576,7 +9731,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
-var Printer = __webpack_require__(31);
+var Printer = __webpack_require__(30);
 
 var Profiler = __webpack_require__(8);
 
@@ -9613,7 +9768,7 @@ function createCodeGenContext(context, transforms, reporter, validations) {
   return codeGenContext;
 }
 
-function compile(context, fragmentContext, printContext, codeGenContext, languagePlugin) {
+function compile(context, fragmentContext, printContext, codeGenContext) {
   var results = []; // Add everything from codeGenContext, these are the operations as well as
   // SplitOperations from @match.
 
@@ -9649,9 +9804,9 @@ function compile(context, fragmentContext, printContext, codeGenContext, languag
           root: node,
           text: printOperation(printContext, fragment.name)
         };
-        results.push([request, RelayCodeGenerator.generate(request, languagePlugin)]);
+        results.push([request, RelayCodeGenerator.generate(request)]);
       } else {
-        results.push([node, RelayCodeGenerator.generate(node, languagePlugin)]);
+        results.push([node, RelayCodeGenerator.generate(node)]);
       }
     } // Add all the Fragments from the fragmentContext for the reader ASTs.
 
@@ -9679,7 +9834,7 @@ function compile(context, fragmentContext, printContext, codeGenContext, languag
       var _node = _step2.value;
 
       if (_node.kind === 'Fragment') {
-        results.push([_node, RelayCodeGenerator.generate(_node, languagePlugin)]);
+        results.push([_node, RelayCodeGenerator.generate(_node)]);
       }
     }
   } catch (err) {
@@ -9722,17 +9877,12 @@ function printOperation(printContext, name) {
  */
 
 
-function compileRelayArtifacts(_ref) {
-  var context = _ref.context,
-      transforms = _ref.transforms,
-      reporter = _ref.reporter,
-      validations = _ref.validations,
-      languagePlugin = _ref.languagePlugin;
+function compileRelayArtifacts(context, transforms, reporter, validations) {
   return Profiler.run('GraphQLCompiler.compile', function () {
     var fragmentContext = createFragmentContext(context, transforms, reporter);
     var printContext = createPrintContext(context, transforms, reporter, validations);
     var codeGenContext = createCodeGenContext(context, transforms, reporter, validations);
-    return compile(context, fragmentContext, printContext, codeGenContext, languagePlugin);
+    return compile(context, fragmentContext, printContext, codeGenContext);
   });
 }
 
@@ -9758,10 +9908,10 @@ var NormalizationCodeGenerator = __webpack_require__(58);
 
 var ReaderCodeGenerator = __webpack_require__(59);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError;
 
-function generate(node, languagePlugin) {
+function generate(node) {
   var _node$metadata;
 
   switch (node.kind) {
@@ -9773,12 +9923,12 @@ function generate(node, languagePlugin) {
         };
       }
 
-      return ReaderCodeGenerator.generate(node, languagePlugin);
+      return ReaderCodeGenerator.generate(node);
 
     case 'Request':
       return {
         kind: 'Request',
-        fragment: ReaderCodeGenerator.generate(node.fragment, languagePlugin),
+        fragment: ReaderCodeGenerator.generate(node.fragment),
         operation: NormalizationCodeGenerator.generate(node.root),
         params: {
           operationKind: node.root.operation,
@@ -9822,18 +9972,17 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
-var CodeMarker = __webpack_require__(20);
-
 var SchemaUtils = __webpack_require__(7);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError,
     createUserError = _require.createUserError;
 
 var _require2 = __webpack_require__(1),
     GraphQLList = _require2.GraphQLList;
 
-var _require3 = __webpack_require__(13),
+var _require3 = __webpack_require__(11),
+    ConnectionInterface = _require3.ConnectionInterface,
     getStorageKey = _require3.getStorageKey,
     stableCopy = _require3.stableCopy;
 
@@ -9907,7 +10056,11 @@ function generateSelections(selections) {
         break;
 
       case 'ConnectionField':
-        normalizationSelections.push(generateConnectionField(selection));
+        normalizationSelections.push.apply(normalizationSelections, (0, _toConsumableArray2["default"])(generateConnectionField(selection)));
+        break;
+
+      case 'Connection':
+        normalizationSelections.push(generateConnection(selection));
         break;
 
       case 'Defer':
@@ -10040,34 +10193,48 @@ function generateLinkedField(node) {
 }
 
 function generateConnectionField(node) {
-  // TODO
-  var type = getRawType(node.type);
+  return generateLinkedField((0, _objectSpread2["default"])({}, node, {
+    handles: null,
+    args: node.args.filter(function (arg) {
+      return !ConnectionInterface.isConnectionCall({
+        name: arg.name,
+        value: null
+      });
+    }),
+    kind: 'LinkedField'
+  }));
+}
 
-  if (isPlural(node.type)) {
-    throw createUserError('Connection fields cannot return a plural (list) value.', [node.loc]);
+function generateConnection(node) {
+  var _ConnectionInterface$ = ConnectionInterface.get(),
+      EDGES = _ConnectionInterface$.EDGES,
+      PAGE_INFO = _ConnectionInterface$.PAGE_INFO;
+
+  var selections = generateSelections(node.selections);
+  var edges;
+  var pageInfo;
+  selections.forEach(function (selection) {
+    if (selection.kind === 'LinkedField') {
+      if (selection.name === EDGES) {
+        edges = selection;
+      } else if (selection.name === PAGE_INFO) {
+        pageInfo = selection;
+      }
+    }
+  });
+
+  if (edges == null || pageInfo == null) {
+    throw createUserError("Invalid connection, expected the '".concat(EDGES, "' and '").concat(PAGE_INFO, "' fields ") + 'to exist.', [node.loc]);
   }
 
-  var field = {
-    kind: 'ConnectionField',
-    alias: node.alias === node.name ? null : node.alias,
+  return {
+    kind: 'Connection',
     label: node.label,
     name: node.name,
-    resolver: CodeMarker.moduleDependency(node.resolver),
-    storageKey: null,
     args: generateArgs(node.args),
-    concreteType: !isAbstractType(type) ? type.toString() : null,
-    selections: generateSelections(node.selections)
-  }; // Precompute storageKey if possible
-
-  var storageKey = getStaticStorageKey(field, node.metadata);
-
-  if (storageKey) {
-    field = (0, _objectSpread2["default"])({}, field, {
-      storageKey: storageKey
-    });
-  }
-
-  return field;
+    edges: edges,
+    pageInfo: pageInfo
+  };
 }
 
 function generateModuleImport(node, key) {
@@ -10241,18 +10408,19 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
-var CodeMarker = __webpack_require__(20);
+var CodeMarker = __webpack_require__(31);
 
 var SchemaUtils = __webpack_require__(7);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError,
     createUserError = _require.createUserError;
 
 var _require2 = __webpack_require__(1),
     GraphQLList = _require2.GraphQLList;
 
-var _require3 = __webpack_require__(13),
+var _require3 = __webpack_require__(11),
+    ConnectionInterface = _require3.ConnectionInterface,
     getStorageKey = _require3.getStorageKey,
     stableCopy = _require3.stableCopy;
 
@@ -10266,7 +10434,7 @@ var getRawType = SchemaUtils.getRawType,
  * used at runtime.
  */
 
-function generate(node, languagePlugin) {
+function generate(node) {
   if (node == null) {
     return node;
   }
@@ -10302,20 +10470,16 @@ function generate(node, languagePlugin) {
     }
 
     if (typeof refetch === 'object') {
-      var _metadata4, _metadata$refetch;
+      var _metadata4;
 
       metadata = (_metadata4 = metadata) !== null && _metadata4 !== void 0 ? _metadata4 : {};
-
-      var _refetch = (_metadata$refetch = metadata.refetch) !== null && _metadata$refetch !== void 0 ? _metadata$refetch : {};
-
-      var _metadata5 = metadata,
-          _connection = _metadata5.connection;
-      var operation = _refetch.operation || '';
       metadata.refetch = {
-        connection: _connection,
-        operation: CodeMarker.moduleDependency(languagePlugin.getRefetchOperationModuleImportPath ? languagePlugin.getRefetchOperationModuleImportPath(operation) : operation + '.graphql'),
         // $FlowFixMe
-        fragmentPathInResult: _refetch.fragmentPathInResult
+        connection: refetch.connection,
+        // $FlowFixMe
+        operation: CodeMarker.moduleDependency(refetch.operation + '.graphql'),
+        // $FlowFixMe
+        fragmentPathInResult: refetch.fragmentPathInResult
       };
     }
   }
@@ -10360,6 +10524,9 @@ function generateSelections(selections) {
 
       case 'ConnectionField':
         return generateConnectionField(selection);
+
+      case 'Connection':
+        return generateConnection(selection);
 
       case 'Defer':
       case 'Stream':
@@ -10477,33 +10644,48 @@ function generateLinkedField(node) {
 }
 
 function generateConnectionField(node) {
-  var type = getRawType(node.type);
+  return generateLinkedField((0, _objectSpread2["default"])({}, node, {
+    handles: null,
+    args: node.args.filter(function (arg) {
+      return !ConnectionInterface.isConnectionCall({
+        name: arg.name,
+        value: null
+      });
+    }),
+    kind: 'LinkedField'
+  }));
+}
 
-  if (isPlural(node.type)) {
-    throw createUserError('Connection fields cannot return a plural (list) value.', [node.loc]);
+function generateConnection(node) {
+  var _ConnectionInterface$ = ConnectionInterface.get(),
+      EDGES = _ConnectionInterface$.EDGES,
+      PAGE_INFO = _ConnectionInterface$.PAGE_INFO;
+
+  var selections = generateSelections(node.selections);
+  var edges;
+  var pageInfo;
+  selections.forEach(function (selection) {
+    if (selection.kind === 'LinkedField') {
+      if (selection.name === EDGES) {
+        edges = selection;
+      } else if (selection.name === PAGE_INFO) {
+        pageInfo = selection;
+      }
+    }
+  });
+
+  if (edges == null || pageInfo == null) {
+    throw createUserError("Invalid connection, expected the '".concat(EDGES, "' and '").concat(PAGE_INFO, "' fields ") + 'to exist.', [node.loc]);
   }
 
-  var field = {
-    kind: 'ConnectionField',
-    alias: node.alias === node.name ? null : node.alias,
+  return {
+    kind: 'Connection',
     label: node.label,
     name: node.name,
-    resolver: CodeMarker.moduleDependency(node.resolver),
-    storageKey: null,
     args: generateArgs(node.args),
-    concreteType: !isAbstractType(type) ? type.toString() : null,
-    selections: generateSelections(node.selections)
-  }; // Precompute storageKey if possible
-
-  var storageKey = getStaticStorageKey(field, node.metadata);
-
-  if (storageKey) {
-    field = (0, _objectSpread2["default"])({}, field, {
-      storageKey: storageKey
-    });
-  }
-
-  return field;
+    edges: edges,
+    pageInfo: pageInfo
+  };
 }
 
 function generateModuleImport(node) {
@@ -10646,7 +10828,7 @@ module.exports = {
 
 var GraphQLCompilerContext = __webpack_require__(19);
 
-var _require = __webpack_require__(16),
+var _require = __webpack_require__(15),
     visit = _require.visit;
 
 /**
@@ -10704,21 +10886,23 @@ var _asyncToGenerator = __webpack_require__(10);
 
 var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
-var CodeMarker = __webpack_require__(20);
+var CodeMarker = __webpack_require__(31);
 
 var Profiler = __webpack_require__(8);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
 var dedupeJSONStringify = __webpack_require__(62);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
-var _require = __webpack_require__(13),
+var _require = __webpack_require__(11),
     RelayConcreteNode = _require.RelayConcreteNode;
 
-function printRequireModuleDependency(moduleName) {
-  return "require('".concat(moduleName, "')");
+function createPrintRequireModuleDependency(extension) {
+  return function (moduleName) {
+    return "require('./".concat(moduleName + '.' + extension, "')");
+  };
 }
 
 function getConcreteType(node) {
@@ -10737,7 +10921,7 @@ function getConcreteType(node) {
 
     default:
       node;
-       true ?  true ? invariant(false, 'Unexpected GeneratedNode kind: `%s`.', node.kind) : undefined : undefined;
+       true ?  true ?  true ?  true ? invariant(false, 'Unexpected GeneratedNode kind: `%s`.', node.kind) : undefined : undefined : undefined : undefined;
   }
 }
 
@@ -10747,7 +10931,7 @@ function writeRelayGeneratedFile(_x, _x2, _x3, _x4, _x5, _x6, _x7, _x8, _x9) {
 
 function _writeRelayGeneratedFile() {
   _writeRelayGeneratedFile = _asyncToGenerator(function* (codegenDir, definition, _generatedNode, formatModule, typeText, _persistQuery, platform, sourceHash, extension) {
-    var printModuleDependency = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : printRequireModuleDependency;
+    var printModuleDependency = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : createPrintRequireModuleDependency(extension);
     var shouldRepersist = arguments.length > 10 ? arguments[10] : undefined;
     var languagePlugin = arguments.length > 11 ? arguments[11] : undefined;
     var generatedNode = _generatedNode; // Copy to const so Flow can refine.
@@ -10801,7 +10985,7 @@ function _writeRelayGeneratedFile() {
         switch (generatedNode.kind) {
           case RelayConcreteNode.REQUEST:
             var _text = generatedNode.params.text;
-            !(_text != null) ?  true ? invariant(false, 'writeRelayGeneratedFile: Expected `text` in order to persist query') : undefined : void 0;
+            !(_text != null) ?  true ?  true ?  true ? invariant(false, 'writeRelayGeneratedFile: Expected `text` in order to persist query') : undefined : undefined : undefined : void 0;
             generatedNode = (0, _objectSpread2["default"])({}, generatedNode, {
               params: {
                 operationKind: generatedNode.params.operationKind,
@@ -11190,7 +11374,7 @@ var _require = __webpack_require__(7),
     getRawType = _require.getRawType,
     isClientDefinedField = _require.isClientDefinedField;
 
-var _require2 = __webpack_require__(4),
+var _require2 = __webpack_require__(3),
     createCompilerError = _require2.createCompilerError,
     createUserError = _require2.createUserError;
 
@@ -11277,6 +11461,7 @@ function traverseSelections(node, compilerContext, parentType) {
         throw createCompilerError('Unexpected ClientExtension node before ClientExtensionTransform', [selection.loc]);
 
       case 'Condition':
+      case 'Connection':
       case 'Defer':
       case 'InlineDataFragmentSpread':
       case 'ModuleImport':
@@ -11625,7 +11810,7 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var GraphQLIRTransformer = __webpack_require__(5);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createUserError = _require.createUserError;
 
 var SCHEMA_EXTENSION = "\ndirective @inline on FRAGMENT_DEFINITION\n";
@@ -11725,7 +11910,7 @@ module.exports = {
 
 var GraphQLIRTransformer = __webpack_require__(5);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * A transform that inlines all fragments and removes them.
@@ -11750,7 +11935,7 @@ function fragmentSpreadVisitor(cache) {
       return traverseResult;
     }
 
-    !(fragmentSpread.args.length === 0) ?  true ? invariant(false, 'InlineFragmentsTransform: Cannot flatten fragment spread `%s` with ' + 'arguments. Use the `ApplyFragmentArgumentTransform` before flattening', fragmentSpread.name) : undefined : void 0;
+    !(fragmentSpread.args.length === 0) ?  true ?  true ?  true ? invariant(false, 'InlineFragmentsTransform: Cannot flatten fragment spread `%s` with ' + 'arguments. Use the `ApplyFragmentArgumentTransform` before flattening', fragmentSpread.name) : undefined : undefined : undefined : void 0;
     var fragment = this.getContext().getFragment(fragmentSpread.name, fragmentSpread.loc);
     var result = {
       kind: 'InlineFragment',
@@ -11803,7 +11988,7 @@ var getIdentifierForArgumentValue = __webpack_require__(72);
 
 var murmurHash = __webpack_require__(73);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError,
     createNonRecoverableUserError = _require.createNonRecoverableUserError;
 
@@ -11937,6 +12122,20 @@ function transformField(context, fragments, scope, field, errorContext) {
   }
 }
 
+function transformConnection(context, fragments, scope, connection, errorContext) {
+  var args = transformArguments(scope, connection.args, errorContext);
+  var selections = transformSelections(context, fragments, scope, connection.selections, errorContext);
+
+  if (!selections) {
+    return null;
+  }
+
+  return (0, _objectSpread2["default"])({}, connection, {
+    args: args,
+    selections: selections
+  });
+}
+
 function transformCondition(context, fragments, scope, node, errorContext) {
   var condition = transformValue(scope, node.condition, errorContext);
 
@@ -11988,6 +12187,8 @@ function transformSelections(context, fragments, scope, selections, errorContext
 
         (_nextSelections = nextSelections).push.apply(_nextSelections, (0, _toConsumableArray2["default"])(conditionSelections));
       }
+    } else if (selection.kind === 'Connection') {
+      nextSelection = transformConnection(context, fragments, scope, selection, errorContext);
     } else if (selection.kind === 'LinkedField' || selection.kind === 'ScalarField' || selection.kind === 'ConnectionField') {
       nextSelection = transformField(context, fragments, scope, selection, errorContext);
     } else if (selection.kind === 'Defer' || selection.kind === 'Stream') {
@@ -12157,7 +12358,7 @@ module.exports = {
  */
 
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCombinedError = _require.createCombinedError,
     createUserError = _require.createUserError,
     eachWithErrors = _require.eachWithErrors;
@@ -12320,7 +12521,7 @@ module.exports = {
  */
 
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Generates an identifier for an argument value. The identifier is based on the
@@ -12356,7 +12557,7 @@ function getIdentifierForArgumentValue(value) {
       };
 
     default:
-       true ?  true ? invariant(false, 'getIdentifierForArgumentValue(): Unsupported AST kind `%s`.', value.kind) : undefined : undefined;
+       true ?  true ?  true ?  true ? invariant(false, 'getIdentifierForArgumentValue(): Unsupported AST kind `%s`.', value.kind) : undefined : undefined : undefined : undefined;
   }
 }
 
@@ -12474,13 +12675,13 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var IRTransformer = __webpack_require__(5);
 
-var RelayParser = __webpack_require__(28);
+var RelayParser = __webpack_require__(27);
 
 var SchemaUtils = __webpack_require__(7);
 
-var getLiteralArgumentValues = __webpack_require__(15);
+var getLiteralArgumentValues = __webpack_require__(16);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCompilerError = _require.createCompilerError,
     createUserError = _require.createUserError;
 
@@ -12500,7 +12701,7 @@ var _require3 = __webpack_require__(1),
     GraphQLUnionType = _require3.GraphQLUnionType,
     parse = _require3.parse;
 
-var _require4 = __webpack_require__(13),
+var _require4 = __webpack_require__(11),
     ConnectionInterface = _require4.ConnectionInterface,
     RelayFeatureFlags = _require4.RelayFeatureFlags;
 
@@ -13170,7 +13371,7 @@ var IRTransformer = __webpack_require__(5);
 var _require = __webpack_require__(7),
     getNullableType = _require.getNullableType;
 
-var _require2 = __webpack_require__(4),
+var _require2 = __webpack_require__(3),
     createUserError = _require2.createUserError;
 
 var _require3 = __webpack_require__(1),
@@ -13429,12 +13630,12 @@ var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
 var IRTransformer = __webpack_require__(5);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var _require = __webpack_require__(1),
     GraphQLString = _require.GraphQLString;
 
-var _require2 = __webpack_require__(13),
+var _require2 = __webpack_require__(11),
     getRelayHandleKey = _require2.getRelayHandleKey;
 
 function relayFieldHandleTransform(context) {
@@ -13460,7 +13661,7 @@ function visitField(field) {
   } // ensure exactly one handle
 
 
-  !(handles.length === 1) ?  true ? invariant(false, 'RelayFieldHandleTransform: Expected fields to have at most one ' + '"handle" property, got `%s`.', handles.join(', ')) : undefined : void 0;
+  !(handles.length === 1) ?  true ?  true ?  true ? invariant(false, 'RelayFieldHandleTransform: Expected fields to have at most one ' + '"handle" property, got `%s`.', handles.join(', ')) : undefined : undefined : undefined : void 0;
   var alias = field.alias;
   var handle = handles[0];
   var name = getRelayHandleKey(handle.name, handle.key, field.name);
@@ -13509,7 +13710,7 @@ module.exports = {
  */
 
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createUserError = _require.createUserError;
 
 var _require2 = __webpack_require__(1),
@@ -13640,7 +13841,7 @@ module.exports = isEquivalentType;
  */
 
 
-var t = __webpack_require__(23);
+var t = __webpack_require__(22);
 
 var _require = __webpack_require__(41),
     exactObjectTypeAnnotation = _require.exactObjectTypeAnnotation,
@@ -14087,8 +14288,10 @@ function visitModuleImport(node, state) {
   // of @module: skip processing a node if its SplitOperation has already
   // been generated
   var normalizationName = getNormalizationOperationName(node.name);
+  var createdSplitOperation = state.splitOperations.get(normalizationName);
 
-  if (state.splitOperations.has(normalizationName)) {
+  if (createdSplitOperation) {
+    createdSplitOperation.parentSources.add(node.documentName);
     return node;
   }
 
@@ -14101,6 +14304,7 @@ function visitModuleImport(node, state) {
       kind: 'Derived',
       source: node.loc
     },
+    parentSources: new Set([node.documentName]),
     metadata: {
       derivedFrom: transformedNode.name
     },
@@ -14233,6 +14437,7 @@ function visitRoot(node) {
           }
 
         case 'Condition':
+        case 'Connection':
         case 'ClientExtension':
         case 'Defer':
         case 'InlineDataFragmentSpread':
@@ -14341,11 +14546,11 @@ var GraphQLIRTransformer = __webpack_require__(5);
 
 var IMap = __webpack_require__(14).Map;
 
-var partitionArray = __webpack_require__(29);
+var partitionArray = __webpack_require__(28);
 
 var getIdentifierForSelection = __webpack_require__(34);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * A transform that removes redundant fields and fragment spreads. Redundancy is
@@ -14502,6 +14707,7 @@ function transformNode(node, selectionMap) {
       case 'ModuleImport':
       case 'ClientExtension':
       case 'InlineDataFragmentSpread':
+      case 'Connection':
       case 'ConnectionField':
       case 'LinkedField':
         {
@@ -14532,7 +14738,7 @@ function transformNode(node, selectionMap) {
 
       default:
         selection;
-         true ?  true ? invariant(false, 'SkipRedundantNodesTransform: Unexpected node kind `%s`.', selection.kind) : undefined : undefined;
+         true ?  true ?  true ?  true ? invariant(false, 'SkipRedundantNodesTransform: Unexpected node kind `%s`.', selection.kind) : undefined : undefined : undefined : undefined;
     }
   });
   var nextNode = selections.length ? (0, _objectSpread2["default"])({}, node, {
@@ -14594,7 +14800,7 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
 var GraphQLIRTransformer = __webpack_require__(5);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var FAIL = 'fail';
 var PASS = 'pass';
@@ -14676,6 +14882,10 @@ function transformNode(context, fragments, node) {
         nextSelection = transformNode(context, fragments, selection);
         break;
 
+      case 'Connection':
+        nextSelection = transformNode(context, fragments, selection);
+        break;
+
       case 'InlineFragment':
         // TODO combine with the LinkedField case when flow supports this
         nextSelection = transformNode(context, fragments, selection);
@@ -14694,12 +14904,12 @@ function transformNode(context, fragments, node) {
         break;
 
       case 'InlineDataFragmentSpread':
-         true ?  true ? invariant(false, 'SkipUnreachableNodeTransform: Did not expect an ' + 'InlineDataFragmentSpread here. Only expecting ' + 'InlineDataFragmentSpread in reader ASTs and this transform to ' + 'run only on normalization ASTs.') : undefined : undefined;
+         true ?  true ?  true ?  true ? invariant(false, 'SkipUnreachableNodeTransform: Did not expect an ' + 'InlineDataFragmentSpread here. Only expecting ' + 'InlineDataFragmentSpread in reader ASTs and this transform to ' + 'run only on normalization ASTs.') : undefined : undefined : undefined : undefined;
       // fallthrough
 
       default:
         selection.kind;
-         true ?  true ? invariant(false, 'SkipUnreachableNodeTransform: Unexpected selection kind `%s`.', selection.kind) : undefined : undefined;
+         true ?  true ?  true ?  true ? invariant(false, 'SkipUnreachableNodeTransform: Unexpected selection kind `%s`.', selection.kind) : undefined : undefined : undefined : undefined;
     }
 
     if (nextSelection) {
@@ -14754,7 +14964,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _objectSpread2 = _interopRequireDefault(__webpack_require__(2));
 
-var inferRootArgumentDefinitions = __webpack_require__(22);
+var inferRootArgumentDefinitions = __webpack_require__(21);
 
 /**
  * Refines the argument definitions for operations to remove unused arguments
@@ -14836,9 +15046,9 @@ module.exports = {
  */
 
 
-var inferRootArgumentDefinitions = __webpack_require__(22);
+var inferRootArgumentDefinitions = __webpack_require__(21);
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     createCombinedError = _require.createCombinedError,
     createUserError = _require.createUserError,
     eachWithErrors = _require.eachWithErrors;
@@ -15052,8 +15262,8 @@ function find(text) {
 
       if (fragments.type === 'ObjectExpression') {
         fragments.properties.forEach(function (property) {
-          !(property.type === 'ObjectProperty' && property.key.type === 'Identifier' && property.value.type === 'TaggedTemplateExpression') ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be ' + '`key: graphql`.', node.callee.name) : undefined : void 0;
-          !isGraphQLModernOrDeprecatedTag(property.value.tag) ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be tagged ' + 'with `graphql`, got `%s`.', node.callee.name, getSourceTextForLocation(text, property.value.tag.loc)) : undefined : void 0;
+          !(property.type === 'ObjectProperty' && property.key.type === 'Identifier' && property.value.type === 'TaggedTemplateExpression') ?  true ?  true ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be ' + '`key: graphql`.', node.callee.name) : undefined : undefined : undefined : void 0;
+          !isGraphQLModernOrDeprecatedTag(property.value.tag) ?  true ?  true ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be tagged ' + 'with `graphql`, got `%s`.', node.callee.name, getSourceTextForLocation(text, property.value.tag.loc)) : undefined : undefined : undefined : void 0;
 
           if (isGraphQLTag(property.value.tag)) {
             result.push({
@@ -15064,8 +15274,8 @@ function find(text) {
           }
         });
       } else {
-        !(fragments && fragments.type === 'TaggedTemplateExpression') ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects a second argument of fragment ' + 'definitions.', node.callee.name) : undefined : void 0;
-        !isGraphQLModernOrDeprecatedTag(fragments.tag) ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be tagged ' + 'with `graphql`, got `%s`.', node.callee.name, getSourceTextForLocation(text, fragments.tag.loc)) : undefined : void 0;
+        !(fragments && fragments.type === 'TaggedTemplateExpression') ?  true ?  true ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects a second argument of fragment ' + 'definitions.', node.callee.name) : undefined : undefined : undefined : void 0;
+        !isGraphQLModernOrDeprecatedTag(fragments.tag) ?  true ?  true ?  true ? invariant(false, 'FindGraphQLTags: `%s` expects fragment definitions to be tagged ' + 'with `graphql`, got `%s`.', node.callee.name, getSourceTextForLocation(text, fragments.tag.loc)) : undefined : undefined : undefined : void 0;
         result.push({
           keyName: null,
           template: getGraphQLText(fragments.quasi),
@@ -15124,7 +15334,7 @@ function isGraphQLModernOrDeprecatedTag(tag) {
 
 function getTemplateNode(quasi) {
   var quasis = quasi.quasis;
-  !(quasis && quasis.length === 1) ?  true ? invariant(false, 'FindGraphQLTags: Substitutions are not allowed in graphql tags.') : undefined : void 0;
+  !(quasis && quasis.length === 1) ?  true ?  true ?  true ? invariant(false, 'FindGraphQLTags: Substitutions are not allowed in graphql tags.') : undefined : undefined : undefined : void 0;
   return quasis[0];
 }
 
@@ -15223,15 +15433,15 @@ var _interopRequireDefault = __webpack_require__(0);
 
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(6));
 
-var ASTCache = __webpack_require__(26);
+var ASTCache = __webpack_require__(25);
 
 var GraphQL = __webpack_require__(1);
 
 var Profiler = __webpack_require__(8);
 
-var fs = __webpack_require__(12);
+var fs = __webpack_require__(13);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var path = __webpack_require__(9);
 
@@ -15259,7 +15469,7 @@ module.exports = function (tagFinder, getFileFilter) {
     try {
       text = fs.readFileSync(filePath, 'utf8');
     } catch (_unused) {
-       true ?  true ? invariant(false, 'RelaySourceModuleParser: Files should be filtered before passed to the ' + 'parser, got unfiltered file `%s`.', file.relPath) : undefined : undefined;
+       true ?  true ?  true ?  true ? invariant(false, 'RelaySourceModuleParser: Files should be filtered before passed to the ' + 'parser, got unfiltered file `%s`.', file.relPath) : undefined : undefined : undefined : undefined;
     }
 
     var astDefinitions = [];
@@ -15267,7 +15477,7 @@ module.exports = function (tagFinder, getFileFilter) {
     memoizedTagFinder(text, baseDir, file).forEach(function (template) {
       var source = new GraphQL.Source(template, file.relPath);
       var ast = parseGraphQL(source);
-      !ast.definitions.length ?  true ? invariant(false, 'RelaySourceModuleParser: Expected GraphQL text to contain at least one ' + 'definition (fragment, mutation, query, subscription), got `%s`.', template) : undefined : void 0;
+      !ast.definitions.length ?  true ?  true ?  true ? invariant(false, 'RelaySourceModuleParser: Expected GraphQL text to contain at least one ' + 'definition (fragment, mutation, query, subscription), got `%s`.', template) : undefined : undefined : undefined : void 0;
       sources.push(source.body);
       astDefinitions.push.apply(astDefinitions, (0, _toConsumableArray2["default"])(ast.definitions));
     });
@@ -15341,7 +15551,7 @@ var util = __webpack_require__(18);
 var cache = new RelayCompilerCache('RelayFindGraphQLTags', 'v1');
 
 function memoizedFind(tagFinder, text, baseDir, file) {
-  !file.exists ?  true ? invariant(false, 'RelayFindGraphQLTags: Called with non-existent file `%s`', file.relPath) : undefined : void 0;
+  !file.exists ?  true ?  true ?  true ? invariant(false, 'RelayFindGraphQLTags: Called with non-existent file `%s`', file.relPath) : undefined : undefined : undefined : void 0;
   return cache.getOrCompute(file.hash, find.bind(null, tagFinder, text, path.join(baseDir, file.relPath)));
 }
 
@@ -15363,17 +15573,17 @@ function validateTemplate(_ref, moduleName, filePath) {
   var ast = graphql.parse(new graphql.Source(template, filePath, sourceLocationOffset));
   ast.definitions.forEach(function (def) {
     if (def.kind === 'OperationDefinition') {
-      !(def.name != null) ?  true ? invariant(false, 'RelayFindGraphQLTags: In module `%s`, an operation requires a name.', moduleName, def.kind) : undefined : void 0;
+      !(def.name != null) ?  true ?  true ?  true ? invariant(false, 'RelayFindGraphQLTags: In module `%s`, an operation requires a name.', moduleName, def.kind) : undefined : undefined : undefined : void 0;
       var definitionName = def.name.value;
       var operationNameParts = definitionName.match(/^(.*)(Mutation|Query|Subscription)$/);
-      !(operationNameParts && definitionName.startsWith(moduleName)) ?  true ? invariant(false, 'RelayFindGraphQLTags: Operation names in graphql tags must be prefixed ' + 'with the module name and end in "Mutation", "Query", or ' + '"Subscription". Got `%s` in module `%s`.', definitionName, moduleName) : undefined : void 0;
+      !(operationNameParts && definitionName.startsWith(moduleName)) ?  true ?  true ?  true ? invariant(false, 'RelayFindGraphQLTags: Operation names in graphql tags must be prefixed ' + 'with the module name and end in "Mutation", "Query", or ' + '"Subscription". Got `%s` in module `%s`.', definitionName, moduleName) : undefined : undefined : undefined : void 0;
     } else if (def.kind === 'FragmentDefinition') {
       var _definitionName = def.name.value;
 
       if (keyName != null) {
-        !(_definitionName === moduleName + '_' + keyName) ?  true ? invariant(false, 'RelayFindGraphQLTags: Container fragment names must be ' + '`<ModuleName>_<propName>`. Got `%s`, expected `%s`.', _definitionName, moduleName + '_' + keyName) : undefined : void 0;
+        !(_definitionName === moduleName + '_' + keyName) ?  true ?  true ?  true ? invariant(false, 'RelayFindGraphQLTags: Container fragment names must be ' + '`<ModuleName>_<propName>`. Got `%s`, expected `%s`.', _definitionName, moduleName + '_' + keyName) : undefined : undefined : undefined : void 0;
       } else {
-        !_definitionName.startsWith(moduleName) ?  true ? invariant(false, 'RelayFindGraphQLTags: Fragment names in graphql tags must be prefixed ' + 'with the module name. Got `%s` in module `%s`.', _definitionName, moduleName) : undefined : void 0;
+        !_definitionName.startsWith(moduleName) ?  true ?  true ?  true ? invariant(false, 'RelayFindGraphQLTags: Fragment names in graphql tags must be prefixed ' + 'with the module name. Got `%s` in module `%s`.', _definitionName, moduleName) : undefined : undefined : undefined : void 0;
       }
     }
   });
@@ -15414,13 +15624,13 @@ module.exports = {
 
 var _interopRequireDefault = __webpack_require__(0);
 
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(24));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(23));
 
 var Profiler = __webpack_require__(8);
 
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(12);
 
-var fs = __webpack_require__(12);
+var fs = __webpack_require__(13);
 
 var os = __webpack_require__(99);
 
