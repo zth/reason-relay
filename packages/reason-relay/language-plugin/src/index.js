@@ -32,8 +32,7 @@ module.exports = () => ({
   isGeneratedFile: fileName =>
     fileName.endsWith("_graphql.re") || fileName.endsWith("_graphql.bs.js"),
   getFileFilter,
-  keepFileInGeneratedFolder: fileName => fileName.endsWith(".bs.js"),
-  getRefetchOperationModuleImportPath: operationName =>
-    `./${operationName}_graphql.bs.js`,
+  getRefetchOperationModuleImportStatement: operationName =>
+    `${operationName}_graphql.bs`,
   getModuleName: operationName => `${operationName}_graphql`
 });

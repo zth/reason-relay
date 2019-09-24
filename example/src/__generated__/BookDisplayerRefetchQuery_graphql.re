@@ -138,7 +138,8 @@ return {
     "id": null,
     "text": "query BookDisplayerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...BookDisplayer_book\n    id\n  }\n}\n\nfragment BookDisplayer_book on Book {\n  ...BookEditor_book\n  title\n  author\n  shelf {\n    ...ShelfDisplayer_shelf\n    id\n  }\n  id\n}\n\nfragment BookEditor_book on Book {\n  id\n  title\n  author\n  status\n}\n\nfragment ShelfDisplayer_shelf on Shelf {\n  name\n}\n",
     "metadata": {
-      "derivedFrom": "BookDisplayer_book"
+      "derivedFrom": "BookDisplayer_book",
+      "isRefetchableQuery": true
     }
   }
 };

@@ -12,7 +12,8 @@
     "build": "rm -rf lib && yarn babel && yarn bs:build",
     "bs:build": "bsb -make-world",
     "bs:start": "bsb -make-world -w",
-    "bs:clean": "bsb -clean-world"
+    "bs:clean": "bsb -clean-world",
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -21,10 +22,12 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-flow": "^7.0.0",
     "@babel/types": "^7.4.4",
+    "babel-jest": "^24.9.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "flow-bin": "^0.101.0",
     "flow-typed": "^2.5.2",
     "gentype": "^2.29.0",
+    "jest": "^24.9.0",
     "relay-compiler": "^5.0.0",
     "relay-runtime": "^5.0.0"
   },
