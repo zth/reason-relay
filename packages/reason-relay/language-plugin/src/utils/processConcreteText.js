@@ -9,7 +9,7 @@
  */
 
 function processConcreteText(concreteText: string): string {
-  let requireRegexp = /(require\('.\/)([A-Za-z_.0-9/]+)(.graphql.re'\))/gm;
+  let requireRegexp = /(require\('.\/)([A-Za-z_.0-9/]+)(.graphql.\w*'\))/gm;
   let str = concreteText;
 
   let result;
