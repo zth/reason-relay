@@ -1,8 +1,18 @@
+/**
+ * This PPX defines the [%relay.<operation> {| ... |}] extension points.
+ */
+
+// Ppxlib provides a number of helpers for writing and registering PPXs that life is very difficult without.
 open Ppxlib;
 
 exception Could_not_extract_operation_name;
 exception Could_not_extract_operation;
 
+/**
+ * This function takes a GraphQL document as a string (typically extracted from the [%relay.<operation>] nodes),
+ * uses Graphql_parser to parse the string into a GraphQL definitions, and then extracts the _first_ operation
+ * of the document only. This is because Relay disallows multiple operations in the same definition.
+ */
 let extractGraphQLOperation = str =>
   switch (str |> Graphql_parser.parse) {
   | Ok(definitions) =>
@@ -13,24 +23,59 @@ let extractGraphQLOperation = str =>
   | Error(_) => raise(Could_not_extract_operation)
   };
 
+/**
+ * Takes a raw GraphQL document as a string and extracts the query name. Raises an error if it's not a query
+ * or the query has no name.
+ */
 let extractTheQueryName = str =>
   switch (str |> extractGraphQLOperation) {
   | Operation({optype: Query, name: Some(name)}) => name
   | _ => raise(Could_not_extract_operation_name)
   };
 
+/**
+ * Takes a raw GraphQL document as a string and extracts the mutation name. Raises an error if it's not a mutation
+ * or the mutation has no name.
+ */
 let extractTheMutationName = str =>
   switch (str |> extractGraphQLOperation) {
   | Operation({optype: Mutation, name: Some(name)}) => name
   | _ => raise(Could_not_extract_operation_name)
   };
 
+/**
+ * Takes a raw GraphQL document as a string and extracts the fragment name. Raises an error if it's not a fragment
+ * or the fragment has no name.
+ */
 let extractTheFragmentName = str =>
   switch (str |> extractGraphQLOperation) {
   | Fragment({name}) => name
   | _ => raise(Could_not_extract_operation_name)
   };
 
+/**
+ * Takes a raw GraphQL document as a string and extracts the subscription name. Raises an error if it's not a subscription
+ * or the subscription has no name.
+ */
+let extractTheSubscriptionName = str =>
+  switch (str |> extractGraphQLOperation) {
+  | Operation({optype: Subscription, name: Some(name)}) => name
+  | _ => raise(Could_not_extract_operation_name)
+  };
+
+/**
+ * Takes a raw GraphQL document as a string and attempts to extract the refetchable query name if there's one defined.
+ * Relay wants you to define refetchable fragments roughly like this:
+ * 
+ * fragment SomeFragment_someName on SomeType @refetchable(queryName: "SomeFragmentRefetchQuery") {
+ *   ...
+ * }
+ * 
+ * So, this functions makes sure that @refetchable is defined and the queryName arg exists, and if so, extracts and
+ * returns "SomeFragmentRefetchQuery" as an option string.
+ * 
+ * Right now, only one directive is allowed a fragment, which might need to change in the future.
+ */
 let extractFragmentRefetchableQueryName = str =>
   switch (str |> extractGraphQLOperation) {
   | Fragment({
@@ -89,14 +134,14 @@ let fragmentHasConnectionNotation = str =>
   | _ => false
   };
 
-let extractTheSubscriptionName = str =>
-  switch (str |> extractGraphQLOperation) {
-  | Operation({optype: Subscription, name: Some(name)}) => name
-  | _ => raise(Could_not_extract_operation_name)
-  };
 
 let getGraphQLModuleName = opName => opName ++ "_graphql";
 
+/**
+ * This is some AST voodoo to extract the provided string from [%relay.<operation> {| ...string here... |}].
+ * It basically just matches on the correct AST structure for having an extension node with a string, and 
+ * returns that string.
+ */
 let extractOperationStr = (~loc, ~expr) =>
   switch (expr) {
   | PStr([
@@ -129,6 +174,9 @@ let extractOperationStr = (~loc, ~expr) =>
     )
   };
 
+/**
+ * This returns an AST record representing a module name definition.
+ */
 let makeModuleNameAst = (~loc, ~moduleName) => {
   pmod_attributes: [],
   pmod_loc: loc,
@@ -136,10 +184,15 @@ let makeModuleNameAst = (~loc, ~moduleName) => {
     Pmod_ident({loc, txt: Lident(getGraphQLModuleName(moduleName))}),
 };
 
+/**
+ * This constructs a module definition AST, in this case for fragments. Note it's only the definition structure,
+ * not the full definition.
+ */
 let makeFragment = (~loc, ~moduleName, ~refetchableQueryName, ~hasConnection) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
-      [%stri module Operation = [%m makeModuleNameAst(~loc, ~moduleName)]],
+      // The %stri PPX comes from Ppxlib and means "make a structure item AST out of this raw string"
+      [%stri module Operation = [%m makeModuleNameAst(~loc, ~moduleName)]], // %m also comes from Ppxlib and means "make a module definition"
       switch (refetchableQueryName) {
       | Some(queryName) => [%stri
           module RefetchableOperation = [%m
@@ -217,6 +270,9 @@ let makeFragment = (~loc, ~moduleName, ~refetchableQueryName, ~hasConnection) =>
     ]),
   );
 
+/**
+ * Check out the comments for makeFragment, this does the same thing but for queries.
+ */
 let makeQuery = (~loc, ~moduleName) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
@@ -243,6 +299,9 @@ let makeQuery = (~loc, ~moduleName) =>
     ]),
   );
 
+/**
+ * Check out the comments for makeFragment, this does the same thing but for mutations.
+ */
 let makeMutation = (~loc, ~moduleName) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
@@ -269,6 +328,9 @@ let makeMutation = (~loc, ~moduleName) =>
     ]),
   );
 
+/**
+ * Check out the comments for makeFragment, this does the same thing but for subscriptions.
+ */
 let makeSubscription = (~loc, ~moduleName) =>
   Ast_helper.Mod.mk(
     Pmod_structure([
@@ -286,6 +348,10 @@ let makeSubscription = (~loc, ~moduleName) =>
     ]),
   );
 
+/**
+ * This is what defines [%relay.query] as an extension point and provides the PPX
+ * with how to transform the extension point when it finds one.
+ */
 let queryExtension =
   Extension.declare(
     "relay.query",
@@ -298,6 +364,7 @@ let queryExtension =
     )
   );
 
+// Same as queryExtension but for [%relay.fragment]
 let fragmentExtension =
   Extension.declare(
     "relay.fragment",
@@ -324,6 +391,7 @@ let fragmentExtension =
     },
   );
 
+// Same as queryExtension but for [%relay.mutation]
 let mutationExtension =
   Extension.declare(
     "relay.mutation",
@@ -336,6 +404,7 @@ let mutationExtension =
     )
   );
 
+// Same as queryExtension but for [%relay.subscription]
 let subscriptionExtension =
   Extension.declare(
     "relay.subscription",
@@ -349,6 +418,7 @@ let subscriptionExtension =
     )
   );
 
+// This registers all defined extension points to the "reason-relay" ppx.
 let () =
   Driver.register_transformation(
     ~extensions=[
