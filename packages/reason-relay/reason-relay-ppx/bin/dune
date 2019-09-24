@@ -1,0 +1,13 @@
+(executable (name ReasonRelayPpxApp)
+    (modules (:standard \ ReasonRelayPpxBinPesyModules))
+    (public_name ReasonRelayPpxApp.exe)
+    (libraries reason-relay-ppx.bin.pesy-modules)
+    (flags -open ReasonRelayPpxBinPesyModules))
+(library (public_name reason-relay-ppx.bin.pesy-modules)
+    (name ReasonRelayPpxBinPesyModules)
+    (modules ReasonRelayPpxBinPesyModules)
+    (libraries reason-relay-ppx.library ocaml-migrate-parsetree ppxlib graphql_parser str)
+    (preprocess (pps ppxlib.metaquot)))
+(rule
+    (with-stdout-to ReasonRelayPpxBinPesyModules.re
+        (run echo "module Library = ReasonRelayPpxLibrary;")))

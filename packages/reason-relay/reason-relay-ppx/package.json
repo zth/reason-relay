@@ -1,0 +1,75 @@
+{
+  "name": "reason-relay-ppx",
+  "version": "0.1.0",
+  "description": "Starter Reason Esy Pesy Project",
+  "esy": {
+    "build": "refmterr dune build -p #{self.name}",
+    "NOTE": "Optional release Section. Customizes result of `esy release`",
+    "release": {
+      "releasedBinaries": [
+        "ReasonRelayPpxApp.exe"
+      ]
+    },
+    "buildEnv": {
+      "ODOC_SYNTAX": "re"
+    }
+  },
+  "buildDirs": {
+    "test": {
+      "imports": [
+        "Library = require('reason-relay-ppx/library')",
+        "Rely = require('rely/lib')"
+      ],
+      "flags": [
+        "-linkall",
+        "-g",
+        "-w",
+        "-9"
+      ]
+    },
+    "testExe": {
+      "imports": [
+        "Test = require('reason-relay-ppx/test')"
+      ],
+      "bin": {
+        "RunReasonRelayPpxTests.exe": "RunReasonRelayPpxTests.re"
+      }
+    },
+    "library": {
+      "imports": [
+        "Console = require('console/lib')",
+        "Pastel = require('pastel/lib')"
+      ]
+    },
+    "bin": {
+      "imports": [
+        "Library = require('reason-relay-ppx/library')"
+      ],
+      "bin": {
+        "ReasonRelayPpxApp.exe": "ReasonRelayPpxApp.re"
+      }
+    }
+  },
+  "scripts": {
+    "start": "esy x ReasonRelayPpxApp.exe",
+    "test": "esy x RunReasonRelayPpxTests.exe",
+    "doc": "esy dune build @doc",
+    "doc-path": "esy echo #{self.target_dir}/default/_doc/_html/index.html"
+  },
+  "dependencies": {
+    "@esy-ocaml/reason": "*",
+    "@opam/dune": "*",
+    "@opam/graphql_parser": "0.12.2",
+    "@opam/ocaml-migrate-parsetree": "1.4.0",
+    "@opam/ppx_tools_versioned": "5.2.3",
+    "@opam/ppxlib": "0.6.0",
+    "@reason-native/rely": "*",
+    "ocaml": "~4.6.1",
+    "refmterr": "*"
+  },
+  "devDependencies": {
+    "@opam/merlin": "*",
+    "ocaml": "~4.6.1",
+    "@opam/odoc": "*"
+  }
+}

@@ -1,7 +1,0 @@
-(library
-  (name ReasonRelayPpx)
-  (public_name reason-relay-ppx.lib)
-  (libraries reason ocaml-migrate-parsetree ppxlib graphql_parser str)
-  (kind ppx_rewriter)
-  (preprocess (pps ppxlib.metaquot))
-)

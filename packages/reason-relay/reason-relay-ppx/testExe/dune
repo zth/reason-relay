@@ -1,0 +1,12 @@
+(executable (name RunReasonRelayPpxTests)
+    (modules (:standard \ ReasonRelayPpxTestExePesyModules))
+    (public_name RunReasonRelayPpxTests.exe)
+    (libraries reason-relay-ppx.testExe.pesy-modules)
+    (flags -open ReasonRelayPpxTestExePesyModules))
+(library (public_name reason-relay-ppx.testExe.pesy-modules)
+    (name ReasonRelayPpxTestExePesyModules)
+    (modules ReasonRelayPpxTestExePesyModules)
+    (libraries reason-relay-ppx.test))
+(rule
+    (with-stdout-to ReasonRelayPpxTestExePesyModules.re
+        (run echo "module Test = ReasonRelayPpxTest;")))

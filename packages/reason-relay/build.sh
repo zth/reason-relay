@@ -3,8 +3,8 @@ yarn build;
 
 # build ppx
 echo "Build PPX...";
-cd ppx;
-esy @ppx;
+cd reason-relay-ppx;
+esy; esy test;
 cd ..;
 
 # build language plugin
@@ -24,8 +24,8 @@ cp ./../../README.md dist/;
 cp -rf src/vendor dist/src/vendor;
 
 # copy ppx and postinstall script
-cp ppx/_build/default/bin/bin.exe dist/ppx-linux;
-cp ppx/prebuilt/ppx-darwin dist/ppx-darwin;
+cp reason-relay-ppx/_esy/default/build/default/ReasonRelayPpxApp.exe dist/ppx-linux;
+# cp ppx/prebuilt/ppx-darwin dist/ppx-darwin;
 cp postinstall.js dist/postinstall.js # Empty placeholder first
 
 # copy config files

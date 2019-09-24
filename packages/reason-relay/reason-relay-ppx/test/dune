@@ -1,0 +1,13 @@
+(library (name ReasonRelayPpxTest) (public_name reason-relay-ppx.test)
+    (modules (:standard \ ReasonRelayPpxTestPesyModules))
+    (libraries reason-relay-ppx.test.pesy-modules)
+    (flags -linkall -g -w -9 -open ReasonRelayPpxTestPesyModules))
+(library (public_name reason-relay-ppx.test.pesy-modules)
+    (name ReasonRelayPpxTestPesyModules)
+    (modules ReasonRelayPpxTestPesyModules)
+    (libraries reason-relay-ppx.library rely.lib))
+(rule
+    (with-stdout-to ReasonRelayPpxTestPesyModules.re
+        (run echo
+             "module Library = ReasonRelayPpxLibrary;\
+            \nmodule Rely = Rely;")))

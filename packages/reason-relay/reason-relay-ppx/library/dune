@@ -1,0 +1,15 @@
+(library (name ReasonRelayPpxLibrary) (public_name reason-relay-ppx.library)
+    (modules (:standard \ ReasonRelayPpxLibraryPesyModules))
+    (libraries reason-relay-ppx.library.pesy-modules)
+    (flags -open ReasonRelayPpxLibraryPesyModules)
+    (kind ppx_rewriter)
+    (preprocess (pps ppxlib.metaquot)))
+(library (public_name reason-relay-ppx.library.pesy-modules)
+    (name ReasonRelayPpxLibraryPesyModules)
+    (modules ReasonRelayPpxLibraryPesyModules)
+    (libraries console.lib pastel.lib ocaml-migrate-parsetree ppxlib graphql_parser str)
+    (preprocess (pps ppxlib.metaquot)))
+(rule
+    (with-stdout-to ReasonRelayPpxLibraryPesyModules.re
+        (run echo  "module Console = Console;\
+                  \nmodule Pastel = Pastel;")))
