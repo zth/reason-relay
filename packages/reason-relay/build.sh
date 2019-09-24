@@ -9,7 +9,7 @@ cd ..;
 
 # build language plugin
 echo "Build language plugin...";
-cd ./language-plugin/; yarn; yarn build; cd ..;
+cd ./language-plugin/; yarn; yarn test; yarn build; cd ..;
 
 # clean dist
 rm -rf dist;
