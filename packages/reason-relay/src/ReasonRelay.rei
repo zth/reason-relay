@@ -24,6 +24,25 @@ let dataIdToString: dataId => string;
 let makeDataId: string => dataId;
 
 /**
+ * Experimental stuff
+ */
+
+module ReactSuspenseConfig: {
+  type t;
+  let make:
+    (
+      ~timeOutMs: float,
+      ~busyDelayMs: float=?,
+      ~busyMinDurationMs: float=?,
+      unit
+    ) =>
+    t;
+};
+
+let unstable_withSuspenseConfig: (unit => unit, ReactSuspenseConfig.t) => unit;
+
+/**
+ * Store helpers.
  * We modify most store primitives to return options instead of nullables.
  */
 module RecordProxy: {

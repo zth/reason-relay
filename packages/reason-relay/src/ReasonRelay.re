@@ -16,6 +16,35 @@ let dataIdToString = dataId => _dataIdToString(dataId);
 external _makeDataId: string => dataId = "%identity";
 let makeDataId = string => _makeDataId(string);
 
+module ReactSuspenseConfig = {
+  type t = {
+    .
+    "timeOutMs": float,
+    "busyDelayMs": option(float),
+    "busyMinDurationMs": option(float),
+  };
+
+  let make = (~timeOutMs, ~busyDelayMs=?, ~busyMinDurationMs=?, ()) => {
+    "timeOutMs": timeOutMs,
+    "busyDelayMs": busyDelayMs,
+    "busyMinDurationMs": busyMinDurationMs,
+  };
+};
+
+[@bs.module "react"]
+external unstable_withSuspenseConfig:
+  (
+    unit => unit,
+    {
+      .
+      "timeOutMs": float,
+      "busyDelayMs": option(float),
+      "busyMinDurationMs": option(float),
+    }
+  ) =>
+  unit =
+  "unstable_withSuspenseConfig";
+
 module RecordProxy = {
   type t;
   type arguments('a) = jsObj('a);
@@ -440,16 +469,6 @@ type paginationBlockingFragmentReturn('fragmentData, 'variables) = {
   refetch: refetchFn('variables),
 };
 
-type paginationBlockingFragmentReturnRaw('fragmentData, 'variables) = {
-  .
-  "data": 'fragmentData,
-  "loadNext": paginationLoadMoreFn,
-  "loadPrevious": paginationLoadMoreFn,
-  "hasNext": bool,
-  "hasPrevious": bool,
-  "refetch": refetchFnRaw('variables),
-};
-
 type paginationLegacyFragmentReturn('fragmentData, 'variables) = {
   data: 'fragmentData,
   loadNext: paginationLoadMoreFn,
@@ -461,28 +480,36 @@ type paginationLegacyFragmentReturn('fragmentData, 'variables) = {
   refetch: refetchFn('variables),
 };
 
-type paginationLegacyFragmentReturnRaw('fragmentData, 'variables) = {
-  .
-  "data": 'fragmentData,
-  "loadNext": paginationLoadMoreFn,
-  "loadPrevious": paginationLoadMoreFn,
-  "hasNext": bool,
-  "hasPrevious": bool,
-  "isLoadingNext": bool,
-  "isLoadingPrevious": bool,
-  "refetch": refetchFnRaw('variables),
-};
-
 [@bs.module "./vendor/relay-experimental"]
 external _useLegacyPaginationFragment:
   (fragmentNode, 'fragmentRef) =>
-  paginationLegacyFragmentReturnRaw('fragmentData, 'variables) =
+  {
+    .
+    "data": 'fragmentData,
+    "loadNext": paginationLoadMoreFn,
+    "loadPrevious": paginationLoadMoreFn,
+    "hasNext": bool,
+    "hasPrevious": bool,
+    "isLoadingNext": bool,
+    "isLoadingPrevious": bool,
+    "refetch": refetchFnRaw('variables),
+  } =
   "useLegacyPaginationFragment";
 
 [@bs.module "./vendor/relay-experimental"]
 external _useBlockingPaginationFragment:
   (fragmentNode, 'fragmentRef) =>
-  paginationBlockingFragmentReturnRaw('fragmentData, 'variables) =
+  {
+    .
+    "data": 'fragmentData,
+    "loadNext": paginationLoadMoreFn,
+    "loadPrevious": paginationLoadMoreFn,
+    "hasNext": bool,
+    "hasPrevious": bool,
+    "isLoadingNext": bool,
+    "isLoadingPrevious": bool,
+    "refetch": refetchFnRaw('variables),
+  } =
   "useBlockingPaginationFragment";
 
 module MakeUsePaginationFragment = (C: MakeUsePaginationFragmentConfig) => {
