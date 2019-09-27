@@ -2,6 +2,7 @@ steps:
   - template: utils/use-node.yml
 
   - script: "mkdir _release"
+    workingDirectory: "packages/reason-relay/reason-relay-ppx"
     displayName: "Create _release dir"
 
   - template: release-platform-setup.yml

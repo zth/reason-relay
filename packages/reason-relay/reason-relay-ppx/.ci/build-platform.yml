@@ -23,13 +23,17 @@ jobs:
       - template: utils/use-esy.yml
       - template: utils/restore-build-cache.yml
       - script: "esy install"
+        workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "esy install"
       - script: "esy build"
+        workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "esy build"
       - template: utils/create-docs.yml
       - script: "esy test"
+        workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "Test command"
       - script: "esy release"
+        workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "esy release"
       - template: utils/publish-build-cache.yml
       - task: PublishBuildArtifacts@1
