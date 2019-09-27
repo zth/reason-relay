@@ -24,7 +24,7 @@ cp ./../../README.md dist/;
 cp -rf src/vendor dist/src/vendor;
 
 # copy ppx and postinstall script
-cp reason-relay-ppx/_esy/default/build/default/ReasonRelayPpxApp.exe dist/ppx-linux;
+cp reason-relay-ppx/_esy/default/build/default/bin/ReasonRelayPpxApp.exe dist/ppx-linux;
 # cp ppx/prebuilt/ppx-darwin dist/ppx-darwin;
 cp postinstall.js dist/postinstall.js # Empty placeholder first
 
