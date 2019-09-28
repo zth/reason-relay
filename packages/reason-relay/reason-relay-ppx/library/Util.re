@@ -72,21 +72,25 @@ let extractTheSubscriptionName = str =>
  *
  * So, this functions makes sure that @refetchable is defined and the queryName arg exists, and if so, extracts and
  * returns "SomeFragmentRefetchQuery" as an option string.
- *
- * Right now, only one directive is allowed per fragment, which might need to change in the future.
  */
 let extractFragmentRefetchableQueryName = str =>
   switch (str |> extractGraphQLOperation) {
-  | Fragment({
-      name: _,
-      directives: [
-        {
-          name: "refetchable",
-          arguments: [("queryName", `String(queryName))],
-        },
-      ],
-    }) =>
-    Some(queryName)
+  | Fragment({name: _, directives}) =>
+    let refetchableQueryName = ref(None);
+
+    directives
+    |> List.iter((dir: Graphql_parser.directive) =>
+         switch (dir) {
+         | {
+             name: "refetchable",
+             arguments: [("queryName", `String(queryName))],
+           } =>
+           refetchableQueryName := Some(queryName);
+         | _ => ()
+         }
+       );
+
+    refetchableQueryName^;
   | _ => None
   };
 

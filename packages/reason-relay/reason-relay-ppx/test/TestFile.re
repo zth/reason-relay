@@ -51,7 +51,7 @@ describe("extractTheSubscriptionName", ({test, _}) =>
   )
 );
 
-describe("extractFragmentRefetchableQueryName", ({test, _}) =>
+describe("extractFragmentRefetchableQueryName", ({test, _}) => {
   test(
     "it should extract the refetchable operation query name from a fragment with @refetchable",
     ({expect}) =>
@@ -63,8 +63,21 @@ describe("extractFragmentRefetchableQueryName", ({test, _}) =>
       toBe(
       Some("SomeFragmentRefetchQuery"),
     )
-  )
-);
+  );
+
+  test(
+    "it should extract the refetchable operation query name from a fragment with @refetchable, even if there are multiple directives on the fragment",
+    ({expect}) =>
+    expect.option(
+      Util.extractFragmentRefetchableQueryName(
+        "fragment SomeFragment_someProp on SomeEntity @argumentDefinitions(id: {type: \"ID!\"}) @refetchable(queryName: \"SomeFragmentRefetchQuery\") { id }",
+      ),
+    ).
+      toBe(
+      Some("SomeFragmentRefetchQuery"),
+    )
+  );
+});
 
 describe("fragmentHasConnectionNotation", ({test, _}) => {
   test(
