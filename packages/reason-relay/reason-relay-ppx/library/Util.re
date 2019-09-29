@@ -20,10 +20,11 @@ let extractGraphQLOperation = (~loc, str) =>
         "Only one GraphQL operation per [%%relay]-node is allowed.",
       )
     }
-  | Error(_) =>
+  | Error(err) =>
     Location.raise_errorf(
       ~loc,
-      "[%%relay]-nodes must define a single, valid GraphQL operation.",
+      "[%%relay]-nodes must define a single, valid GraphQL operation. GraphQL error message: %s", 
+      err,
     )
   };
 
