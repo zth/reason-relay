@@ -1,5 +1,5 @@
 {
-  "checksum": "028f20c3b3cff1b6d727786c596bd0f8",
+  "checksum": "1cc329b62ee5ac84eb9b82a2d1fb2122",
   "root": "reason-relay-ppx@link-dev:./package.json",
   "node": {
     "refmterr@3.2.2@d41d8cd9": {
@@ -35,7 +35,7 @@
       "dependencies": [
         "refmterr@3.2.2@d41d8cd9", "ocaml@4.6.1000@d41d8cd9",
         "@reason-native/rely@3.1.0@d41d8cd9",
-        "@opam/ppxlib@opam:0.6.0@844d9e68",
+        "@opam/ppxlib@opam:0.9.0@bfabe269",
         "@opam/ppx_tools_versioned@opam:5.2.3@4994ec80",
         "@opam/ocaml-migrate-parsetree@opam:1.4.0@0c4ec62d",
         "@opam/graphql_parser@opam:0.12.2@881db779",
@@ -446,20 +446,20 @@
         "ocaml@4.6.1000@d41d8cd9", "@opam/result@opam:1.4@dc720aef"
       ]
     },
-    "@opam/ppxlib@opam:0.6.0@844d9e68": {
-      "id": "@opam/ppxlib@opam:0.6.0@844d9e68",
+    "@opam/ppxlib@opam:0.9.0@bfabe269": {
+      "id": "@opam/ppxlib@opam:0.9.0@bfabe269",
       "name": "@opam/ppxlib",
-      "version": "opam:0.6.0",
+      "version": "opam:0.9.0",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://opam.ocaml.org/cache/md5/e2/e2d129139891c135acc6d52a3fa9f731#md5:e2d129139891c135acc6d52a3fa9f731",
-          "archive:https://github.com/ocaml-ppx/ppxlib/releases/download/0.6.0/ppxlib-0.6.0.tbz#md5:e2d129139891c135acc6d52a3fa9f731"
+          "archive:https://opam.ocaml.org/cache/sha256/d2/d269f882a31ff75095a80793082f7481884ca75ef867c8c409f26ad36f9a0a54#sha256:d269f882a31ff75095a80793082f7481884ca75ef867c8c409f26ad36f9a0a54",
+          "archive:https://github.com/ocaml-ppx/ppxlib/archive/0.9.0.tar.gz#sha256:d269f882a31ff75095a80793082f7481884ca75ef867c8c409f26ad36f9a0a54"
         ],
         "opam": {
           "name": "ppxlib",
-          "version": "0.6.0",
-          "path": "esy.lock/opam/ppxlib.0.6.0"
+          "version": "0.9.0",
+          "path": "esy.lock/opam/ppxlib.0.9.0"
         }
       },
       "overrides": [],

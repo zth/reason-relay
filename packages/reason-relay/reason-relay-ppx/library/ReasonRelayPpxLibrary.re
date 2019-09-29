@@ -12,11 +12,14 @@ let queryExtension =
     "relay.query",
     Extension.Context.module_expr,
     Ast_pattern.__,
-    (~loc, ~path as _, expr) =>
-    makeQuery(
-      ~moduleName=extractOperationStr(~loc, ~expr) |> extractTheQueryName,
-      ~loc,
-    )
+    (~loc, ~path as _, expr) => {
+      let (operationStr, operationStrLoc) = extractOperationStr(~loc, ~expr);
+
+      makeQuery(
+        ~moduleName=operationStr |> extractTheQueryName(~loc=operationStrLoc),
+        ~loc=operationStrLoc,
+      );
+    },
   );
 
 // Same as queryExtension but for [%relay.fragment]
@@ -26,22 +29,25 @@ let fragmentExtension =
     Extension.Context.module_expr,
     Ast_pattern.__,
     (~loc, ~path as _, expr) => {
-      let operationStr = extractOperationStr(~loc, ~expr);
+      let (operationStr, operationStrLoc) = extractOperationStr(~loc, ~expr);
       let refetchableQueryName =
-        operationStr |> extractFragmentRefetchableQueryName;
+        operationStr
+        |> extractFragmentRefetchableQueryName(~loc=operationStrLoc);
 
       makeFragment(
-        ~moduleName=operationStr |> extractTheFragmentName,
+        ~moduleName=
+          operationStr |> extractTheFragmentName(~loc=operationStrLoc),
         ~refetchableQueryName,
         ~hasConnection=
           switch (
             refetchableQueryName,
-            operationStr |> fragmentHasConnectionNotation,
+            operationStr
+            |> fragmentHasConnectionNotation(~loc=operationStrLoc),
           ) {
           | (Some(_), true) => true
           | _ => false
           },
-        ~loc,
+        ~loc=operationStrLoc,
       );
     },
   );
@@ -52,11 +58,14 @@ let mutationExtension =
     "relay.mutation",
     Extension.Context.module_expr,
     Ast_pattern.__,
-    (~loc, ~path as _, expr) =>
-    makeMutation(
-      ~moduleName=extractOperationStr(~loc, ~expr) |> extractTheMutationName,
-      ~loc,
-    )
+    (~loc, ~path as _, expr) => {
+      let (operationStr, operationStrLoc) = extractOperationStr(~loc, ~expr);
+      makeMutation(
+        ~moduleName=
+          operationStr |> extractTheMutationName(~loc=operationStrLoc),
+        ~loc=operationStrLoc,
+      );
+    },
   );
 
 // Same as queryExtension but for [%relay.subscription]
@@ -65,12 +74,14 @@ let subscriptionExtension =
     "relay.subscription",
     Extension.Context.module_expr,
     Ast_pattern.__,
-    (~loc, ~path as _, expr) =>
-    makeSubscription(
-      ~moduleName=
-        extractOperationStr(~loc, ~expr) |> extractTheSubscriptionName,
-      ~loc,
-    )
+    (~loc, ~path as _, expr) => {
+      let (operationStr, operationStrLoc) = extractOperationStr(~loc, ~expr);
+      makeSubscription(
+        ~moduleName=
+          operationStr |> extractTheSubscriptionName(~loc=operationStrLoc),
+        ~loc=operationStrLoc,
+      );
+    },
   );
 
 // This registers all defined extension points to the "reason-relay" ppx.

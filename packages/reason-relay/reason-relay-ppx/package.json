@@ -62,7 +62,7 @@
     "@opam/graphql_parser": "0.12.2",
     "@opam/ocaml-migrate-parsetree": "1.4.0",
     "@opam/ppx_tools_versioned": "5.2.3",
-    "@opam/ppxlib": "0.6.0",
+    "@opam/ppxlib": "*",
     "@reason-native/rely": "*",
     "ocaml": "~4.6.1",
     "refmterr": "*"

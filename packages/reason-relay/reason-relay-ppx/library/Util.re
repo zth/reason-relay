@@ -4,62 +4,90 @@
 // Ppxlib provides a number of helpers for writing and registering PPXs that life is very difficult without.
 open Ppxlib;
 
-exception Could_not_extract_operation_name;
-exception Could_not_extract_operation;
-
 /**
  * This function takes a GraphQL document as a string (typically extracted from the [%relay.<operation>] nodes),
  * uses Graphql_parser to parse the string into a list of GraphQL definitions, and then extracts the _first_ operation
  * of the document only. This is because Relay disallows multiple operations in the same definition.
  */
-let extractGraphQLOperation = str =>
+let extractGraphQLOperation = (~loc, str) =>
   switch (str |> Graphql_parser.parse) {
   | Ok(definitions) =>
     switch (definitions) {
-    | [op, ..._] => op
-    | _ => raise(Could_not_extract_operation)
+    | [op] => op
+    | _ =>
+      Location.raise_errorf(
+        ~loc,
+        "Only one GraphQL operation per [%%relay]-node is allowed.",
+      )
     }
-  | Error(_) => raise(Could_not_extract_operation)
+  | Error(_) =>
+    Location.raise_errorf(
+      ~loc,
+      "[%%relay]-nodes must define a single, valid GraphQL operation.",
+    )
   };
 
 /**
  * Takes a raw GraphQL document as a string and extracts the query name. Raises an error if it's not a query
  * or the query has no name.
  */
-let extractTheQueryName = str =>
-  switch (str |> extractGraphQLOperation) {
+let extractTheQueryName = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Operation({optype: Query, name: Some(name)}) => name
-  | _ => raise(Could_not_extract_operation_name)
+  | Operation({optype: Query, name: None}) =>
+    Location.raise_errorf(~loc, "GraphQL query must be named.")
+  | _ =>
+    Location.raise_errorf(
+      ~loc,
+      "[%%relay.query] must contain a query definition, and nothing else.",
+    )
   };
 
 /**
  * Takes a raw GraphQL document as a string and extracts the mutation name. Raises an error if it's not a mutation
  * or the mutation has no name.
  */
-let extractTheMutationName = str =>
-  switch (str |> extractGraphQLOperation) {
+let extractTheMutationName = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Operation({optype: Mutation, name: Some(name)}) => name
-  | _ => raise(Could_not_extract_operation_name)
+  | Operation({optype: Mutation, name: None}) =>
+    Location.raise_errorf(~loc, "GraphQL mutation must be named.")
+  | _ =>
+    Location.raise_errorf(
+      ~loc,
+      "[%%relay.mutation] must contain a mutation definition, and nothing else.",
+    )
   };
 
 /**
  * Takes a raw GraphQL document as a string and extracts the fragment name. Raises an error if it's not a fragment
  * or the fragment has no name.
  */
-let extractTheFragmentName = str =>
-  switch (str |> extractGraphQLOperation) {
+let extractTheFragmentName = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Fragment({name}) => name
-  | _ => raise(Could_not_extract_operation_name)
+  | _ =>
+    Location.raise_errorf(
+      ~loc,
+      "[%%relay.fragment] must contain a fragment definition with a name, and nothing else.",
+    )
   };
 
 /**
  * Takes a raw GraphQL document as a string and extracts the subscription name. Raises an error if it's not a subscription
  * or the subscription has no name.
  */
-let extractTheSubscriptionName = str =>
-  switch (str |> extractGraphQLOperation) {
+let extractTheSubscriptionName = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Operation({optype: Subscription, name: Some(name)}) => name
-  | _ => raise(Could_not_extract_operation_name)
+  | Operation({optype: Subscription, name: None}) =>
+    Location.raise_errorf(~loc, "GraphQL subscription must be named.")
+
+  | _ =>
+    Location.raise_errorf(
+      ~loc,
+      "[%%relay.subscription] must contain a subscription definition, and nothing else.",
+    )
   };
 
 /**
@@ -73,8 +101,8 @@ let extractTheSubscriptionName = str =>
  * So, this functions makes sure that @refetchable is defined and the queryName arg exists, and if so, extracts and
  * returns "SomeFragmentRefetchQuery" as an option string.
  */
-let extractFragmentRefetchableQueryName = str =>
-  switch (str |> extractGraphQLOperation) {
+let extractFragmentRefetchableQueryName = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Fragment({name: _, directives}) =>
     let refetchableQueryName = ref(None);
 
@@ -85,7 +113,7 @@ let extractFragmentRefetchableQueryName = str =>
              name: "refetchable",
              arguments: [("queryName", `String(queryName))],
            } =>
-           refetchableQueryName := Some(queryName);
+           refetchableQueryName := Some(queryName)
          | _ => ()
          }
        );
@@ -124,8 +152,8 @@ let rec selectionSetHasConnection = selections =>
   };
 
 // Returns whether a fragment has a @connection annotation or not
-let fragmentHasConnectionNotation = str =>
-  switch (str |> extractGraphQLOperation) {
+let fragmentHasConnectionNotation = (~loc, str) =>
+  switch (extractGraphQLOperation(~loc, str)) {
   | Fragment({name: _, selection_set}) =>
     selectionSetHasConnection(selection_set)
   | _ => false
@@ -137,6 +165,9 @@ let getGraphQLModuleName = opName => opName ++ "_graphql";
  * This is some AST voodoo to extract the provided string from [%relay.<operation> {| ...string here... |}].
  * It basically just matches on the correct AST structure for having an extension node with a string, and
  * returns that string.
+ *
+ * It also returns loc, which keeps track of *where* in the code the string is located, so editors can highlight
+ * the actual operation string as a whole when it errors, rather than just the module keyword.
  */
 let extractOperationStr = (~loc, ~expr) =>
   switch (expr) {
@@ -157,16 +188,14 @@ let extractOperationStr = (~loc, ~expr) =>
           ),
         _,
       },
-    ]) => operationStr
+    ]) => (
+      operationStr,
+      loc,
+    )
   | _ =>
-    raise(
-      Location.Error(
-        Obj.magic(),
-        /*Location.Error.createf(
-            ~loc,
-            "All [%relay] operations must be provided a string, like [%relay.query {| { query SomeQuery { id } |}]",
-          ),*/
-      ),
+    Location.raise_errorf(
+      ~loc,
+      "All [%%relay] operations must be provided a string, like [%%relay.query {| { query SomeQuery { id } |}]",
     )
   };
 

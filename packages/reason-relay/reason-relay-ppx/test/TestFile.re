@@ -1,10 +1,26 @@
 open TestFramework;
 open ReasonRelayPpxLibrary;
 
+let makeMockLexingPos = (): Stdlib.Lexing.position => {
+  pos_fname: "",
+  pos_lnum: 0,
+  pos_bol: 0,
+  pos_cnum: 0,
+};
+
+let makeMockLocObj = (): Ppxlib.Location.t => {
+  loc_start: makeMockLexingPos(),
+  loc_end: makeMockLexingPos(),
+  loc_ghost: false,
+};
+
 describe("extractTheQueryName", ({test, _}) =>
   test("it should extract the query name", ({expect}) =>
     expect.string(
-      Util.extractTheQueryName("query SomeQuery { viewer { id } }"),
+      Util.extractTheQueryName(
+        ~loc=makeMockLocObj(),
+        "query SomeQuery { viewer { id } }",
+      ),
     ).
       toEqual(
       "SomeQuery",
@@ -16,6 +32,7 @@ describe("extractTheMutationName", ({test, _}) =>
   test("it should extract the mutation name", ({expect}) =>
     expect.string(
       Util.extractTheMutationName(
+        ~loc=makeMockLocObj(),
         "mutation SomeMutation($input: SomeMutationInput!) { someMutation(input: $input) { addedStuff { id } } }",
       ),
     ).
@@ -29,6 +46,7 @@ describe("extractTheFragmentName", ({test, _}) =>
   test("it should extract the fragment name", ({expect}) =>
     expect.string(
       Util.extractTheFragmentName(
+        ~loc=makeMockLocObj(),
         "fragment SomeFragment_someProp on SomeEntity { id }",
       ),
     ).
@@ -42,6 +60,7 @@ describe("extractTheSubscriptionName", ({test, _}) =>
   test("it should extract the subscription name", ({expect}) =>
     expect.string(
       Util.extractTheSubscriptionName(
+        ~loc=makeMockLocObj(),
         "subscription SomeSub { viewer { id } }",
       ),
     ).
@@ -57,6 +76,7 @@ describe("extractFragmentRefetchableQueryName", ({test, _}) => {
     ({expect}) =>
     expect.option(
       Util.extractFragmentRefetchableQueryName(
+        ~loc=makeMockLocObj(),
         "fragment SomeFragment_someProp on SomeEntity @refetchable(queryName: \"SomeFragmentRefetchQuery\") { id }",
       ),
     ).
@@ -70,6 +90,7 @@ describe("extractFragmentRefetchableQueryName", ({test, _}) => {
     ({expect}) =>
     expect.option(
       Util.extractFragmentRefetchableQueryName(
+        ~loc=makeMockLocObj(),
         "fragment SomeFragment_someProp on SomeEntity @argumentDefinitions(id: {type: \"ID!\"}) @refetchable(queryName: \"SomeFragmentRefetchQuery\") { id }",
       ),
     ).
@@ -85,6 +106,7 @@ describe("fragmentHasConnectionNotation", ({test, _}) => {
     ({expect}) =>
     expect.bool(
       Util.fragmentHasConnectionNotation(
+        ~loc=makeMockLocObj(),
         {|
         fragment SomeFragment_someProp on SomeEntity @refetchable(queryName: "SomeFragmentRefetchQuery") {
           id
@@ -107,6 +129,7 @@ describe("fragmentHasConnectionNotation", ({test, _}) => {
     ({expect}) =>
     expect.bool(
       Util.fragmentHasConnectionNotation(
+        ~loc=makeMockLocObj(),
         {|
         fragment SomeFragment_someProp on SomeEntity @refetchable(queryName: "SomeFragmentRefetchQuery") {
           id
