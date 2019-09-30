@@ -28,7 +28,6 @@ jobs:
       - script: "esy build"
         workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "esy build"
-      # - template: utils/create-docs.yml
       - script: "esy test"
         workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "Test command"
@@ -39,5 +38,5 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: "Publish Artifact: ${{ parameters.platform }}"
         inputs:
-          PathtoPublish: "packages/reason-relay/reason-relay-ppx/_release"
+          PathtoPublish: "_release"
           ArtifactName: ${{ parameters.platform }}
