@@ -1,2 +1,0 @@
-bash: "./build-ci.sh"
-  displayName: "Run build script"
