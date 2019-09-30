@@ -31,11 +31,6 @@ jobs:
       ESY__CACHE_INSTALL_PATH: /C/Users/VssAdministrator/.esy/3_/i
       ESY__CACHE_SOURCE_TARBALL_PATH: /C/Users/VssAdministrator/.esy/source/i
 
-  - template: .ci/build-package.yml
-    parameters:
-      platform: Linux
-      vmImage: ubuntu-16.04
-
   # This job is kept here as we want to have the platform names in the same file
   - job: Release
     displayName: Release
