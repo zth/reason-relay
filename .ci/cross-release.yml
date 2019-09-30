@@ -19,7 +19,8 @@ steps:
       platform: "Windows"
       folder: "platform-windows-x64"
 
-  - template: build-package.yml
+  - bash: "./build-ci.sh"
+    displayName: "Run build script"
 
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: Release"
