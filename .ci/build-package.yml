@@ -1,3 +1,2 @@
-steps:
-  - bash: "./build-ci.sh"
-    displayName: "Run build script"
+bash: "./build-ci.sh"
+  displayName: "Run build script"
