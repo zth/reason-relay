@@ -38,5 +38,5 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: "Publish Artifact: ${{ parameters.platform }}"
         inputs:
-          PathtoPublish: "_release"
+          PathtoPublish: "packages/reason-relay/reason-relay-ppx/_release/bin/ReasonRelayPpxApp.exe"
           ArtifactName: ${{ parameters.platform }}

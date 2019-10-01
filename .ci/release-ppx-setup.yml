@@ -9,5 +9,5 @@ steps:
       artifactName: ${{ parameters.platform }}
       downloadPath: $(Build.StagingDirectory)
 
-  - script: "cp -r $(Build.StagingDirectory)/${{ parameters.platform }}/_esy/default/build/default/bin/ReasonRelayPpx.exe _release/ppx-${{ parameters.platform }}"
+  - script: "cp -r $(Build.StagingDirectory)/${{ parameters.platform }} _release/ppx-${{ parameters.platform }}"
     displayName: "cp ${{ parameters.platform }}"
