@@ -28,8 +28,10 @@
     "flow-typed": "^2.5.2",
     "gentype": "^2.29.0",
     "jest": "^24.9.0",
-    "relay-compiler": "6.0.0",
-    "relay-runtime": "6.0.0"
+    "relay-compiler": "^6.0.0",
+    "relay-runtime": "6.0.0",
+    "relay-test-utils": "^6.0.0",
+    "relay-test-utils-internal": "^6.0.0"
   },
   "dependencies": {
     "@babel/generator": "^7.4.4",

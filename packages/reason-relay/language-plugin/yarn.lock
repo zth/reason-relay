@@ -4555,7 +4555,7 @@ regjsparser@^0.6.0:
   dependencies:
     jsesc "~0.5.0"
 
-relay-compiler@6.0.0:
+relay-compiler@6.0.0, relay-compiler@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/relay-compiler/-/relay-compiler-6.0.0.tgz#a70ecb39b59dea507261aeda704c071326d69d5e"
   integrity sha512-8K8cCwrOTqu3usF8GXQ+JEgxcTxJ5qVFqfNpfMYrRpMraXrBmykcLRpj38p2MxtcjyqkE2ZnUe5huW5/469obA==
@@ -4584,6 +4584,25 @@ relay-runtime@6.0.0:
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
+
+relay-test-utils-internal@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/relay-test-utils-internal/-/relay-test-utils-internal-6.0.0.tgz#325e88b62b77ae7a550166b704d18e6fb4169784"
+  integrity sha512-YIBG0GAtUrU1n3K7PZDyc+VcQEc5r3rSB5DC1X8qKMLXr+2NijD2Dh/3wE4pgx0PnYpQfleuMYnseauJ2LXTAg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    fbjs "^1.0.0"
+    relay-compiler "6.0.0"
+    relay-runtime "6.0.0"
+
+relay-test-utils@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/relay-test-utils/-/relay-test-utils-6.0.0.tgz#d1bce7862793160a8ac9064b2cb4334b5cc0cf89"
+  integrity sha512-Tvkz2AuIXXprGcSW04fPAQDQvmMco2Jc1SdEfIogVmRBBGGBdmjlPKfhViNAA/MJ49OsJUJIRWgVFZ7a+PeLyA==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    fbjs "^1.0.0"
+    relay-runtime "6.0.0"
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

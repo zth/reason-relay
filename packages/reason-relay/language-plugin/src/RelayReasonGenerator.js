@@ -21,15 +21,15 @@ import type { GraphQLEnumType } from 'graphql';
 // $FlowFixMe
 import { TypeGeneratorOptions } from 'relay-compiler';
 // $FlowFixMe
-import type { Root } from 'relay-compiler/core/GraphQLIR';
+import type { Root } from 'relay-compiler/lib/core/GraphQLIR';
 // $FlowFixMe
 import type { IRTransform } from 'relay-compiler/core/GraphQLIRTransforms';
-import * as FlattenTransform from 'relay-compiler/lib/FlattenTransform';
-import * as IRVisitor from 'relay-compiler/lib/GraphQLIRVisitor';
-import * as RelayMaskTransform from 'relay-compiler/lib/RelayMaskTransform';
-import * as RelayMatchTransform from 'relay-compiler/lib/RelayMatchTransform';
-import * as RelayRefetchableFragmentTransform from 'relay-compiler/lib/RelayRefetchableFragmentTransform';
-import * as RelayRelayDirectiveTransform from 'relay-compiler/lib/RelayRelayDirectiveTransform';
+import * as FlattenTransform from 'relay-compiler/lib/transforms/FlattenTransform';
+import * as IRVisitor from 'relay-compiler/lib/core/GraphQLIRVisitor';
+import * as RelayMaskTransform from 'relay-compiler/lib/transforms/RelayMaskTransform';
+import * as RelayMatchTransform from 'relay-compiler/lib/transforms/RelayMatchTransform';
+import * as RelayRefetchableFragmentTransform from 'relay-compiler/lib/transforms/RelayRefetchableFragmentTransform';
+import * as RelayRelayDirectiveTransform from 'relay-compiler/lib/transforms/RelayRelayDirectiveTransform';
 import {
   makeFragment,
   makeFragmentRefProp,
