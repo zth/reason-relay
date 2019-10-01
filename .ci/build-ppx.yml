@@ -22,7 +22,6 @@ jobs:
     steps:
       - template: utils/use-node.yml
       - template: utils/use-esy.yml
-      - template: utils/restore-build-cache.yml
       - script: "esy install"
         workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "esy install"
@@ -32,7 +31,6 @@ jobs:
       - script: "esy test"
         workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "Test command"
-      - template: utils/publish-build-cache.yml
       - task: PublishBuildArtifacts@1
         displayName: "Publish Artifact: ${{ parameters.ppxName }}"
         inputs:
