@@ -1,13 +1,14 @@
 parameters:
   platform: "macOS"
   folder: "platform-darwin"
+  ppxName: "ppx-darwin"
 
 steps:
   - task: DownloadBuildArtifacts@0
-    displayName: "Download ${{ parameters.platform }} Artifacts"
+    displayName: "Download ${{ parameters.ppxName }} Artifact"
     inputs:
-      artifactName: ${{ parameters.platform }}
+      artifactName: ${{ parameters.ppxName }}
       downloadPath: $(Build.StagingDirectory)
 
-  - script: "cp -r $(Build.StagingDirectory)/${{ parameters.platform }} _release/ppx-${{ parameters.platform }}"
-    displayName: "cp ${{ parameters.platform }}"
+  - script: "cp -r $(Build.StagingDirectory)/${{ parameters.ppxName }} _release/${{ parameters.ppxName }}"
+    displayName: "cp ${{ parameters.ppxName }}"

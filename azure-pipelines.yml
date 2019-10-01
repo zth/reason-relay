@@ -7,6 +7,7 @@ jobs:
   - template: .ci/build-ppx.yml
     parameters:
       platform: Linux
+      ppxName: ppx-linux
       vmImage: ubuntu-16.04
       STAGING_DIRECTORY: /home/vsts/STAGING
       STAGING_DIRECTORY_UNIX: /home/vsts/STAGING
@@ -16,6 +17,7 @@ jobs:
   - template: .ci/build-ppx.yml
     parameters:
       platform: macOS
+      ppxName: ppx-darwin
       vmImage: macOS-10.13
       STAGING_DIRECTORY: /Users/vsts/STAGING
       STAGING_DIRECTORY_UNIX: /Users/vsts/STAGING
@@ -25,6 +27,7 @@ jobs:
   - template: .ci/build-ppx.yml
     parameters:
       platform: Windows
+      ppxName: ppx-windows
       vmImage: vs2017-win2016
       STAGING_DIRECTORY: C:\Users\VssAdministrator\STAGING
       STAGING_DIRECTORY_UNIX: /C/Users/VssAdministrator/STAGING

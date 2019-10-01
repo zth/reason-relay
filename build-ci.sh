@@ -20,16 +20,10 @@ cp src/ReasonRelayUtils.rei ../../_release/src/;
 cp ../../README.md _release/;
 cp -rf src/vendor ../../_release/src/vendor;
 
-# copy post-install placeholder
-cp postinstall.js ../../_release/postinstall.js # Empty placeholder first
-
 # copy config files
 cp bsconfig.json ../../_release/;
 cp package.json ../../_release/;
 cp yarn.lock ../../_release/;
-
-# run yarn
-cd ../../_release; yarn; cd ../packages/reason-relay;
 
 # copy real post-install
 cp -f scripts/release-postinstall.js ../../_release/postinstall.js

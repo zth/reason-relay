@@ -1,5 +1,6 @@
 parameters:
   platform: "macOS"
+  ppxName: "ppx-darwin"
   vmImage: "macOS-10.13"
   STAGING_DIRECTORY: /Users/vsts/STAGING
   STAGING_DIRECTORY_UNIX: /Users/vsts/STAGING
@@ -31,12 +32,9 @@ jobs:
       - script: "esy test"
         workingDirectory: "packages/reason-relay/reason-relay-ppx"
         displayName: "Test command"
-      - script: "esy release"
-        workingDirectory: "packages/reason-relay/reason-relay-ppx"
-        displayName: "esy release"
       - template: utils/publish-build-cache.yml
       - task: PublishBuildArtifacts@1
-        displayName: "Publish Artifact: ${{ parameters.platform }}"
+        displayName: "Publish Artifact: ${{ parameters.ppxName }}"
         inputs:
-          PathtoPublish: "packages/reason-relay/reason-relay-ppx/_release/bin/ReasonRelayPpxApp.exe"
-          ArtifactName: ${{ parameters.platform }}
+          PathtoPublish: "packages/reason-relay/reason-relay-ppx/_esy/default/build/default/bin/ReasonRelayPpxApp.exe"
+          ArtifactName: ${{ parameters.ppxName }}
