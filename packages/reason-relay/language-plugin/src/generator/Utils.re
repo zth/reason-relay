@@ -1,0 +1,1 @@
+let makeAddToStr = (container, newStr) => container := container^ ++ newStr;

@@ -13,18 +13,18 @@
 const RelayReasonGenerator = require('../RelayReasonGenerator');
 const { printCode } = require('../generator/Printer.gen');
 
-const GraphQLCompilerContext = require('../../../src/vendor/relay-compiler/lib/core/GraphQLCompilerContext');
-const RelayFlowGenerator = require('../../../src/vendor/relay-compiler/lib/language/javascript/RelayFlowGenerator');
-const RelayIRTransforms = require('../../../src/vendor/relay-compiler/lib/core/RelayIRTransforms');
+const GraphQLCompilerContext = require('relay-compiler/lib/core/GraphQLCompilerContext');
+const RelayFlowGenerator = require('relay-compiler/lib/language/javascript/RelayFlowGenerator');
+const RelayIRTransforms = require('relay-compiler/lib/core/RelayIRTransforms');
 
-const {transformASTSchema} = require('../../../src/vendor/relay-compiler/lib/core/ASTConvert');
+const {transformASTSchema} = require('relay-compiler/lib/core/ASTConvert');
 const {
   TestSchema,
   generateTestsFromFixtures,
   parseGraphQLText,
 } = require('relay-test-utils-internal');
 
-import type {TypeGeneratorOptions} from '../../src/vendor/relay-compiler/lib/RelayLanguagePluginInterface';
+import type {TypeGeneratorOptions} from 'relay-compiler/lib/RelayLanguagePluginInterface';
 
 function generate(text, options: TypeGeneratorOptions, context?) {
   const schema = transformASTSchema(TestSchema, [
@@ -43,10 +43,10 @@ function generate(text, options: TypeGeneratorOptions, context?) {
     .documents()
     .map(
       doc =>
-        `// ${doc.name}.graphql\n${RelayReasonGenerator.generate(doc, {
+        `// ${doc.name}.graphql\n${printCode(RelayReasonGenerator.generate(doc, {
           ...options,
           normalizationIR: context ? context.get(doc.name) : undefined,
-        })}`,
+        }))}`,
     )
     .join('\n\n');
 }

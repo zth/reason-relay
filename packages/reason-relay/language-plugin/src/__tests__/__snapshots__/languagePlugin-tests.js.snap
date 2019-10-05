@@ -12,34 +12,12 @@ fragment RefetchableFragment on Node
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // RefetchableFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "fragAndField": Js.Nullable.t({. "uri": Js.Nullable.t(string)}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__RefetchableFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // RefetchableFragmentQuery.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
-type response = {
-  .
-  "node":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__RefetchableFragment": RefetchableFragment_graphql.t,
-    }),
-};
+type response = {. "node": Js.Nullable.t(unit)};
+type variables = {. "id": string};
 
 `;
 
@@ -57,28 +35,12 @@ fragment NestedCondition on Node {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // ConditionField.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "id": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__ConditionField": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // NestedCondition.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "id": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__NestedCondition": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: fragment-spread.graphql 1`] = `
@@ -134,128 +96,121 @@ fragment UserFrag2 on Page {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // FragmentSpread.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "justFrag":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__PictureFragment": PictureFragment_graphql.t,
-    }),
-  "fragAndField":
-    Js.Nullable.t({
-      .
-      "uri": Js.Nullable.t(string),
-      "__$fragment_ref__PictureFragment": PictureFragment_graphql.t,
-    }),
-  "__$fragment_ref__OtherFragment": OtherFragment_graphql.t,
-  "__$fragment_ref__UserFrag1": UserFrag1_graphql.t,
-  "__$fragment_ref__UserFrag2": UserFrag2_graphql.t,
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FragmentSpread": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // ConcreateTypes.graphql
-module Unions { 
-  module Union_actor = {
-      type wrapped;
-      
-      external __unwrap_union: wrapped => {. "__typename": string } = "%identity";      
-      type type_Page = {."id": string,"__$fragment_ref__PageFragment": PageFragment_graphql.t};
-type type_User = {."name": Js.Nullable.t(string)};
-      external __unwrap_Page: wrapped => type_Page = "%identity";
-external __unwrap_User: wrapped => type_User = "%identity";
-      
-      type t = [  | \`Page(type_Page) 
- | \`User(type_User)  | \`UnmappedUnionMember];
-      
-      let unwrap = wrapped => {
-        let unwrappedUnion = wrapped |> __unwrap_union;
-        switch (unwrappedUnion##__typename) {
-          | "Page" => \`Page(wrapped |> __unwrap_Page)
-| "User" => \`User(wrapped |> __unwrap_User)
-          | _ => \`UnmappedUnionMember
-        };
-      };
-    };
-    };
-    open Unions;type fragment = {
-  .
-  "actor": Js.Nullable.t({. "actor": Js.Nullable.t(Union_actor.wrapped)}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__ConcreateTypes": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // PictureFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "__typename": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__PictureFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // OtherFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "__typename": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__OtherFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // PageFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "__typename": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__PageFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // UserFrag1.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "__typename": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__UserFrag1": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // UserFrag2.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "__typename": string};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__UserFrag2": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
+`;
+
+exports[`Snapshot tests for useHaste matches expected output: inline-fragment.graphql 1`] = `
+~~~~~~~~~~ INPUT ~~~~~~~~~~
+fragment InlineFragment on Node {
+  id
+  ... on Actor {
+    id
+    name
+  }
+  ... on User {
+    message {
+      text
+    }
+  }
+}
+
+fragment InlineFragmentWithOverlappingFields on Actor {
+  ... on User {
+    hometown {
+      id
+      name
+    }
+  }
+  ... on Page {
+    name
+    hometown {
+      id
+      message {
+        text
+      }
+    }
+  }
+}
+
+fragment InlineFragmentConditionalID on Node {
+  ... on Actor {
+    id # nullable since it's conditional
+    name
+  }
+}
+
+fragment InlineFragmentKitchenSink on Story {
+  actor {
+    id
+    profilePicture {
+      uri
+    }
+    ... on User {
+      id
+      name
+      ...SomeFragment
+      profilePicture {
+        width
+      }
+    }
+    ... on Page {
+      profilePicture {
+        uri
+        height
+      }
+    }
+  }
+}
+
+fragment SomeFragment on User {
+  __typename
+}
+
+~~~~~~~~~~ OUTPUT ~~~~~~~~~~
+// InlineFragment.graphql
+
+
+
+// InlineFragmentWithOverlappingFields.graphql
+
+
+
+// InlineFragmentConditionalID.graphql
+
+
+
+// InlineFragmentKitchenSink.graphql
+
+
+
+// SomeFragment.graphql
+
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: linked-field.graphql 1`] = `
@@ -290,39 +245,128 @@ query UnionTypeTest {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // LinkedField.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "profilePicture":
-    Js.Nullable.t({
-      .
-      "uri": Js.Nullable.t(string),
-      "width": Js.Nullable.t(int),
-      "height": Js.Nullable.t(int),
-    }),
-  "hometown":
-    Js.Nullable.t({
-      .
-      "id": string,
-      "profilePicture": Js.Nullable.t({. "uri": Js.Nullable.t(string)}),
-    }),
-  "actor": Js.Nullable.t({. "id": string}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__LinkedField": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // UnionTypeTest.graphql
-module Unions { 
-  
+type union_response_neverNode_wrapped;
+
+module Union_response_neverNode: {
+  type type_FakeNode = {. "id": string};
+  type t = [ | \`FakeNode(type_FakeNode) | \`UnmappedUnionMember];
+  let unwrap: union_response_neverNode_wrapped => t;
+} = {
+  external __unwrap_union:
+    union_response_neverNode_wrapped => {. "__typename": string} =
+    "%identity";
+  type type_FakeNode = {. "id": string};
+  type t = [ | \`FakeNode(type_FakeNode) | \`UnmappedUnionMember];
+  external __unwrap_FakeNode: union_response_neverNode_wrapped => type_FakeNode =
+    "%identity";
+  let unwrap = wrapped => {
+    let unwrappedUnion = wrapped |> __unwrap_union;
+    switch (unwrappedUnion##__typename) {
+    | "FakeNode" => \`FakeNode(wrapped |> __unwrap_FakeNode)
+    | _ => \`UnmappedUnionMember
     };
-    type variables = unit;
-type response = {. "neverNode": Js.Nullable.t(Union_neverNode.wrapped)};
+  };
+};
+type response = {. "neverNode": union_response_neverNode_wrapped};
+type variables = unit;
+
+`;
+
+exports[`Snapshot tests for useHaste matches expected output: match-field.graphql 1`] = `
+~~~~~~~~~~ INPUT ~~~~~~~~~~
+fragment NameRendererFragment on User {
+  id
+  nameRenderer @match {
+    ...PlainUserNameRenderer_name @module(name: "PlainUserNameRenderer.react")
+    ...MarkdownUserNameRenderer_name
+      @module(name: "MarkdownUserNameRenderer.react")
+  }
+}
+
+fragment PlainUserNameRenderer_name on PlainUserNameRenderer {
+  plaintext
+  data {
+    text
+  }
+}
+
+fragment MarkdownUserNameRenderer_name on MarkdownUserNameRenderer {
+  markdown
+  data {
+    markup
+  }
+}
+
+~~~~~~~~~~ OUTPUT ~~~~~~~~~~
+// NameRendererFragment.graphql
+
+
+
+// PlainUserNameRenderer_name.graphql
+
+
+
+// MarkdownUserNameRenderer_name.graphql
+
+
+`;
+
+exports[`Snapshot tests for useHaste matches expected output: match-field-in-query.graphql 1`] = `
+~~~~~~~~~~ INPUT ~~~~~~~~~~
+query NameRendererQuery {
+  me {
+    nameRenderer @match {
+      ...PlainUserNameRenderer_name @module(name: "PlainUserNameRenderer.react")
+      ...MarkdownUserNameRenderer_name
+        @module(name: "MarkdownUserNameRenderer.react")
+    }
+  }
+}
+
+fragment PlainUserNameRenderer_name on PlainUserNameRenderer {
+  plaintext
+  data {
+    text
+  }
+}
+
+fragment MarkdownUserNameRenderer_name on MarkdownUserNameRenderer {
+  markdown
+  data {
+    markup
+  }
+}
+
+~~~~~~~~~~ OUTPUT ~~~~~~~~~~
+// NameRendererQuery.graphql
+type response = {
+  .
+  "me":
+    Js.Nullable.t({
+      .
+      "nameRenderer":
+        Js.Nullable.t({
+          .
+          "__$fragment_ref__MarkdownUserNameRenderer_name": MarkdownUserNameRenderer_name_graphql.t,
+          "__$fragment_ref__PlainUserNameRenderer_name": PlainUserNameRenderer_name_graphql.t,
+          "__module_component": Js.Nullable.t(string),
+          "__fragmentPropName": Js.Nullable.t(string),
+        }),
+    }),
+};
+type variables = unit;
+
+
+// PlainUserNameRenderer_name.graphql
+
+
+
+// MarkdownUserNameRenderer_name.graphql
+
 
 `;
 
@@ -348,185 +392,12 @@ type Foo {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // Test.graphql
-module Unions { 
-  
-    };
-    type input_UpdateAllSeenStateInput = {
-  .
-  "clientMutationId": option(string),
-  "storyIds": option(array(option(string))),
-}
-;type variables = {. "input": option(input_UpdateAllSeenStateInput)};
 type response = {
   .
   "viewerNotificationsUpdateAllSeenState":
-    Js.Nullable.t({
-      .
-      "stories":
-        Js.Nullable.t(
-          array(
-            Js.Nullable.t({
-              .
-              "foos":
-                Js.Nullable.t(
-                  array(Js.Nullable.t({. "bar": Js.Nullable.t(string)})),
-                ),
-            }),
-          ),
-        ),
-    }),
+    Js.Nullable.t({. "stories": ReasonRelay.any}),
 };
-
-`;
-
-exports[`Snapshot tests for useHaste matches expected output: mutaion-with-response-on-inline-fragments.graphql 1`] = `
-~~~~~~~~~~ INPUT ~~~~~~~~~~
-mutation TestMutation($input: CommentCreateInput!) @raw_response_type {
-  commentCreate(input: $input) {
-    viewer {
-      actor {
-        ...InlineFragmentWithOverlappingFields
-      }
-    }
-  }
-}
-
-fragment InlineFragmentWithOverlappingFields on Actor {
-  ... on User {
-    hometown {
-      id
-      name
-    }
-  }
-  ... on Page {
-    name
-    hometown {
-      id
-      message {
-        text
-      }
-    }
-  }
-}
-
-~~~~~~~~~~ OUTPUT ~~~~~~~~~~
-// TestMutation.graphql
-module Unions { 
-  
-    };
-    type input_CommentCreateInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-  "feedback": option(input_CommentfeedbackFeedback),
-}
- and input_CommentfeedbackFeedback = {
-  .
-  "comment": option(input_FeedbackcommentComment),
-}
- and input_FeedbackcommentComment = {
-  .
-  "feedback": option(input_CommentfeedbackFeedback),
-}
-;type variables = {. "input": input_CommentCreateInput};
-type response = {
-  .
-  "commentCreate":
-    Js.Nullable.t({
-      .
-      "viewer":
-        Js.Nullable.t({
-          .
-          "actor":
-            Js.Nullable.t({
-              .
-              "__$fragment_ref__InlineFragmentWithOverlappingFields": InlineFragmentWithOverlappingFields_graphql.t,
-            }),
-        }),
-    }),
-};
-
-
-// InlineFragmentWithOverlappingFields.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "hometown":
-    Js.Nullable.t({
-      .
-      "id": string,
-      "name": Js.Nullable.t(string),
-      "message": Js.Nullable.t({. "text": Js.Nullable.t(string)}),
-    }),
-  "name": Js.Nullable.t(string),
-};
-
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__InlineFragmentWithOverlappingFields": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
-`;
-
-exports[`Snapshot tests for useHaste matches expected output: mutation.graphql 1`] = `
-~~~~~~~~~~ INPUT ~~~~~~~~~~
-mutation CommentCreateMutation(
-  $input: CommentCreateInput!
-  $first: Int
-  $orderBy: [String!]
-) {
-  commentCreate(input: $input) {
-    comment {
-      id
-      name
-      friends(first: $first, orderby: $orderBy) {
-        count
-      }
-    }
-  }
-}
-
-~~~~~~~~~~ OUTPUT ~~~~~~~~~~
-// CommentCreateMutation.graphql
-module Unions { 
-  
-    };
-    type input_CommentCreateInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-  "feedback": option(input_CommentfeedbackFeedback),
-}
- and input_CommentfeedbackFeedback = {
-  .
-  "comment": option(input_FeedbackcommentComment),
-}
- and input_FeedbackcommentComment = {
-  .
-  "feedback": option(input_CommentfeedbackFeedback),
-}
-;type variables = {
-  .
-  "input": input_CommentCreateInput,
-  "first": option(int),
-  "orderBy": option(array(string)),
-};
-type response = {
-  .
-  "commentCreate":
-    Js.Nullable.t({
-      .
-      "comment":
-        Js.Nullable.t({
-          .
-          "id": string,
-          "name": Js.Nullable.t(string),
-          "friends": Js.Nullable.t({. "count": Js.Nullable.t(int)}),
-        }),
-    }),
-};
+type variables = {. "input": option(ReasonRelay.any)};
 
 `;
 
@@ -542,264 +413,13 @@ mutation InputHasArray($input: UpdateAllSeenStateInput) @raw_response_type {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // InputHasArray.graphql
-module Unions { 
-  
-    };
-    type input_UpdateAllSeenStateInput = {
-  .
-  "clientMutationId": option(string),
-  "storyIds": option(array(option(string))),
-}
-;type variables = {. "input": option(input_UpdateAllSeenStateInput)};
 type response = {
   .
   "viewerNotificationsUpdateAllSeenState":
-    Js.Nullable.t({
-      .
-      "stories":
-        Js.Nullable.t(
-          array(Js.Nullable.t({. "actorCount": Js.Nullable.t(int)})),
-        ),
-    }),
+    Js.Nullable.t({. "stories": ReasonRelay.any}),
 };
+type variables = {. "input": option(ReasonRelay.any)};
 
-`;
-
-exports[`Snapshot tests for useHaste matches expected output: mutation-with-enums-on-fragment.graphql 1`] = `
-~~~~~~~~~~ INPUT ~~~~~~~~~~
-mutation CommentCreateMutation(
-  $input: CommentCreateInput!
-  $first: Int
-  $orderBy: [String!]
-) @raw_response_type {
-  commentCreate(input: $input) {
-    comment {
-      friends(first: $first, orderby: $orderBy) {
-        edges {
-          node {
-            id
-            __typename
-            ...FriendFragment
-          }
-        }
-      }
-    }
-  }
-}
-
-fragment FriendFragment on User {
-  name
-  lastName
-  profilePicture2 {
-    test_enums
-  }
-}
-
-~~~~~~~~~~ OUTPUT ~~~~~~~~~~
-// CommentCreateMutation.graphql
-module Unions { 
-  
-    };
-    type input_CommentCreateInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-  "feedback": option(input_CommentfeedbackFeedback),
-}
- and input_CommentfeedbackFeedback = {
-  .
-  "comment": option(input_FeedbackcommentComment),
-}
- and input_FeedbackcommentComment = {
-  .
-  "feedback": option(input_CommentfeedbackFeedback),
-}
-;type variables = {
-  .
-  "input": input_CommentCreateInput,
-  "first": option(int),
-  "orderBy": option(array(string)),
-};
-type response = {
-  .
-  "commentCreate":
-    Js.Nullable.t({
-      .
-      "comment":
-        Js.Nullable.t({
-          .
-          "friends":
-            Js.Nullable.t({
-              .
-              "edges":
-                Js.Nullable.t(
-                  array(
-                    Js.Nullable.t({
-                      .
-                      "node":
-                        Js.Nullable.t({
-                          .
-                          "id": string,
-                          "__typename": string,
-                          "__$fragment_ref__FriendFragment": FriendFragment_graphql.t,
-                        }),
-                    }),
-                  ),
-                ),
-            }),
-        }),
-    }),
-};
-
-
-// FriendFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "name": Js.Nullable.t(string),
-  "lastName": Js.Nullable.t(string),
-  "profilePicture2":
-    Js.Nullable.t({
-      .
-      "test_enums": Js.Nullable.t(SchemaAssets.Enum_TestEnums.wrapped),
-    }),
-};
-
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FriendFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
-`;
-
-exports[`Snapshot tests for useHaste matches expected output: mutation-with-nested-fragments.graphql 1`] = `
-~~~~~~~~~~ INPUT ~~~~~~~~~~
-mutation CommentCreateMutation(
-  $input: CommentCreateInput!
-  $first: Int
-  $orderBy: [String!]
-) @raw_response_type {
-  commentCreate(input: $input) {
-    comment {
-      friends(first: $first, orderby: $orderBy) {
-        edges {
-          node {
-            lastName
-            ...FriendFragment
-          }
-        }
-      }
-    }
-  }
-}
-
-fragment FriendFragment on User {
-  name
-  lastName
-  feedback {
-    ...FeedbackFragment
-  }
-}
-
-fragment FeedbackFragment on Feedback {
-  id
-  name
-}
-
-~~~~~~~~~~ OUTPUT ~~~~~~~~~~
-// CommentCreateMutation.graphql
-module Unions { 
-  
-    };
-    type input_CommentCreateInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-  "feedback": option(input_CommentfeedbackFeedback),
-}
- and input_CommentfeedbackFeedback = {
-  .
-  "comment": option(input_FeedbackcommentComment),
-}
- and input_FeedbackcommentComment = {
-  .
-  "feedback": option(input_CommentfeedbackFeedback),
-}
-;type variables = {
-  .
-  "input": input_CommentCreateInput,
-  "first": option(int),
-  "orderBy": option(array(string)),
-};
-type response = {
-  .
-  "commentCreate":
-    Js.Nullable.t({
-      .
-      "comment":
-        Js.Nullable.t({
-          .
-          "friends":
-            Js.Nullable.t({
-              .
-              "edges":
-                Js.Nullable.t(
-                  array(
-                    Js.Nullable.t({
-                      .
-                      "node":
-                        Js.Nullable.t({
-                          .
-                          "lastName": Js.Nullable.t(string),
-                          "__$fragment_ref__FriendFragment": FriendFragment_graphql.t,
-                        }),
-                    }),
-                  ),
-                ),
-            }),
-        }),
-    }),
-};
-
-
-// FriendFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "name": Js.Nullable.t(string),
-  "lastName": Js.Nullable.t(string),
-  "feedback":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__FeedbackFragment": FeedbackFragment_graphql.t,
-    }),
-};
-
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FriendFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
-
-// FeedbackFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "name": Js.Nullable.t(string),
-};
-
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FeedbackFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: plural-fragment.graphql 1`] = `
@@ -810,16 +430,8 @@ fragment PluralFragment on Node @relay(plural: true) {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // PluralFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = array({. "id": string});
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = array({.. "__$fragment_ref__PluralFragment": t } as 'a);
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: query-with-defer.graphql 1`] = `
@@ -844,36 +456,16 @@ query TestDefer @raw_response_type {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // TestDefer.graphql
-module Unions { 
-  
-    };
-    type variables = unit;
 type response = {
   .
   "node":
     Js.Nullable.t({
       .
+      "friends": Js.Nullable.t({. "edges": ReasonRelay.any}),
       "name": Js.Nullable.t(string),
-      "friends":
-        Js.Nullable.t({
-          .
-          "edges":
-            Js.Nullable.t(
-              array(
-                Js.Nullable.t({
-                  .
-                  "pageInfo":
-                    Js.Nullable.t({
-                      .
-                      "endCursor": Js.Nullable.t(string),
-                      "hasNextPage": Js.Nullable.t(bool),
-                    }),
-                }),
-              ),
-            ),
-        }),
     }),
 };
+type variables = unit;
 
 `;
 
@@ -899,10 +491,6 @@ query ScalarHandleField($id: ID!) @raw_response_type {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // LinkedHandleField.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
 type response = {
   .
   "node":
@@ -911,17 +499,141 @@ type response = {
       "friends": Js.Nullable.t({. "count": Js.Nullable.t(int)}),
     }),
 };
+type variables = {. "id": string};
 
 
 // ScalarHandleField.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
 type response = {
   .
   "node": Js.Nullable.t({. "name": Js.Nullable.t(string)}),
 };
+type variables = {. "id": string};
+
+`;
+
+exports[`Snapshot tests for useHaste matches expected output: query-with-match-fields.graphql 1`] = `
+~~~~~~~~~~ INPUT ~~~~~~~~~~
+query Test @raw_response_type {
+  node(id: "1") {
+    ...NameRendererFragment
+  }
+}
+
+fragment NameRendererFragment on User {
+  id
+  nameRenderer @match {
+    ...PlainUserNameRenderer_name @module(name: "PlainUserNameRenderer.react")
+    ...MarkdownUserNameRenderer_name
+      @module(name: "MarkdownUserNameRenderer.react")
+  }
+}
+
+fragment PlainUserNameRenderer_name on PlainUserNameRenderer {
+  plaintext
+  data {
+    text
+  }
+}
+
+fragment MarkdownUserNameRenderer_name on MarkdownUserNameRenderer {
+  markdown
+  data {
+    markup
+  }
+}
+
+~~~~~~~~~~ OUTPUT ~~~~~~~~~~
+// Test.graphql
+type response = {. "node": Js.Nullable.t(unit)};
+type variables = unit;
+
+
+// NameRendererFragment.graphql
+
+
+
+// PlainUserNameRenderer_name.graphql
+
+
+
+// MarkdownUserNameRenderer_name.graphql
+
+
+`;
+
+exports[`Snapshot tests for useHaste matches expected output: query-with-multiple-match-fields.graphql 1`] = `
+~~~~~~~~~~ INPUT ~~~~~~~~~~
+query Test @raw_response_type {
+  node(id: "1") {
+    ... on User {
+      username
+      ...NameRendererFragment
+    }
+  }
+  viewer {
+    ... on User {
+      name
+      ...AnotherNameRendererFragment
+    }
+  }
+}
+
+fragment NameRendererFragment on User {
+  id
+  nameRenderer @match {
+    ...PlainUserNameRenderer_name @module(name: "PlainUserNameRenderer.react")
+    ...MarkdownUserNameRenderer_name
+      @module(name: "MarkdownUserNameRenderer.react")
+  }
+}
+
+fragment AnotherNameRendererFragment on User {
+  name
+  nameRenderer @match {
+    ...PlainUserNameRenderer_name @module(name: "PlainUserNameRenderer.react")
+    ...MarkdownUserNameRenderer_name
+      @module(name: "MarkdownUserNameRenderer.react")
+  }
+}
+
+fragment PlainUserNameRenderer_name on PlainUserNameRenderer {
+  plaintext
+  data {
+    text
+  }
+}
+
+fragment MarkdownUserNameRenderer_name on MarkdownUserNameRenderer {
+  markdown
+  data {
+    markup
+  }
+}
+
+~~~~~~~~~~ OUTPUT ~~~~~~~~~~
+// Test.graphql
+type response = {
+  .
+  "viewer": Js.Nullable.t({. "name": Js.Nullable.t(string)}),
+  "node": Js.Nullable.t({. "username": Js.Nullable.t(string)}),
+};
+type variables = unit;
+
+
+// NameRendererFragment.graphql
+
+
+
+// AnotherNameRendererFragment.graphql
+
+
+
+// PlainUserNameRenderer_name.graphql
+
+
+
+// MarkdownUserNameRenderer_name.graphql
+
 
 `;
 
@@ -946,45 +658,17 @@ fragment FriendFragment on User {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // ExampleQuery.graphql
-module Unions { 
-  
-    };
-    type variables = {
+type response = {. "node": Js.Nullable.t(unit)};
+type variables = {
   .
-  "id": string,
   "condition": bool,
-};
-type response = {
-  .
-  "node":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__FriendFragment": FriendFragment_graphql.t,
-    }),
+  "id": string,
 };
 
 
 // FriendFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "name": Js.Nullable.t(string),
-  "lastName": Js.Nullable.t(string),
-  "feedback":
-    Js.Nullable.t({
-      .
-      "id": string,
-      "name": Js.Nullable.t(string),
-    }),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FriendFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: query-with-stream.graphql 1`] = `
@@ -1010,28 +694,16 @@ query TestStream @raw_response_type {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // TestStream.graphql
-module Unions { 
-  
-    };
-    type variables = unit;
 type response = {
   .
   "node":
     Js.Nullable.t({
       .
+      "friends": Js.Nullable.t({. "edges": ReasonRelay.any}),
       "name": Js.Nullable.t(string),
-      "friends":
-        Js.Nullable.t({
-          .
-          "edges":
-            Js.Nullable.t(
-              array(
-                Js.Nullable.t({. "node": Js.Nullable.t({. "id": string})}),
-              ),
-            ),
-        }),
     }),
 };
+type variables = unit;
 
 `;
 
@@ -1046,20 +718,8 @@ fragment FragmentSpread on Node {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // FragmentSpread.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "__$fragment_ref__FragmentSpread": FragmentSpread_graphql.t,
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__FragmentSpread": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: refetchable-fragment.graphql 1`] = `
@@ -1074,127 +734,12 @@ fragment RefetchableFragment on Node
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // RefetchableFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "fragAndField": Js.Nullable.t({. "uri": Js.Nullable.t(string)}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__RefetchableFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // RefetchableFragmentQuery.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
-type response = {
-  .
-  "node":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__RefetchableFragment": RefetchableFragment_graphql.t,
-    }),
-};
-
-`;
-
-exports[`Snapshot tests for useHaste matches expected output: roots.graphql 1`] = `
-~~~~~~~~~~ INPUT ~~~~~~~~~~
-query ExampleQuery($id: ID!) {
-  node(id: $id) {
-    id
-  }
-}
-
-fragment ExampleFragment on User {
-  id
-}
-
-mutation TestMutation($input: CommentCreateInput!) {
-  commentCreate(input: $input) {
-    comment {
-      id
-    }
-  }
-}
-
-subscription TestSubscription($input: FeedbackLikeInput) {
-  feedbackLikeSubscribe(input: $input) {
-    feedback {
-      id
-    }
-  }
-}
-
-~~~~~~~~~~ OUTPUT ~~~~~~~~~~
-// ExampleQuery.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
-type response = {. "node": Js.Nullable.t({. "id": string})};
-
-
-// ExampleFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {. "id": string};
-
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__ExampleFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
-
-// TestMutation.graphql
-module Unions { 
-  
-    };
-    type input_CommentCreateInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-  "feedback": option(input_CommentfeedbackFeedback),
-}
- and input_CommentfeedbackFeedback = {
-  .
-  "comment": option(input_FeedbackcommentComment),
-}
- and input_FeedbackcommentComment = {
-  .
-  "feedback": option(input_CommentfeedbackFeedback),
-}
-;type variables = {. "input": input_CommentCreateInput};
-type response = {
-  .
-  "commentCreate":
-    Js.Nullable.t({. "comment": Js.Nullable.t({. "id": string})}),
-};
-
-
-// TestSubscription.graphql
-module Unions { 
-  
-    };
-    type input_FeedbackLikeInput = {
-  .
-  "clientMutationId": option(string),
-  "feedbackId": option(string),
-}
-;type variables = {. "input": option(input_FeedbackLikeInput)};
-type response = {
-  .
-  "feedbackLikeSubscribe":
-    Js.Nullable.t({. "feedback": Js.Nullable.t({. "id": string})}),
-};
+type response = {. "node": Js.Nullable.t(unit)};
+type variables = {. "id": string};
 
 `;
 
@@ -1216,37 +761,8 @@ fragment ScalarField on User {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // ScalarField.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "name": Js.Nullable.t(string),
-  "websites": Js.Nullable.t(array(Js.Nullable.t(string))),
-  "traits":
-    Js.Nullable.t(
-      array(Js.Nullable.t(SchemaAssets.Enum_PersonalityTraits.wrapped)),
-    ),
-  "aliasedLinkedField":
-    Js.Nullable.t({. "aliasedField": Js.Nullable.t(int)}),
-  "screennames":
-    Js.Nullable.t(
-      array(
-        Js.Nullable.t({
-          .
-          "name": Js.Nullable.t(string),
-          "service": Js.Nullable.t(string),
-        }),
-      ),
-    ),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__ScalarField": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: typename-inside-with-overlapping-fields.graphql 1`] = `
@@ -1270,39 +786,8 @@ fragment TypenameInsideWithOverlappingFields on Viewer {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // TypenameInsideWithOverlappingFields.graphql
-module Unions { 
-  module Union_actor = {
-      type wrapped;
-      
-      external __unwrap_union: wrapped => {. "__typename": string } = "%identity";      
-      type type_Page = {."id": string,"name": Js.Nullable.t(string)};
-type type_User = {."id": string,"name": Js.Nullable.t(string),"profile_picture": Js.Nullable.t({."uri": Js.Nullable.t(string)})};
-      external __unwrap_Page: wrapped => type_Page = "%identity";
-external __unwrap_User: wrapped => type_User = "%identity";
-      
-      type t = [  | \`Page(type_Page) 
- | \`User(type_User)  | \`UnmappedUnionMember];
-      
-      let unwrap = wrapped => {
-        let unwrappedUnion = wrapped |> __unwrap_union;
-        switch (unwrappedUnion##__typename) {
-          | "Page" => \`Page(wrapped |> __unwrap_Page)
-| "User" => \`User(wrapped |> __unwrap_User)
-          | _ => \`UnmappedUnionMember
-        };
-      };
-    };
-    };
-    open Unions;type fragment = {
-  .
-  "actor": Js.Nullable.t({. "actor": Js.Nullable.t(Union_actor.wrapped)}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameInsideWithOverlappingFields": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: typename-on-union.graphql 1`] = `
@@ -1390,152 +875,36 @@ fragment TypenameAliases on Actor {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // TypenameInside.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "__typename": string,
-  "firstName": Js.Nullable.t(string),
-  "__typename": string,
-  "username": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameInside": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameOutside.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "__typename": string,
-  "firstName": Js.Nullable.t(string),
-  "__typename": string,
-  "username": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameOutside": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameOutsideWithAbstractType.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "__typename": string,
-  "username": Js.Nullable.t(string),
-  "address":
-    Js.Nullable.t({
-      .
-      "city": Js.Nullable.t(string),
-      "country": Js.Nullable.t(string),
-      "street": Js.Nullable.t(string),
-    }),
-  "firstName": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameOutsideWithAbstractType": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameWithoutSpreads.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "firstName": Js.Nullable.t(string),
-  "__typename": string,
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameWithoutSpreads": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameWithoutSpreadsAbstractType.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "__typename": string,
-  "id": string,
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameWithoutSpreadsAbstractType": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameWithCommonSelections.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "__typename": string,
-  "name": Js.Nullable.t(string),
-  "firstName": Js.Nullable.t(string),
-  "username": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameWithCommonSelections": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameAlias.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "_typeAlias": string,
-  "firstName": Js.Nullable.t(string),
-  "_typeAlias": string,
-  "username": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameAlias": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // TypenameAliases.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "_typeAlias1": string,
-  "_typeAlias2": string,
-  "firstName": Js.Nullable.t(string),
-  "_typeAlias1": string,
-  "_typeAlias2": string,
-  "username": Js.Nullable.t(string),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__TypenameAliases": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useHaste matches expected output: unmasked-fragment-spreads.graphql 1`] = `
@@ -1569,74 +938,20 @@ fragment AnotherRecursiveFragment on Image {
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // UserProfile.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "profilePicture":
-    Js.Nullable.t({
-      .
-      "uri": Js.Nullable.t(string),
-      "width": Js.Nullable.t(int),
-      "height": Js.Nullable.t(int),
-      "__$fragment_ref__PhotoFragment": PhotoFragment_graphql.t,
-    }),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__UserProfile": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // PhotoFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "uri": Js.Nullable.t(string),
-  "width": Js.Nullable.t(int),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__PhotoFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // RecursiveFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "uri": Js.Nullable.t(string),
-  "width": Js.Nullable.t(int),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__RecursiveFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // AnotherRecursiveFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "uri": Js.Nullable.t(string),
-  "height": Js.Nullable.t(int),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__AnotherRecursiveFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 `;
 
 exports[`Snapshot tests for useSingleDirectory matches expected output: refetchable-fragment.graphql 1`] = `
@@ -1651,33 +966,11 @@ fragment RefetchableFragment on Node
 
 ~~~~~~~~~~ OUTPUT ~~~~~~~~~~
 // RefetchableFragment.graphql
-module Unions { 
-  
-    };
-    type fragment = {
-  .
-  "id": string,
-  "fragAndField": Js.Nullable.t({. "uri": Js.Nullable.t(string)}),
-};
 
-        type t;
-        type fragmentRef;
-        type fragmentRefSelector('a) = {.. "__$fragment_ref__RefetchableFragment": t } as 'a;
-        external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
-        
+
 
 // RefetchableFragmentQuery.graphql
-module Unions { 
-  
-    };
-    type variables = {. "id": string};
-type response = {
-  .
-  "node":
-    Js.Nullable.t({
-      .
-      "__$fragment_ref__RefetchableFragment": RefetchableFragment_graphql.t,
-    }),
-};
+type response = {. "node": Js.Nullable.t(unit)};
+type variables = {. "id": string};
 
 `;

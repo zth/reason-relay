@@ -22,11 +22,14 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-flow": "^7.0.0",
     "@babel/types": "^7.4.4",
+    "@types/graphql": "14.5.0",
+    "@types/node": "^12.7.11",
+    "@types/relay-compiler": "^6.0.1",
     "babel-jest": "^24.9.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "flow-bin": "^0.101.0",
     "flow-typed": "^2.5.2",
-    "gentype": "^2.29.0",
+    "gentype": "^2.40.1",
     "jest": "^24.9.0",
     "relay-compiler": "^6.0.0",
     "relay-runtime": "6.0.0",
@@ -36,14 +39,17 @@
   "dependencies": {
     "@babel/generator": "^7.4.4",
     "@babel/parser": "^7.4.5",
+    "bs-flow-parser": "^0.91.0-1",
     "bs-platform": "^5.0.5-beta.1",
     "fbjs": "^1.0.0",
-    "graphql": "14.3.1",
+    "graphql": "14.5.0",
     "invariant": "^2.2.4",
     "nullthrows": "^1.1.1",
-    "reason": "^3.3.4"
+    "reason": "^3.3.4",
+    "tablecloth-bucklescript": "^0.0.6",
+    "typescript": "^3.6.3"
   },
   "resolutions": {
-    "graphql": "14.3.1"
+    "graphql": "14.5.0"
   }
 }

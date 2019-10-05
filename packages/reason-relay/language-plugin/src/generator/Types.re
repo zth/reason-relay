@@ -1,12 +1,18 @@
-[@genType]
-type scalarValues =
+type unionMember = {
+  name: string,
+  shape: object_,
+}
+and union = {
+  members: list(unionMember),
+  atPath: list(string),
+}
+and scalarValues =
   | Int
   | String
   | Float
   | Boolean
   | CustomScalar(string)
   | Any
-[@genType]
 and propType =
   | Scalar(scalarValues)
   | Enum(string)
@@ -15,18 +21,14 @@ and propType =
   | FragmentRefValue(string)
   | TypeReference(string)
   | Union(string)
-[@genType]
 and propValue = {
   nullable: bool,
   propType,
 }
-[@genType]
 and propValues =
   | FragmentRef(string)
   | Prop(string, propValue)
-[@genType]
 and object_ = {values: array(propValues)}
-[@genType]
 and rootType =
   | Operation(object_)
   | Fragment(object_)
@@ -34,7 +36,6 @@ and rootType =
   | InputObject(string, object_)
   | PluralFragment(object_);
 
-[@genType]
 type fullEnum = {
   name: string,
   values: array(string),

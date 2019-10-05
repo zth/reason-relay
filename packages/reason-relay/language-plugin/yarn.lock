@@ -851,6 +851,20 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@elliottcable/bs-gen@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@elliottcable/bs-gen/-/bs-gen-0.5.1.tgz#0cd7f31013b1d424e201a6fe6118615c15964102"
+  integrity sha512-nTxwpcBbCENxy9TIYFr553mp2Mts7I5OAan4ke7uiphiQKo0EqOpCgPG+kSYlp8LdPSz4h/IYJJoVC7ldIr/Lg==
+  dependencies:
+    bs-platform "^4.0.2"
+
+"@elliottcable/bs-uchar@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@elliottcable/bs-uchar/-/bs-uchar-0.0.2.tgz#455e23b226c38349a54e18fefa3284baf22a5558"
+  integrity sha512-DG8C2IhTZB2a+A0/AE0jrBZyzkj9VW/7Zc+E5XOALfmgBh2Xy92H8xyT6okh0QK4EzGZiT2/heHYF0AAriOrNA==
+  dependencies:
+    bs-platform "^4.0.2"
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -1065,6 +1079,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/graphql@14.5.0":
+  version "14.5.0"
+  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.5.0.tgz#a545fb3bc8013a3547cf2f07f5e13a33642b75d6"
+  integrity sha512-MOkzsEp1Jk5bXuAsHsUi6BVv0zCO+7/2PTiZMXWDSsMXvNU6w/PLMQT2vHn8hy2i0JqojPz1Sz6rsFjHtsU0lA==
+  dependencies:
+    graphql "*"
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.1.tgz#42995b446db9a48a11a07ec083499a860e9138ff"
@@ -1084,6 +1105,24 @@
   dependencies:
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
+
+"@types/node@^12.7.11":
+  version "12.7.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.11.tgz#be879b52031cfb5d295b047f5462d8ef1a716446"
+  integrity sha512-Otxmr2rrZLKRYIybtdG/sgeO+tHY20GxeDjcGmUnmmlCWyEnv2a2x1ZXBo3BTec4OiTXMQCiazB8NMBf0iRlFw==
+
+"@types/relay-compiler@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@types/relay-compiler/-/relay-compiler-6.0.1.tgz#c33dace63e70d33ecf932bfe6abe911b71c9839c"
+  integrity sha512-to0ntZAGmgQanFpBQHOuvpULJFATD5z7We+H2gM7QPNzK/0P4jScweBmTGKSd8idnFfemPdXbVNEfKL9Mjd26g==
+  dependencies:
+    "@types/relay-runtime" "*"
+    graphql "^14.5.3"
+
+"@types/relay-runtime@*":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@types/relay-runtime/-/relay-runtime-6.0.4.tgz#c58245a86e77b225d8124f17995133573d84fdc6"
+  integrity sha512-YlMFtqgMDpwCWMLpcbXIQALbroZbS1ZV2GkU6as9LMLnLJ4jLzZIvQqHOyKtYnow/mghRj6AHk0mZ6bH+rH7Bg==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -1474,10 +1513,34 @@ browserslist@^4.6.0, browserslist@^4.6.2:
     electron-to-chromium "^1.3.191"
     node-releases "^1.1.25"
 
+bs-flow-parser@^0.91.0-1:
+  version "0.91.0-1"
+  resolved "https://registry.yarnpkg.com/bs-flow-parser/-/bs-flow-parser-0.91.0-1.tgz#49fc17a30c61477a162463b1f49e1f45a69c77c8"
+  integrity sha512-231RjIq/8ZKiYe2W6Xe/EGh/hYHZPtrZ4PxL+Bjq/XlDfLEFl5+7cEXK0vtpSzgnY9lTS4V/hju49DPg0sNqjw==
+  dependencies:
+    "@elliottcable/bs-gen" "^0.5.1"
+    "@elliottcable/bs-uchar" "^0.0.2"
+    bs-sedlex "^1.99.4-pre.8"
+    ppx-sedlex "^1.99.4-pre.8"
+
+bs-platform@^4.0.2, bs-platform@^4.0.3:
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.18.tgz#d17b8693ba1f714d9b27e0ddb365f2069ba4b8a0"
+  integrity sha512-BwzW0iYHvREqUZIgQxJmdJrxexppLvJxYQ4LLexbhCp7uZU5DIZ5ub4ZHpkCkc8fn8bsXWc+Rrejb3csi+BoAQ==
+
 bs-platform@^5.0.5-beta.1:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-5.0.6.tgz#88c13041fb020479800de3d82c680bf971091425"
   integrity sha512-6Boa2VEcWJp2WJr38L7bp3J929nYha7gDarjxb070jWzgfPJ/WbzjipmSfnu2eqqk1MfjEIpBipbPz6n1NISwA==
+
+bs-sedlex@^1.99.4-pre.8:
+  version "1.99.4"
+  resolved "https://registry.yarnpkg.com/bs-sedlex/-/bs-sedlex-1.99.4.tgz#484ddb21b29874c3fdf9a192a692dfb2a7acf43e"
+  integrity sha512-Uc8Iinl2OZfQIw6FR5nKQqqKL8tsUdLaqDzAsGw6TovVoJxOXvp4mfrUQmwj3WC9szh4cNUzTRS4SPfr98goUg==
+  dependencies:
+    "@elliottcable/bs-gen" "^0.5.1"
+    "@elliottcable/bs-uchar" "^0.0.2"
+    bs-platform "^4.0.3"
 
 bser@^2.0.0:
   version "2.1.0"
@@ -2382,10 +2445,10 @@ gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gentype@^2.29.0:
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/gentype/-/gentype-2.32.0.tgz#fea2a7ed34a7d8594471496eb4f48c81f8b3cd46"
-  integrity sha512-G87GrGvRiXrxS+grT4ypUX+3LeQJ04r42dhcAfU0zSTEpvKC0NU11Ba/uYJtGacloYGv98psKaeuQl7WOuIJGQ==
+gentype@^2.40.1:
+  version "2.40.1"
+  resolved "https://registry.yarnpkg.com/gentype/-/gentype-2.40.1.tgz#28a04e167e5fb1ce4ab1bfbae61ed1ea80dc59a9"
+  integrity sha512-R4lU2KovCyZOiBq1S1/RZG2GRakoMmOutTxBajpNjZeQCpOB4zRAoKTIWx8e3B3u46lHVb/B4d/Vu/9rh6OngQ==
 
 get-caller-file@^1.0.1:
   version "1.0.3"
@@ -2484,10 +2547,10 @@ graceful-fs@^4.1.15:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.2.tgz#6f0952605d0140c1cfdb138ed005775b92d67b02"
   integrity sha512-IItsdsea19BoLC7ELy13q1iJFNmd7ofZH5+X/pJr90/nRoPEX0DJo1dHDbgtYWOhJhcCgMDTOw84RZ72q6lB+Q==
 
-graphql@14.3.1:
-  version "14.3.1"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.3.1.tgz#b3aa50e61a841ada3c1f9ccda101c483f8e8c807"
-  integrity sha512-FZm7kAa3FqKdXy8YSSpAoTtyDFMIYSpCDOr+3EqlI1bxmtHu+Vv/I2vrSeT1sBOEnEniX3uo4wFhFdS/8XN6gA==
+graphql@*, graphql@14.5.0, graphql@^14.5.3:
+  version "14.5.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.5.0.tgz#4801e6460942c9c591944617f6dd224a9e531520"
+  integrity sha512-wnGcTD181L2xPnIwHHjx/moV4ulxA2Kms9zcUY+B/SIrK+2N+iOC6WNgnR2zVTmg1Z8P+CZq5KXibTnatg3WUw==
   dependencies:
     iterall "^1.2.2"
 
@@ -4312,6 +4375,11 @@ posix-character-classes@^0.1.0:
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
 
+ppx-sedlex@^1.99.4-pre.8:
+  version "1.99.4"
+  resolved "https://registry.yarnpkg.com/ppx-sedlex/-/ppx-sedlex-1.99.4.tgz#77b03266808a7b2100814b9b8152e326573c40eb"
+  integrity sha512-SkHPnUCd8GU5ZdnAVypL64D/Ie5dH3S60tY3ZsWvmuIzklSosm/r0HnJA7xi8VqtWjHUjsluNWFj0lmyvuLTJA==
+
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -5137,6 +5205,11 @@ table@^5.0.2:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
+tablecloth-bucklescript@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/tablecloth-bucklescript/-/tablecloth-bucklescript-0.0.6.tgz#92b27c4e46ceec47008728367eccd7d5016b3914"
+  integrity sha512-rfwtTya+tfPByxsfH0i1GACppzv098wKNGa4YEG9t9m+hpj0T/qpyjA1iOngN9w1iBJaIs4pSUNEAgLf7jWAmw==
+
 tar@^4:
   version "4.4.10"
   resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.10.tgz#946b2810b9a5e0b26140cf78bea6b0b0d689eba1"
@@ -5271,6 +5344,11 @@ typescript@^3.3.3333:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.3.tgz#c830f657f93f1ea846819e929092f5fe5983e977"
   integrity sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
+
+typescript@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
+  integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
 
 ua-parser-js@^0.7.18:
   version "0.7.20"
