@@ -123,7 +123,6 @@ module Unions = {};
 exports[`Language plugin tests Unions generates code to unwrap unions 1`] = `
 "// appQuery.graphql
 type union_response_participantById_wrapped;
-
 type response = {
   .
   \\"participantById\\": Js.Nullable.t(union_response_participantById_wrapped),

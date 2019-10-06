@@ -1,4 +1,6 @@
 let makeAddToStr = (container, newStr) => container := container^ ++ newStr;
+let makeAddToList = (container, newMember) =>
+  container := [newMember, ...container^];
 
 /**
  * To avoid having to pattern match on module access of arbitrary

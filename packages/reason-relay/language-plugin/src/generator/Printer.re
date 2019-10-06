@@ -5,21 +5,13 @@ let printPropName = propName => propName |> printQuoted;
 let printEnumName = name => "enum_" ++ name;
 let getInputObjName = name => "input_" ++ name;
 let getObjName = name => "obj_" ++ name;
-
 let printWrappedEnumName = name => "SchemaAssets.Enum_" ++ name ++ ".wrapped";
-
 let printUnionName = name => "Union_" ++ name;
-
 let printWrappedUnionName = name => "union_" ++ name ++ "_wrapped";
-
 let printFragmentRef = name => name ++ "_graphql.t";
-
 let getFragmentRefName = name => "__$fragment_ref__" ++ name;
-
 let getInputTypeName = name => "input_" ++ name;
-
 let printAnyType = () => "ReasonRelay.any";
-
 let printTypeReference = (typeName: string) => typeName;
 
 type objectOptionalType =
@@ -225,3 +217,46 @@ let printUnion = (union: union) => {
   ++ unwrapFnImpl^
   ++ "}";
 };
+
+let fragmentRefAssets = fragmentName => {
+  let fref = fragmentName |> getFragmentRefName;
+  {j|
+type t;
+type fragmentRef;
+type fragmentRefSelector('a) = {.. "$fref": t} as 'a;
+external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
+|j};
+};
+
+let unionModule = unions => {
+  let unionsText =
+    Tablecloth.(unions |> List.map(~f=printUnion) |> String.join(~sep="\n"));
+  {j|
+    module Unions {
+      $unionsText
+    };
+    |j};
+};
+
+let operationType = (operationType: Types.operationType) => {
+  let opType =
+    switch (operationType) {
+    | Fragment(_) => "fragment"
+    | Query(_) => "query"
+    | Mutation(_) => "mutation"
+    | Subscription(_) => "subscription"
+    };
+
+  "type operationType = ReasonRelay." ++ opType ++ "Node;";
+};
+
+let printType = typeText => {j|type $typeText;|j};
+
+let opaqueUnionType = unions =>
+  Tablecloth.(
+    unions
+    |> List.map(~f=(union: Types.union) =>
+         union.atPath |> makeUnionName |> printWrappedUnionName |> printType
+       )
+    |> String.join(~sep="\n")
+  );

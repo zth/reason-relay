@@ -1,3 +1,14 @@
+/**
+ * This is information the language plugin needs to supply
+ * in addition to just the Flow types.
+ */
+[@gentype]
+type operationType =
+  | Fragment(string, bool) // Name, isPlural
+  | Mutation(string)
+  | Subscription(string)
+  | Query(string);
+  
 type unionMember = {
   name: string,
   shape: object_,

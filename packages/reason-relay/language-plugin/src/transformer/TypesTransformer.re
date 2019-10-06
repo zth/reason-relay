@@ -16,17 +16,6 @@ let parse_options: option(Parser_env.parse_options) =
     use_strict: false,
   });
 
-/**
- * This is information the language plugin needs to supply
- * in addition to just the Flow types.
- */
-[@gentype]
-type operationType =
-  | Fragment(string, bool) // Name, isPlural
-  | Mutation(string)
-  | Subscription(string)
-  | Query(string);
-
 type propList('a, 'b) = list(Flow_ast.Type.Object.property('a, 'b));
 
 type obj('a, 'b) = {
@@ -385,7 +374,7 @@ let printFromFlowTypes = (~content, ~operationType) => {
     Parser_flow.program(~fail=true, ~parse_options, content),
   ) {
   | (
-      Mutation(name) | Query(name) | Subscription(name),
+      Types.Mutation(name) | Query(name) | Subscription(name),
       ((_, statements, _), []),
     ) =>
     statements
@@ -512,11 +501,12 @@ let printFromFlowTypes = (~content, ~operationType) => {
   };
 
   let finalStr = ref("");
-  let addToStr = str => finalStr := finalStr^ ++ str;
+  let addToStr = Utils.makeAddToStr(finalStr);
 
   let definitions: ref(list(Types.rootType)) = ref([]);
-  let addDefinition = def => definitions := [def, ...definitions^];
+  let addDefinition = Utils.makeAddToList(definitions);
 
+  // We check and add all definitions we've found to a list that'll later be printed as types.
   switch (state^.variables) {
   | Some(variables) =>
     addDefinition(
@@ -551,7 +541,7 @@ let printFromFlowTypes = (~content, ~operationType) => {
     addDefinition(
       plural ? Types.PluralFragment(shape) : Types.Fragment(shape),
     );
-    addToStr(Templates.fragmentRefTemplate(name));
+    addToStr(Printer.fragmentRefAssets(name));
   | None => ()
   };
 
@@ -570,38 +560,19 @@ let printFromFlowTypes = (~content, ~operationType) => {
   };
 
   // This prints the opaque union types. We need to do it after everything above as makeObjShape will add the unions.
-  unions^
-  |> List.iter((union: Types.union) =>
-       addToStr(
-         "type "
-         ++ Printer.(union.atPath |> makeUnionName |> printWrappedUnionName)
-         ++ ";\n",
-       )
-     );
+  addToStr(Printer.opaqueUnionType(unions^) ++ "\n");
 
-  addToStr("\n");
-
+  // Print all definitions we've found
   Printer.(definitions^ |> List.iter(def => def |> printRootType |> addToStr));
 
   /**
    * This adds operationType, which is refernced in the raw output of the Relay
    * runtime representation.
    */
-
-  let opType =
-    switch (operationType) {
-    | Fragment(_) => "fragment"
-    | Query(_) => "query"
-    | Mutation(_) => "mutation"
-    | Subscription(_) => "subscription"
-    };
-
-  addToStr("type operationType = ReasonRelay." ++ opType ++ "Node;");
+  addToStr(Printer.operationType(operationType));
 
   // We always output a Unions module, so we can include it through our PPX
-  addToStr("\n\nmodule Unions = {");
-  Printer.(unions^ |> List.iter(union => union |> printUnion |> addToStr));
-  addToStr("};\n");
+  addToStr("\n\n" ++ Printer.unionModule(unions^));
 
   switch (state^) {
   | {fragment: None, response: None, variables: None} =>

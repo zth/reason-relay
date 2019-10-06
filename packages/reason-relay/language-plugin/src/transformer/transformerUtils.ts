@@ -1,11 +1,5 @@
-import {
-  Node,
-  Fragment,
-  Selection,
-  LocalArgumentDefinition
-} from "relay-compiler";
-import { GraphQLCompositeType, GraphQLObjectType } from "graphql";
-import { operationType } from "./TypesTransformer.gen";
+import { Node, Fragment } from "relay-compiler";
+import { operationType } from "../generator/Types.gen";
 
 export function makeOperationDescriptor(node: Node | Fragment): operationType {
   if (node.kind === "Root") {
