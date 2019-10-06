@@ -10,8 +10,11 @@ function generate(node, options) {
         content: RelayFlowGenerator.generate(node, options),
         operationType: transformerUtils_1.makeOperationDescriptor(node),
         lookupAtPath: (path) => {
-            let atPath = transformerUtils_1.lookupPropAtPath(node, path);
-            if (atPath != null && atPath.kind === "ScalarField") {
+            let thePath = path.slice().reverse();
+            let atPath = transformerUtils_1.lookupPropAtPath(node, thePath);
+            if (atPath != null &&
+                (atPath.kind === "ScalarField" ||
+                    atPath.kind === "LocalArgumentDefinition")) {
                 let targetType = atPath.type instanceof graphql_1.GraphQLNonNull
                     ? atPath.type.ofType
                     : atPath.type;
@@ -22,7 +25,7 @@ function generate(node, options) {
                     switch (targetType.name) {
                         case "Int":
                         case "Float":
-                            return atPath.type.name;
+                            return targetType.name;
                     }
                 }
             }

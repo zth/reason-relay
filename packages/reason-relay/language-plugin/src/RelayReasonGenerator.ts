@@ -19,9 +19,14 @@ function generate(
     content: RelayFlowGenerator.generate(node, options),
     operationType: makeOperationDescriptor(node),
     lookupAtPath: (path: string[]): atPath => {
-      let atPath = lookupPropAtPath(node, path);
+      let thePath = path.slice().reverse();
+      let atPath = lookupPropAtPath(node, thePath);
 
-      if (atPath != null && atPath.kind === "ScalarField") {
+      if (
+        atPath != null &&
+        (atPath.kind === "ScalarField" ||
+          atPath.kind === "LocalArgumentDefinition")
+      ) {
         let targetType =
           atPath.type instanceof GraphQLNonNull
             ? atPath.type.ofType
@@ -35,7 +40,7 @@ function generate(
           switch (targetType.name) {
             case "Int":
             case "Float":
-              return atPath.type.name;
+              return targetType.name;
           }
         }
       }

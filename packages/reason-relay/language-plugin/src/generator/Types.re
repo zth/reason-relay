@@ -20,6 +20,7 @@ and propType =
   | Array(propValue)
   | FragmentRefValue(string)
   | TypeReference(string)
+  | ObjectReference(string)
   | Union(string)
 and propValue = {
   nullable: bool,

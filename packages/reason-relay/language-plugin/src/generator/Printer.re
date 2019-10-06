@@ -3,6 +3,8 @@ open Types;
 let printQuoted = propName => "\"" ++ propName ++ "\"";
 let printPropName = propName => propName |> printQuoted;
 let printEnumName = name => "enum_" ++ name;
+let getInputObjName = name => "input_" ++ name;
+let getObjName = name => "obj_" ++ name;
 
 let printWrappedEnumName = name => "SchemaAssets.Enum_" ++ name ++ ".wrapped";
 
@@ -38,6 +40,7 @@ let rec printPropType = (~propType, ~optType) =>
   switch (propType) {
   | Scalar(scalar) => printScalar(scalar)
   | Object(obj) => printObject(~obj, ~optType)
+  | ObjectReference(objName) => objName |> getObjName |> printTypeReference
   | Array(propValue) => printArray(~propValue, ~optType)
   | Enum(name) => printWrappedEnumName(name)
   | Union(name) => printWrappedUnionName(name)
@@ -128,8 +131,8 @@ let makeEnum = fullEnum => {
 let makeUnionName = path =>
   path |> Tablecloth.List.reverse |> Tablecloth.String.join(~sep="_");
 
-let printUnion = (~chainedDeclaration, union: union) => {
-  let prefix = chainedDeclaration ? " and " : "module ";
+let printUnion = (union: union) => {
+  let prefix = "module ";
   let unionName = union.atPath |> makeUnionName |> printUnionName;
   let unionWrappedName =
     union.atPath |> makeUnionName |> printWrappedUnionName;

@@ -1,8 +1,7 @@
 open BsFlowParser;
 
-[@bs.module "./testStrings"] external testQuery: string = "testQuery";
-
 exception Missing_typename_field_on_union;
+exception Could_not_map_number;
 
 let parse_options: option(Parser_env.parse_options) =
   Some({
@@ -25,12 +24,19 @@ type operationType =
   | Subscription(string)
   | Query(string);
 
+[@gentype]
+type atPath =
+  | Int
+  | Float
+  | Unmapped;
+
 type enumName = string;
 
 type propList('a, 'b) = list(Flow_ast.Type.Object.property('a, 'b));
 
 type obj('a, 'b) = {
   name: string,
+  atPath: list(string),
   properties: propList('a, 'b),
 };
 
@@ -53,7 +59,10 @@ type state('a, 'b) = {
   input: option(input('a, 'b)),
 };
 
-type controls = {addUnion: Types.union => unit};
+type controls = {
+  addUnion: Types.union => unit,
+  lookupAtPath: array(string) => atPath,
+};
 
 let rec mapObjProp =
         (
@@ -73,13 +82,26 @@ let rec mapObjProp =
       propType: Scalar(String),
     }
 
-  | Number => {nullable: optional, propType: Scalar(Int)} // Must lookup
-  | NumberLiteral(_) => {nullable: optional, propType: Scalar(Int)} // Must lookup
-  | Nullable((_, Number)) => {nullable: true, propType: Scalar(Int)} // Must lookup
+  | Number
+  | NumberLiteral(_) => {
+      nullable: optional,
+      propType:
+        switch (controls.lookupAtPath(path |> Tablecloth.Array.fromList)) {
+        | Int => Scalar(Int)
+        | Float => Scalar(Float)
+        | Unmapped => raise(Could_not_map_number)
+        },
+    }
+  | Nullable((_, Number))
   | Nullable((_, NumberLiteral(_))) => {
       nullable: true,
-      propType: Scalar(Int),
-    } // Must lookup
+      propType:
+        switch (controls.lookupAtPath(path |> Tablecloth.Array.fromList)) {
+        | Int => Scalar(Int)
+        | Float => Scalar(Float)
+        | Unmapped => raise(Could_not_map_number)
+        },
+    }
 
   | Boolean => {nullable: optional, propType: Scalar(Boolean)}
   | BooleanLiteral(_) => {nullable: optional, propType: Scalar(Boolean)}
@@ -162,7 +184,7 @@ let rec mapObjProp =
              ),
         ) {
         | (Some(_), _) => Enum(typeName)
-        | (_, Some(_)) => TypeReference(typeName) // TODO: Obj type reference
+        | (_, Some(_)) => ObjectReference(typeName)
         | (_, _) => TypeReference(typeName)
         },
     }
@@ -320,14 +342,7 @@ and makeUnion =
 };
 
 [@gentype]
-type atPath =
-  | Int
-  | Float
-  | Unmapped;
-
-[@gentype]
-let printFromFlowTypes =
-    (~content, ~operationType, ~lookupAtPath: array(string) => atPath) => {
+let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
   let state =
     ref({
       enums: [],
@@ -341,7 +356,7 @@ let printFromFlowTypes =
   let setState = updater => state := updater(state^);
   let unions: ref(list(Types.union)) = ref([]);
   let addUnion = union => unions := [union, ...unions^];
-  let controls = {addUnion: addUnion};
+  let controls = {addUnion, lookupAtPath};
 
   switch (
     operationType,
@@ -354,6 +369,16 @@ let printFromFlowTypes =
     statements
     |> List.iter(((_, statement): Flow_ast.Statement.t(Loc.t, Loc.t)) =>
          switch (statement) {
+         /*** Avoid full mutation object */
+         | ExportNamedDeclaration({
+             declaration:
+               Some((
+                 _,
+                 TypeAlias({right: (_, Object(_)), id: (_, typeName)}),
+               )),
+           })
+             when typeName == name =>
+           ()
          /***
           * Objects
           */
@@ -378,7 +403,10 @@ let printFromFlowTypes =
              setState(state =>
                {
                  ...state,
-                 objects: [{name: typeName, properties}, ...state.objects],
+                 objects: [
+                   {name: typeName, atPath: [typeName], properties},
+                   ...state.objects,
+                 ],
                }
              )
            }
@@ -399,7 +427,58 @@ let printFromFlowTypes =
          | _ => ()
          }
        )
-  | (_, errors) => Js.log2("error...", errors)
+  | (Fragment(name, plural), ((_, statements, _), [])) =>
+    statements
+    |> List.iter(((_, statement): Flow_ast.Statement.t(Loc.t, Loc.t)) =>
+         switch (statement) {
+         /***
+          * Objects
+          */
+         | ExportNamedDeclaration({
+             declaration:
+               Some((
+                 _,
+                 TypeAlias({
+                   right: (_, Object({properties})),
+                   id: (_, typeName),
+                 }),
+               )),
+           }) =>
+           switch (typeName) {
+           | _ when typeName == name =>
+             setState(state =>
+               {...state, fragment: Some({plural, properties})}
+             )
+           | _ when !Tablecloth.String.contains(~substring="$", typeName) =>
+             setState(state =>
+               {
+                 ...state,
+                 objects: [
+                   {name: typeName, atPath: [typeName], properties},
+                   ...state.objects,
+                 ],
+               }
+             )
+           | _ => ()
+           }
+         /***
+          * Enums
+          */
+         | ExportNamedDeclaration({
+             declaration:
+               Some((
+                 _,
+                 TypeAlias({
+                   right: (_, Union((_, StringLiteral(_)), _, _)),
+                   id: (_, typeName),
+                 }),
+               )),
+           }) =>
+           setState(state => {...state, enums: [typeName, ...state.enums]})
+         | _ => ()
+         }
+       )
+  | (_, _errors) => Js.log("Parse error.")
   };
 
   let finalStr = ref("");
@@ -407,6 +486,37 @@ let printFromFlowTypes =
 
   let definitions: ref(list(Types.rootType)) = ref([]);
   let addDefinition = def => definitions := [def, ...definitions^];
+
+  unions^
+  |> List.iter((union: Types.union) =>
+       addToStr(
+         "type "
+         ++ Printer.(union.atPath |> makeUnionName |> printWrappedUnionName)
+         ++ ";\n",
+       )
+     );
+
+  state^.objects
+  |> List.iteri((index, obj: obj('a, 'b)) =>
+       addToStr(
+         (index == 0 ? "type " : " and ")
+         ++ Printer.(obj.name |> getObjName)
+         ++ " = "
+         ++ Printer.(
+              printObject(
+                ~optType=JsNullable,
+                ~obj=
+                  makeObjShape(
+                    ~state=state^,
+                    ~controls,
+                    ~path=obj.atPath,
+                    obj.properties,
+                  ),
+              )
+            )
+         ++ ";\n",
+       )
+     );
 
   switch (state^.variables) {
   | Some(variables) =>
@@ -434,12 +544,21 @@ let printFromFlowTypes =
   | None => ()
   };
 
+  switch (state^.fragment) {
+  | Some({properties, plural}) =>
+    let shape =
+      properties
+      |> makeObjShape(~controls, ~state=state^, ~path=["response"]);
+    addDefinition(Types.(plural ? PluralFragment(shape) : Fragment(shape)));
+  | None => ()
+  };
+
   switch (state^.input) {
   | Some(input) =>
     addDefinition(
       Types.(
         InputObject(
-          input.name,
+          input.name |> Printer.getInputObjName,
           input.properties
           |> makeObjShape(~controls, ~state=state^, ~path=["input"]),
         )
@@ -448,25 +567,10 @@ let printFromFlowTypes =
   | None => ()
   };
 
-  unions^
-  |> List.iter((union: Types.union) =>
-       addToStr(
-         "type "
-         ++ Printer.(union.atPath |> makeUnionName |> printWrappedUnionName)
-         ++ ";\n",
-       )
-     );
-
   addToStr("\n");
 
   Printer.(
-    unions^
-    |> List.iteri((index, union) =>
-         union
-         |> printUnion(~chainedDeclaration=false)
-         |> printCode
-         |> addToStr
-       )
+    unions^ |> List.iter(union => union |> printUnion |> printCode |> addToStr)
   );
 
   Printer.(
@@ -474,8 +578,5 @@ let printFromFlowTypes =
     |> List.iter(def => def |> printRootType |> printCode |> addToStr)
   );
 
-  finalStr^;
+  finalStr^ |> Printer.printCode;
 };
-
-/*printFromFlowTypes(~content=testQuery, ~operationType=Query("appQuery"))
-  |> Js.log;*/

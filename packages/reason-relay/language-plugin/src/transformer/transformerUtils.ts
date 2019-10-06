@@ -1,4 +1,9 @@
-import { Node, Fragment, Selection } from "relay-compiler";
+import {
+  Node,
+  Fragment,
+  Selection,
+  LocalArgumentDefinition
+} from "relay-compiler";
 import { GraphQLCompositeType, GraphQLObjectType } from "graphql";
 import { operationType } from "./TypesTransformer.gen";
 
@@ -37,4 +42,4 @@ export function makeOperationDescriptor(node: Node | Fragment): operationType {
 export declare function lookupPropAtPath(
   root: Node | Fragment,
   path: string[]
-): Selection | null;
+): Selection | LocalArgumentDefinition | null;
