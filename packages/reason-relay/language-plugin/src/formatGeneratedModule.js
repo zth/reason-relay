@@ -25,31 +25,10 @@ const formatGeneratedModule: FormatModule = ({
   hash,
   sourceHash
 }) => {
-  const modName = moduleName.split("_graphql")[0];
-
-  const opKind: null | "fragment" | "query" | "mutation" | "subscription" =
-    kind === "Fragment"
-      ? "fragment"
-      : modName.endsWith("Query")
-      ? "query"
-      : modName.endsWith("Mutation")
-      ? "mutation"
-      : modName.endsWith("Subscription")
-      ? "subscription"
-      : null;
-
-  if (!opKind) {
-    throw new Error(
-      'Something went wrong, uninterpreted module type: "' + moduleName + '"'
-    );
-  }
-
   return printCode(`
 ${typeText || ""}
 
-let node: ReasonRelay.${opKind}Node = [%bs.raw {| ${processConcreteText(
-    concreteText
-  )} |}];
+let node: operationType = [%bs.raw {| ${processConcreteText(concreteText)} |}];
 `);
 };
 

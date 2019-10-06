@@ -2,8 +2,6 @@
 /* eslint-disable import/first */
 
 
-const $$toRE558203978: { [key: string]: any } = {"Int": 0, "Float": 1, "Unmapped": 2};
-
 // tslint:disable-next-line:no-var-requires
 const CreateBucklescriptBlock = require('bs-platform/lib/es6/block.js');
 
@@ -20,23 +18,13 @@ export type operationType =
   | { tag: "Subscription"; value: string }
   | { tag: "Query"; value: string };
 
-// tslint:disable-next-line:interface-over-type-literal
-export type atPath = "Int" | "Float" | "Unmapped";
-
-export const printFromFlowTypes: (_1:{
-  readonly content: string; 
-  readonly operationType: operationType; 
-  readonly lookupAtPath: ((_1:string[]) => atPath)
-}) => string = function (Arg1: any) {
-  const result = Curry._3(TypesTransformerBS.printFromFlowTypes, Arg1.content, Arg1.operationType.tag==="Fragment"
+export const printFromFlowTypes: (_1:{ readonly content: string; readonly operationType: operationType }) => string = function (Arg1: any) {
+  const result = Curry._2(TypesTransformerBS.printFromFlowTypes, Arg1.content, Arg1.operationType.tag==="Fragment"
     ? CreateBucklescriptBlock.__(0, Arg1.operationType.value)
     : Arg1.operationType.tag==="Mutation"
     ? CreateBucklescriptBlock.__(1, [Arg1.operationType.value])
     : Arg1.operationType.tag==="Subscription"
     ? CreateBucklescriptBlock.__(2, [Arg1.operationType.value])
-    : CreateBucklescriptBlock.__(3, [Arg1.operationType.value]), function (Arg11: any) {
-      const result1 = Arg1.lookupAtPath(Arg11);
-      return $$toRE558203978[result1]
-    });
+    : CreateBucklescriptBlock.__(3, [Arg1.operationType.value]));
   return result
 };

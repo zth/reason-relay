@@ -15,22 +15,16 @@ let parse_options: option(Parser_env.parse_options) =
     use_strict: false,
   });
 
-let refName = "$ref";
-
+/**
+ * This is information the language plugin needs to supply
+ * in addition to just the Flow types.
+ */
 [@gentype]
 type operationType =
-  | Fragment(string, bool)
+  | Fragment(string, bool) // Name, isPlural
   | Mutation(string)
   | Subscription(string)
   | Query(string);
-
-[@gentype]
-type atPath =
-  | Int
-  | Float
-  | Unmapped;
-
-type enumName = string;
 
 type propList('a, 'b) = list(Flow_ast.Type.Object.property('a, 'b));
 
@@ -50,8 +44,13 @@ type input('a, 'b) = {
   properties: propList('a, 'b),
 };
 
+/**
+ * The state keeps track of what's defined in the
+ * Flow types. It's then used to print the Reason
+ * types.
+ */
 type state('a, 'b) = {
-  enums: list(enumName),
+  enums: list(string), // A list of the enum names. Enums are referenced by the global generated SchemaAssets.re file.
   objects: list(obj('a, 'b)),
   variables: option(propList('a, 'b)),
   response: option(propList('a, 'b)),
@@ -59,11 +58,11 @@ type state('a, 'b) = {
   input: option(input('a, 'b)),
 };
 
-type controls = {
-  addUnion: Types.union => unit,
-  lookupAtPath: array(string) => atPath,
-};
-
+type controls = {addUnion: Types.union => unit};
+/**
+ * Maps an object prop (represented by a Flow type) to a prop value
+ * in our own model of the selections.
+ */
 let rec mapObjProp =
         (
           ~state: state('a, 'a),
@@ -75,34 +74,23 @@ let rec mapObjProp =
         : Types.propValue =>
   switch (prop) {
   | String => {nullable: optional, propType: Scalar(String)}
-  | StringLiteral(_) => {nullable: optional, propType: Scalar(String)}
+  | StringLiteral(_) => {nullable: optional, propType: Scalar(String)} // Reason does not have string literals, so we map literals to normal strings
   | Nullable((_, String)) => {nullable: true, propType: Scalar(String)}
   | Nullable((_, StringLiteral(_))) => {
       nullable: true,
       propType: Scalar(String),
     }
 
+  // Our compiler fork already emits int/float as generic Flow types instead of number, so these are probably not needed, but leaving them in there anyway just in case.
   | Number
-  | NumberLiteral(_) => {
-      nullable: optional,
-      propType:
-        switch (controls.lookupAtPath(path |> Tablecloth.Array.fromList)) {
-        | Int => Scalar(Int)
-        | Float => Scalar(Float)
-        | Unmapped => raise(Could_not_map_number)
-        },
-    }
+  | NumberLiteral(_) => {nullable: optional, propType: Scalar(Float)}
   | Nullable((_, Number))
   | Nullable((_, NumberLiteral(_))) => {
       nullable: true,
-      propType:
-        switch (controls.lookupAtPath(path |> Tablecloth.Array.fromList)) {
-        | Int => Scalar(Int)
-        | Float => Scalar(Float)
-        | Unmapped => raise(Could_not_map_number)
-        },
+      propType: Scalar(Float),
     }
 
+  // Booleans
   | Boolean => {nullable: optional, propType: Scalar(Boolean)}
   | BooleanLiteral(_) => {nullable: optional, propType: Scalar(Boolean)}
   | Nullable((_, Boolean)) => {nullable: true, propType: Scalar(Boolean)}
@@ -111,6 +99,7 @@ let rec mapObjProp =
       propType: Scalar(Boolean),
     }
 
+  // Arrays
   | Array(typ) => {
       nullable: optional,
       propType:
@@ -130,6 +119,7 @@ let rec mapObjProp =
         Array(typ |> mapObjProp(~controls, ~state, ~path, ~optional=false)),
     }
 
+  // Objects
   | Object({properties}) => {
       nullable: optional,
       propType: Object(makeObjShape(~controls, ~state, ~path, properties)),
@@ -139,6 +129,7 @@ let rec mapObjProp =
       propType: Object(makeObjShape(~controls, ~state, ~path, properties)),
     }
 
+  // Unions
   | Nullable((
       _,
       Union(
@@ -172,7 +163,8 @@ let rec mapObjProp =
       ~optional,
     )
 
-  // This handles generic type references
+  // This handles generic type references.
+  // We check whether it's an enum or object, and if not, we just print it as a type reference.
   | Generic({id: Unqualified((_, typeName))}) => {
       nullable: optional,
       propType:
@@ -184,7 +176,8 @@ let rec mapObjProp =
              ),
         ) {
         | (Some(_), _) => Enum(typeName)
-        | (_, Some(_)) => ObjectReference(typeName)
+        | (_, Some(obj)) =>
+          Object(obj.properties |> makeObjShape(~controls, ~state, ~path)) // We inline all object definitions. I feel it gives better DX than printing them as separate objects.
         | (_, _) => TypeReference(typeName)
         },
     }
@@ -206,7 +199,7 @@ and makeObjShape =
       Types.(
         FragmentRef(
           Tablecloth.String.dropRight(
-            ~count=String.length(refName),
+            ~count=String.length("$ref"),
             rawFragmentRef,
           ),
         )
@@ -328,21 +321,21 @@ and makeUnion =
        }
      );
 
-  controls.addUnion(
-    Types.{
-      members:
-        unionMembers^
-        |> Tablecloth.List.filter(~f=(member: Types.unionMember) =>
-             member.name != {|%other|}
-           ),
-      atPath: path,
-    },
-  );
+  let union: Types.union = {
+    members:
+      unionMembers^
+      |> Tablecloth.List.filter(~f=(member: Types.unionMember) =>
+           member.name != {|%other|}
+         ),
+    atPath: path,
+  };
+
+  controls.addUnion(union);
   {nullable: optional, propType: Union(Printer.makeUnionName(path))};
 };
 
 [@gentype]
-let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
+let printFromFlowTypes = (~content, ~operationType) => {
   let state =
     ref({
       enums: [],
@@ -355,8 +348,10 @@ let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
 
   let setState = updater => state := updater(state^);
   let unions: ref(list(Types.union)) = ref([]);
-  let addUnion = union => unions := [union, ...unions^];
-  let controls = {addUnion, lookupAtPath};
+  let addUnion = union => {
+    unions := [union, ...unions^];
+  };
+  let controls = {addUnion: addUnion};
 
   switch (
     operationType,
@@ -487,37 +482,6 @@ let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
   let definitions: ref(list(Types.rootType)) = ref([]);
   let addDefinition = def => definitions := [def, ...definitions^];
 
-  unions^
-  |> List.iter((union: Types.union) =>
-       addToStr(
-         "type "
-         ++ Printer.(union.atPath |> makeUnionName |> printWrappedUnionName)
-         ++ ";\n",
-       )
-     );
-
-  state^.objects
-  |> List.iteri((index, obj: obj('a, 'b)) =>
-       addToStr(
-         (index == 0 ? "type " : " and ")
-         ++ Printer.(obj.name |> getObjName)
-         ++ " = "
-         ++ Printer.(
-              printObject(
-                ~optType=JsNullable,
-                ~obj=
-                  makeObjShape(
-                    ~state=state^,
-                    ~controls,
-                    ~path=obj.atPath,
-                    obj.properties,
-                  ),
-              )
-            )
-         ++ ";\n",
-       )
-     );
-
   switch (state^.variables) {
   | Some(variables) =>
     addDefinition(
@@ -549,7 +513,9 @@ let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
     let shape =
       properties
       |> makeObjShape(~controls, ~state=state^, ~path=["response"]);
-    addDefinition(Types.(plural ? PluralFragment(shape) : Fragment(shape)));
+    addDefinition(
+      plural ? Types.PluralFragment(shape) : Types.Fragment(shape),
+    );
   | None => ()
   };
 
@@ -567,16 +533,36 @@ let printFromFlowTypes = (~content, ~operationType, ~lookupAtPath) => {
   | None => ()
   };
 
+  // This prints the opaque union types. We need to do it after everything above as makeObjShape will add the unions.
+  unions^
+  |> List.iter((union: Types.union) =>
+       addToStr(
+         "type "
+         ++ Printer.(union.atPath |> makeUnionName |> printWrappedUnionName)
+         ++ ";\n",
+       )
+     );
+
   addToStr("\n");
 
-  Printer.(
-    unions^ |> List.iter(union => union |> printUnion |> printCode |> addToStr)
-  );
+  Printer.(unions^ |> List.iter(union => union |> printUnion |> addToStr));
 
-  Printer.(
-    definitions^
-    |> List.iter(def => def |> printRootType |> printCode |> addToStr)
-  );
+  Printer.(definitions^ |> List.iter(def => def |> printRootType |> addToStr));
 
-  finalStr^ |> Printer.printCode;
+  /**
+   * This adds operationType, which is refernced in the raw output of the Relay
+   * runtime representation.
+   */
+
+  let opType =
+    switch (operationType) {
+    | Fragment(_) => "fragment"
+    | Query(_) => "query"
+    | Mutation(_) => "mutation"
+    | Subscription(_) => "subscription"
+    };
+
+  addToStr("type operationType = ReasonRelay." ++ opType ++ "Node;");
+
+  finalStr^;
 };

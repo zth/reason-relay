@@ -7,9 +7,6 @@ import {
 import { GraphQLCompositeType, GraphQLObjectType } from "graphql";
 import { operationType } from "./TypesTransformer.gen";
 
-// @ts-ignore
-export { lookupPropAtPath } from "./lookupPropAtPath";
-
 export function makeOperationDescriptor(node: Node | Fragment): operationType {
   if (node.kind === "Root") {
     switch (node.operation) {
@@ -38,8 +35,3 @@ export function makeOperationDescriptor(node: Node | Fragment): operationType {
 
   throw new Error("Could not map root node. This should not happen.");
 }
-
-export declare function lookupPropAtPath(
-  root: Node | Fragment,
-  path: string[]
-): Selection | LocalArgumentDefinition | null;

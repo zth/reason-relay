@@ -4,10 +4,7 @@ import * as RelayFlowGenerator from "relay-compiler/lib/language/javascript/Rela
 import { Fragment, Node } from "relay-compiler";
 import { TypeGeneratorOptions } from "relay-compiler/lib/language/RelayLanguagePluginInterface";
 import { printFromFlowTypes } from "./transformer/TypesTransformer.gen";
-import {
-  makeOperationDescriptor,
-  lookupPropAtPath
-} from "./transformer/transformerUtils";
+import { makeOperationDescriptor } from "./transformer/transformerUtils";
 import { atPath } from "./transformer/TypesTransformer.gen";
 import { GraphQLScalarType, GraphQLNonNull } from "graphql";
 
@@ -17,36 +14,7 @@ function generate(
 ): string {
   return printFromFlowTypes({
     content: RelayFlowGenerator.generate(node, options),
-    operationType: makeOperationDescriptor(node),
-    lookupAtPath: (path: string[]): atPath => {
-      let thePath = path.slice().reverse();
-      let atPath = lookupPropAtPath(node, thePath);
-
-      if (
-        atPath != null &&
-        (atPath.kind === "ScalarField" ||
-          atPath.kind === "LocalArgumentDefinition")
-      ) {
-        let targetType =
-          atPath.type instanceof GraphQLNonNull
-            ? atPath.type.ofType
-            : atPath.type;
-
-        if (targetType instanceof GraphQLNonNull) {
-          throw new Error("Cannot have nested nullable types.");
-        }
-
-        if (targetType instanceof GraphQLScalarType) {
-          switch (targetType.name) {
-            case "Int":
-            case "Float":
-              return targetType.name;
-          }
-        }
-      }
-
-      return "Unmapped";
-    }
+    operationType: makeOperationDescriptor(node)
   });
 }
 

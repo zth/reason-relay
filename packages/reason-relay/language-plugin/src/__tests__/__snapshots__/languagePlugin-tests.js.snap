@@ -1,5 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Language plugin tests Query prints nested objects inlined in types 1`] = `
+"// appQuery.graphql
+type response = {
+  .
+  \\"userByLocation\\":
+    Js.Nullable.t({
+      .
+      \\"firstName\\": string,
+      \\"id\\": string,
+    }),
+};
+type variables = {
+  .
+  \\"location\\": {
+    .
+    \\"lng\\": float,
+    \\"lat\\": float,
+  },
+};
+type operationType = ReasonRelay.queryNode;
+"
+`;
+
 exports[`Language plugin tests Query prints simple responses and variables 1`] = `
 "// appQuery.graphql
 type response = {
@@ -12,5 +35,68 @@ type response = {
     }),
 };
 type variables = {. \\"userId\\": string};
+type operationType = ReasonRelay.queryNode;
+"
+`;
+
+exports[`Language plugin tests Unions generates code to unwrap unions 1`] = `
+"// appQuery.graphql
+type union_response_participantById_wrapped;
+
+module Union_response_participantById: {
+  type type_User = {
+    .
+    \\"id\\": string,
+    \\"firstName\\": string,
+    \\"lastName\\": string,
+  };
+  type type_Observer = {
+    .
+    \\"id\\": string,
+    \\"name\\": string,
+  };
+  type t = [
+    | \`User(type_User)
+    | \`Observer(type_Observer)
+    | \`UnmappedUnionMember
+  ];
+  let unwrap: union_response_participantById_wrapped => t;
+} = {
+  external __unwrap_union:
+    union_response_participantById_wrapped => {. \\"__typename\\": string} =
+    \\"%identity\\";
+  type type_User = {
+    .
+    \\"id\\": string,
+    \\"firstName\\": string,
+    \\"lastName\\": string,
+  };
+  type type_Observer = {
+    .
+    \\"id\\": string,
+    \\"name\\": string,
+  };
+  type t = [
+    | \`User(type_User)
+    | \`Observer(type_Observer)
+    | \`UnmappedUnionMember
+  ];
+  external __unwrap_User: union_response_participantById_wrapped => type_User =
+    \\"%identity\\";
+  external __unwrap_Observer:
+    union_response_participantById_wrapped => type_Observer =
+    \\"%identity\\";
+  let unwrap = wrapped => {
+    let unwrappedUnion = wrapped |> __unwrap_union;
+    switch (unwrappedUnion##__typename) {
+    | \\"User\\" => \`User(wrapped |> __unwrap_User)
+    | \\"Observer\\" => \`Observer(wrapped |> __unwrap_Observer)
+    | _ => \`UnmappedUnionMember
+    };
+  };
+};
+type response = {. \\"participantById\\": union_response_participantById_wrapped};
+type variables = unit;
+type operationType = ReasonRelay.queryNode;
 "
 `;

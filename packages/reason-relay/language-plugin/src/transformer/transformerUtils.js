@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
-var lookupPropAtPath_1 = require("./lookupPropAtPath");
-exports.lookupPropAtPath = lookupPropAtPath_1.lookupPropAtPath;
 function makeOperationDescriptor(node) {
     if (node.kind === "Root") {
         switch (node.operation) {

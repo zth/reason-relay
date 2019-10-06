@@ -58,6 +58,19 @@ function generate(text, options?: TypeGeneratorOptions, extraDefs = "") {
 
 describe("Language plugin tests", () => {
   describe("Query", () => {
+    it("prints the correct operationType type", () => {
+      expect(
+        generate(
+          `query appQuery($userId: ID!) {
+            user(id: $userId) {
+              id
+              firstName
+            }
+          }`
+        ).includes("type operationType = ReasonRelay.queryNode;")
+      ).toBe(true);
+    });
+
     it("prints simple responses and variables", () => {
       let generated = generate(
         `query appQuery($userId: ID!) {
@@ -71,7 +84,20 @@ describe("Language plugin tests", () => {
       expect(generated).toMatchSnapshot();
     });
 
-    it("prints nested objects", () => {
+    it("prints variables as unit if not variables are supplied", () => {
+      let generated = generate(
+        `query appQuery {
+            me {
+              id
+              firstName
+            }
+          }`
+      );
+
+      expect(generated.includes("type variables = unit;")).toBe(true);
+    });
+
+    it("prints nested objects inlined in types", () => {
       let generated = generate(
         `query appQuery($location: LocationBounds!) {
             userByLocation(location: $location) {
@@ -82,6 +108,117 @@ describe("Language plugin tests", () => {
       );
 
       expect(generated).toMatchSnapshot();
+    });
+  });
+
+  describe("Mutation", () => {
+    it("prints the correct operationType type", () => {
+      expect(
+        generate(
+          `mutation SetUserLocationMutation($input: SetUserLocationInput!) {
+            setUserLocation(input: $input) {
+              changedUser {
+                id
+                firstName
+              }
+            }
+          }`
+        ).includes("type operationType = ReasonRelay.mutationNode;")
+      ).toBe(true);
+    });
+  });
+
+  describe("Subscription", () => {
+    it("prints the correct operationType type", () => {
+      expect(
+        generate(
+          `subscription SomeSubscription($input: UserChangedInput!) {
+            userChanged(input: $input) {
+              user {
+                id
+                firstName
+              }
+            }
+          }`
+        ).includes("type operationType = ReasonRelay.subscriptionNode;")
+      ).toBe(true);
+    });
+  });
+
+  describe("Fragment", () => {
+    it("prints the correct operationType type", () => {
+      expect(
+        generate(
+          `fragment SomeComponent_user on User {
+            id
+            firstName
+          }`
+        ).includes("type operationType = ReasonRelay.fragmentNode;")
+      ).toBe(true);
+    });
+  });
+
+  describe("Enums", () => {
+    it("references any enums by global, generated schema assets file", () => {
+      let generated = generate(
+        `query appQuery {
+            me {
+              role
+            }
+          }`
+      );
+
+      expect(
+        generated.includes(`"role": SchemaAssets.Enum_UserRole.wrapped`)
+      ).toBe(true);
+    });
+  });
+
+  describe("Unions", () => {
+    it("generates code to unwrap unions", () => {
+      let generated = generate(
+        `query appQuery {
+            participantById(id: "123") {
+              __typename
+              ... on User {
+                id
+                firstName
+                lastName
+              }
+
+              ... on Observer {
+                id
+                name
+              }
+            }
+          }`
+      );
+
+      expect(generated).toMatchSnapshot();
+    });
+
+    it("generates opaque wrapped union types referenced by path in types", () => {
+      let generated = generate(
+        `query appQuery {
+            participantById(id: "123") {
+              __typename
+              ... on User {
+                id
+                firstName
+                lastName
+              }
+
+              ... on Observer {
+                id
+                name
+              }
+            }
+          }`
+      );
+
+      expect(
+        generated.includes("type union_response_participantById_wrapped;")
+      ).toBe(true);
     });
   });
 });
