@@ -20,7 +20,9 @@
   "refmt": 3,
   "gentypeconfig": {
     "language": "typescript",
-    "shims": {},
+    "shims": {
+      "Js": "Js"
+    },
     "debug": {
       "all": false,
       "basic": false

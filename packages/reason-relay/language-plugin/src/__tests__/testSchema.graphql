@@ -4,6 +4,8 @@ schema {
   subscription: Subscription
 }
 
+scalar Color
+
 enum UserRole {
   Admin
   User
@@ -50,6 +52,7 @@ type User {
   lastName: String!
   location: Location!
   role: UserRole!
+  favoriteColor: Color!
 }
 
 type Observer {

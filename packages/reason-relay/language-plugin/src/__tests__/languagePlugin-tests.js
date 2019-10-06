@@ -109,6 +109,119 @@ describe("Language plugin tests", () => {
 
       expect(generated).toMatchSnapshot();
     });
+
+    it("prints single fragment references", () => {
+      let generated = generate(
+        `
+        fragment SomeComponent_user on User {
+          id
+        }
+
+        query appQuery {
+            me {
+              id
+              firstName
+              ...SomeComponent_user
+            }
+          }`
+      );
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__SomeComponent_user": SomeComponent_user_graphql.t'
+        )
+      ).toBe(true);
+    });
+
+    it("prints two fragment references", () => {
+      let generated = generate(
+        `
+        fragment SomeComponent_user on User {
+          id
+        }
+
+        fragment OtherComponent_user on User {
+          id
+        }
+
+        query appQuery {
+            me {
+              id
+              firstName
+              ...SomeComponent_user
+              ...OtherComponent_user
+            }
+          }`
+      );
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__SomeComponent_user": SomeComponent_user_graphql.t'
+        )
+      ).toBe(true);
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__OtherComponent_user": OtherComponent_user_graphql.t'
+        )
+      ).toBe(true);
+    });
+
+    it("prints many fragment references", () => {
+      let generated = generate(
+        `
+        fragment SomeComponent_user on User {
+          id
+        }
+
+        fragment OtherComponent_user on User {
+          id
+        }
+
+        fragment AnotherComponent_user on User {
+          id
+        }
+
+        fragment LastComponent_user on User {
+          id
+        }
+
+        query appQuery {
+            me {
+              id
+              firstName
+              ...SomeComponent_user
+              ...OtherComponent_user
+              ...AnotherComponent_user
+              ...LastComponent_user
+            }
+          }`
+      );
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__SomeComponent_user": SomeComponent_user_graphql.t'
+        )
+      ).toBe(true);
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__OtherComponent_user": OtherComponent_user_graphql.t'
+        )
+      ).toBe(true);
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__AnotherComponent_user": AnotherComponent_user_graphql.t'
+        )
+      ).toBe(true);
+
+      expect(
+        generated.includes(
+          '"__$fragment_ref__LastComponent_user": LastComponent_user_graphql.t'
+        )
+      ).toBe(true);
+    });
   });
 
   describe("Mutation", () => {
@@ -125,6 +238,21 @@ describe("Language plugin tests", () => {
           }`
         ).includes("type operationType = ReasonRelay.mutationNode;")
       ).toBe(true);
+    });
+
+    it("prints the correct basic structure for mutations", () => {
+      expect(
+        generate(
+          `mutation SetUserLocationMutation($input: SetUserLocationInput!) {
+            setUserLocation(input: $input) {
+              changedUser {
+                id
+                firstName
+              }
+            }
+          }`
+        )
+      ).toMatchSnapshot();
     });
   });
 
@@ -143,6 +271,21 @@ describe("Language plugin tests", () => {
         ).includes("type operationType = ReasonRelay.subscriptionNode;")
       ).toBe(true);
     });
+
+    it("prints the correct basic structure for subscriptions", () => {
+      expect(
+        generate(
+          `subscription SomeSubscription($input: UserChangedInput!) {
+            userChanged(input: $input) {
+              user {
+                id
+                firstName
+              }
+            }
+          }`
+        )
+      ).toMatchSnapshot();
+    });
   });
 
   describe("Fragment", () => {
@@ -155,6 +298,16 @@ describe("Language plugin tests", () => {
           }`
         ).includes("type operationType = ReasonRelay.fragmentNode;")
       ).toBe(true);
+    });
+
+    it("prints the correct fragment ref extractor helpers and base types", () => {
+      expect(
+        generate(
+          `fragment SomeComponent_user on User {
+            id
+          }`
+        )
+      ).toMatchSnapshot();
     });
   });
 
@@ -171,6 +324,37 @@ describe("Language plugin tests", () => {
       expect(
         generated.includes(`"role": SchemaAssets.Enum_UserRole.wrapped`)
       ).toBe(true);
+    });
+  });
+
+  describe("Custom scalars", () => {
+    it("outputs any unmapped custom scalars as any", () => {
+      let generated = generate(
+        `query appQuery {
+            me {
+              favoriteColor
+            }
+          }`
+      );
+
+      expect(generated.includes(`"favoriteColor": ReasonRelay.any`)).toBe(true);
+    });
+
+    it("handles provided custom scalars", () => {
+      let generated = generate(
+        `query appQuery {
+            me {
+              favoriteColor
+            }
+          }`,
+        {
+          customScalars: {
+            Color: "Color.t"
+          }
+        }
+      );
+
+      expect(generated.includes(`"favoriteColor": Color.t`)).toBe(true);
     });
   });
 

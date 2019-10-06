@@ -35,6 +35,7 @@ type obj('a, 'b) = {
 };
 
 type fragment('a, 'b) = {
+  name: string,
   plural: bool,
   properties: propList('a, 'b),
 };
@@ -119,6 +120,18 @@ let rec mapObjProp =
         Array(typ |> mapObjProp(~controls, ~state, ~path, ~optional=false)),
     }
 
+  | Nullable((
+      _,
+      Generic({
+        id: Unqualified((_, "$ReadOnlyArray")),
+        targs: Some((_, [typ])),
+      }),
+    )) => {
+      nullable: true,
+      propType:
+        Array(typ |> mapObjProp(~controls, ~state, ~path, ~optional=false)),
+    }
+
   // Objects
   | Object({properties}) => {
       nullable: optional,
@@ -145,7 +158,7 @@ let rec mapObjProp =
       ~maybeMoreMembers,
       ~state,
       ~path,
-      ~optional,
+      ~optional=true,
     )
 
   | Union(
@@ -165,23 +178,19 @@ let rec mapObjProp =
 
   // This handles generic type references.
   // We check whether it's an enum or object, and if not, we just print it as a type reference.
-  | Generic({id: Unqualified((_, typeName))}) => {
-      nullable: optional,
-      propType:
-        switch (
-          state.enums |> Tablecloth.List.find(~f=name => name == typeName),
-          state.objects
-          |> Tablecloth.List.find(~f=({name}: obj('a, 'b)) =>
-               name == typeName
-             ),
-        ) {
-        | (Some(_), _) => Enum(typeName)
-        | (_, Some(obj)) =>
-          Object(obj.properties |> makeObjShape(~controls, ~state, ~path)) // We inline all object definitions. I feel it gives better DX than printing them as separate objects.
-        | (_, _) => TypeReference(typeName)
-        },
-    }
+  | Generic({id: Unqualified((_, typeName))}) =>
+    makeGenericTypeReference(~typeName, ~state, ~optional, ~controls, ~path)
 
+  | Nullable((_, Generic({id: Unqualified((_, typeName))}))) =>
+    makeGenericTypeReference(
+      ~typeName,
+      ~state,
+      ~optional=true,
+      ~controls,
+      ~path,
+    )
+
+  // Handle anything we haven't matched above, including any which needs no explicit match as it's handled here
   | _ => {nullable: optional, propType: Scalar(Any)}
   }
 and makeObjShape =
@@ -214,6 +223,8 @@ and makeObjShape =
            {value: Init((_, typ)), key: Identifier((_, "$fragmentRefs"))},
          )) =>
          switch (typ) {
+         | Generic({id: Unqualified((_, firstId))}) =>
+           addFragmentRef(firstId)
          | Intersection(
              (_, Generic({id: Unqualified((_, firstId))})),
              (_, Generic({id: Unqualified((_, secondId))})),
@@ -291,6 +302,21 @@ and makeUnionMember =
     }
   | None => raise(Missing_typename_field_on_union)
   };
+}
+and makeGenericTypeReference =
+    (~optional, ~state, ~typeName, ~controls, ~path): Types.propValue => {
+  nullable: optional,
+  propType:
+    switch (
+      state.enums |> Tablecloth.List.find(~f=name => name == typeName),
+      state.objects
+      |> Tablecloth.List.find(~f=({name}: obj('a, 'b)) => name == typeName),
+    ) {
+    | (Some(_), _) => Enum(typeName)
+    | (_, Some(obj)) =>
+      Object(obj.properties |> makeObjShape(~controls, ~state, ~path)) // We inline all object definitions. I feel it gives better DX than printing them as separate objects.
+    | (_, _) => TypeReference(typeName |> Utils.unmaskDots)
+    },
 }
 and makeUnion =
     (
@@ -442,7 +468,7 @@ let printFromFlowTypes = (~content, ~operationType) => {
            switch (typeName) {
            | _ when typeName == name =>
              setState(state =>
-               {...state, fragment: Some({plural, properties})}
+               {...state, fragment: Some({plural, properties, name})}
              )
            | _ when !Tablecloth.String.contains(~substring="$", typeName) =>
              setState(state =>
@@ -509,13 +535,14 @@ let printFromFlowTypes = (~content, ~operationType) => {
   };
 
   switch (state^.fragment) {
-  | Some({properties, plural}) =>
+  | Some({properties, plural, name}) =>
     let shape =
       properties
       |> makeObjShape(~controls, ~state=state^, ~path=["response"]);
     addDefinition(
       plural ? Types.PluralFragment(shape) : Types.Fragment(shape),
     );
+    addToStr(Templates.fragmentRefTemplate(name));
   | None => ()
   };
 
@@ -545,8 +572,6 @@ let printFromFlowTypes = (~content, ~operationType) => {
 
   addToStr("\n");
 
-  Printer.(unions^ |> List.iter(union => union |> printUnion |> addToStr));
-
   Printer.(definitions^ |> List.iter(def => def |> printRootType |> addToStr));
 
   /**
@@ -563,6 +588,11 @@ let printFromFlowTypes = (~content, ~operationType) => {
     };
 
   addToStr("type operationType = ReasonRelay." ++ opType ++ "Node;");
+
+  // We always output a Unions module, so we can include it through our PPX
+  addToStr("\n\nmodule Unions = {");
+  Printer.(unions^ |> List.iter(union => union |> printUnion |> addToStr));
+  addToStr("};\n");
 
   finalStr^;
 };

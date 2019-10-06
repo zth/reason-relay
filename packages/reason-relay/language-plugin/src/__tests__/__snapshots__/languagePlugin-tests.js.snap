@@ -1,5 +1,54 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Language plugin tests Fragment prints the correct fragment ref extractor helpers and base types 1`] = `
+"// SomeComponent_user.graphql
+type t;
+type fragmentRef;
+type fragmentRefSelector('a) =
+  {.. \\"__$fragment_ref__SomeComponent_user\\": t} as 'a;
+external getFragmentRef: fragmentRefSelector('a) => fragmentRef = \\"%identity\\";
+
+type fragment = {. \\"id\\": string};
+type operationType = ReasonRelay.fragmentNode;
+
+module Unions = {};
+"
+`;
+
+exports[`Language plugin tests Mutation prints the correct basic structure for mutations 1`] = `
+"// SetUserLocationMutation.graphql
+type response = {
+  .
+  \\"setUserLocation\\": {
+    .
+    \\"changedUser\\":
+      Js.Nullable.t({
+        .
+        \\"firstName\\": string,
+        \\"id\\": string,
+      }),
+  },
+};
+type variables = {
+  .
+  \\"input\\": {
+    .
+    \\"location\\":
+      option({
+        .
+        \\"lng\\": float,
+        \\"lat\\": float,
+      }),
+    \\"userId\\": string,
+    \\"clientMutationId\\": option(string),
+  },
+};
+type operationType = ReasonRelay.mutationNode;
+
+module Unions = {};
+"
+`;
+
 exports[`Language plugin tests Query prints nested objects inlined in types 1`] = `
 "// appQuery.graphql
 type response = {
@@ -20,6 +69,8 @@ type variables = {
   },
 };
 type operationType = ReasonRelay.queryNode;
+
+module Unions = {};
 "
 `;
 
@@ -36,6 +87,36 @@ type response = {
 };
 type variables = {. \\"userId\\": string};
 type operationType = ReasonRelay.queryNode;
+
+module Unions = {};
+"
+`;
+
+exports[`Language plugin tests Subscription prints the correct basic structure for subscriptions 1`] = `
+"// SomeSubscription.graphql
+type response = {
+  .
+  \\"userChanged\\": {
+    .
+    \\"user\\":
+      Js.Nullable.t({
+        .
+        \\"firstName\\": string,
+        \\"id\\": string,
+      }),
+  },
+};
+type variables = {
+  .
+  \\"input\\": {
+    .
+    \\"userId\\": string,
+    \\"clientMutationId\\": option(string),
+  },
+};
+type operationType = ReasonRelay.subscriptionNode;
+
+module Unions = {};
 "
 `;
 
@@ -43,60 +124,66 @@ exports[`Language plugin tests Unions generates code to unwrap unions 1`] = `
 "// appQuery.graphql
 type union_response_participantById_wrapped;
 
-module Union_response_participantById: {
-  type type_User = {
-    .
-    \\"id\\": string,
-    \\"firstName\\": string,
-    \\"lastName\\": string,
-  };
-  type type_Observer = {
-    .
-    \\"id\\": string,
-    \\"name\\": string,
-  };
-  type t = [
-    | \`User(type_User)
-    | \`Observer(type_Observer)
-    | \`UnmappedUnionMember
-  ];
-  let unwrap: union_response_participantById_wrapped => t;
-} = {
-  external __unwrap_union:
-    union_response_participantById_wrapped => {. \\"__typename\\": string} =
-    \\"%identity\\";
-  type type_User = {
-    .
-    \\"id\\": string,
-    \\"firstName\\": string,
-    \\"lastName\\": string,
-  };
-  type type_Observer = {
-    .
-    \\"id\\": string,
-    \\"name\\": string,
-  };
-  type t = [
-    | \`User(type_User)
-    | \`Observer(type_Observer)
-    | \`UnmappedUnionMember
-  ];
-  external __unwrap_User: union_response_participantById_wrapped => type_User =
-    \\"%identity\\";
-  external __unwrap_Observer:
-    union_response_participantById_wrapped => type_Observer =
-    \\"%identity\\";
-  let unwrap = wrapped => {
-    let unwrappedUnion = wrapped |> __unwrap_union;
-    switch (unwrappedUnion##__typename) {
-    | \\"User\\" => \`User(wrapped |> __unwrap_User)
-    | \\"Observer\\" => \`Observer(wrapped |> __unwrap_Observer)
-    | _ => \`UnmappedUnionMember
+type response = {
+  .
+  \\"participantById\\": Js.Nullable.t(union_response_participantById_wrapped),
+};
+type variables = unit;
+type operationType = ReasonRelay.queryNode;
+
+module Unions = {
+  module Union_response_participantById: {
+    type type_User = {
+      .
+      \\"id\\": string,
+      \\"firstName\\": string,
+      \\"lastName\\": string,
+    };
+    type type_Observer = {
+      .
+      \\"id\\": string,
+      \\"name\\": string,
+    };
+    type t = [
+      | \`User(type_User)
+      | \`Observer(type_Observer)
+      | \`UnmappedUnionMember
+    ];
+    let unwrap: union_response_participantById_wrapped => t;
+  } = {
+    external __unwrap_union:
+      union_response_participantById_wrapped => {. \\"__typename\\": string} =
+      \\"%identity\\";
+    type type_User = {
+      .
+      \\"id\\": string,
+      \\"firstName\\": string,
+      \\"lastName\\": string,
+    };
+    type type_Observer = {
+      .
+      \\"id\\": string,
+      \\"name\\": string,
+    };
+    type t = [
+      | \`User(type_User)
+      | \`Observer(type_Observer)
+      | \`UnmappedUnionMember
+    ];
+    external __unwrap_User: union_response_participantById_wrapped => type_User =
+      \\"%identity\\";
+    external __unwrap_Observer:
+      union_response_participantById_wrapped => type_Observer =
+      \\"%identity\\";
+    let unwrap = wrapped => {
+      let unwrappedUnion = wrapped |> __unwrap_union;
+      switch (unwrappedUnion##__typename) {
+      | \\"User\\" => \`User(wrapped |> __unwrap_User)
+      | \\"Observer\\" => \`Observer(wrapped |> __unwrap_Observer)
+      | _ => \`UnmappedUnionMember
+      };
     };
   };
 };
-type response = {. \\"participantById\\": union_response_participantById_wrapped};
-type variables = unit;
-type operationType = ReasonRelay.queryNode;
 "
 `;
