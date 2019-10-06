@@ -39,8 +39,7 @@ var _require = require('react'),
 
 var _require2 = require('relay-runtime'),
     getFragment = _require2.getFragment,
-    getFragmentIdentifier = _require2.getFragmentIdentifier,
-    getFragmentOwner = _require2.getFragmentOwner;
+    getFragmentIdentifier = _require2.getFragmentIdentifier;
 
 function useBlockingPaginationFragment(fragmentInput, parentFragmentRef) {
   var componentDisplayName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'useBlockingPaginationFragment()';
@@ -63,15 +62,13 @@ function useBlockingPaginationFragment(fragmentInput, parentFragmentRef) {
       disableStoreUpdates = _useRefetchableFragme.disableStoreUpdates,
       enableStoreUpdates = _useRefetchableFragme.enableStoreUpdates;
 
-  var fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef); // $FlowFixMe - TODO T39154660 Use FragmentPointer type instead of mixed
-
-  var fragmentOwner = getFragmentOwner(fragmentNode, fragmentRef); // Backward pagination
+  var fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef); // Backward pagination
 
   var _useLoadMore = useLoadMore({
     direction: 'backward',
     fragmentNode: fragmentNode,
+    fragmentRef: fragmentRef,
     fragmentIdentifier: fragmentIdentifier,
-    fragmentOwner: fragmentOwner,
     fragmentData: fragmentData,
     connectionPathInFragmentData: connectionPathInFragmentData,
     fragmentRefPathInResponse: fragmentRefPathInResponse,
@@ -89,8 +86,8 @@ function useBlockingPaginationFragment(fragmentInput, parentFragmentRef) {
   var _useLoadMore2 = useLoadMore({
     direction: 'forward',
     fragmentNode: fragmentNode,
+    fragmentRef: fragmentRef,
     fragmentIdentifier: fragmentIdentifier,
-    fragmentOwner: fragmentOwner,
     fragmentData: fragmentData,
     connectionPathInFragmentData: connectionPathInFragmentData,
     fragmentRefPathInResponse: fragmentRefPathInResponse,
@@ -191,7 +188,7 @@ function useLoadMore(args) {
   }
 
   useEffect(function () {
-    if (requestPromise == null) {
+    if (requestPromise !== requestPromiseRef.current) {
       // NOTE: After suspense pagination has resolved, we re-enable store updates
       // for this fragment. This may cause the component to re-render if
       // we missed any updates to the fragment data other than the pagination update.
