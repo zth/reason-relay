@@ -18,7 +18,7 @@ var _objectSpread4 = _interopRequireDefault(require("@babel/runtime/helpers/obje
 
 var invariant = require("fbjs/lib/invariant");
 
-function getPaginationVariables(direction, count, cursor, parentVariables, paginationMetadata) {
+function getPaginationVariables(direction, count, cursor, baseVariables, paginationMetadata) {
   var _objectSpread3;
 
   var backwardMetadata = paginationMetadata.backward,
@@ -29,7 +29,7 @@ function getPaginationVariables(direction, count, cursor, parentVariables, pagin
 
     !(backwardMetadata != null && backwardMetadata.count != null && backwardMetadata.cursor != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected backward pagination metadata to be avialable. ' + "If you're seeing this, this is likely a bug in Relay.") : invariant(false) : void 0;
 
-    var _paginationVariables = (0, _objectSpread4["default"])({}, parentVariables, (_objectSpread2 = {}, (0, _defineProperty2["default"])(_objectSpread2, backwardMetadata.cursor, cursor), (0, _defineProperty2["default"])(_objectSpread2, backwardMetadata.count, count), _objectSpread2));
+    var _paginationVariables = (0, _objectSpread4["default"])({}, baseVariables, (_objectSpread2 = {}, (0, _defineProperty2["default"])(_objectSpread2, backwardMetadata.cursor, cursor), (0, _defineProperty2["default"])(_objectSpread2, backwardMetadata.count, count), _objectSpread2));
 
     if (forwardMetadata && forwardMetadata.cursor) {
       _paginationVariables[forwardMetadata.cursor] = null;
@@ -43,7 +43,7 @@ function getPaginationVariables(direction, count, cursor, parentVariables, pagin
   }
 
   !(forwardMetadata != null && forwardMetadata.count != null && forwardMetadata.cursor != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected forward pagination metadata to be avialable. ' + "If you're seeing this, this is likely a bug in Relay.") : invariant(false) : void 0;
-  var paginationVariables = (0, _objectSpread4["default"])({}, parentVariables, (_objectSpread3 = {}, (0, _defineProperty2["default"])(_objectSpread3, forwardMetadata.cursor, cursor), (0, _defineProperty2["default"])(_objectSpread3, forwardMetadata.count, count), _objectSpread3));
+  var paginationVariables = (0, _objectSpread4["default"])({}, baseVariables, (_objectSpread3 = {}, (0, _defineProperty2["default"])(_objectSpread3, forwardMetadata.cursor, cursor), (0, _defineProperty2["default"])(_objectSpread3, forwardMetadata.count, count), _objectSpread3));
 
   if (backwardMetadata && backwardMetadata.cursor) {
     paginationVariables[backwardMetadata.cursor] = null;

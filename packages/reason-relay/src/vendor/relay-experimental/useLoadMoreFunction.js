@@ -41,13 +41,14 @@ var _require2 = require('relay-runtime'),
     _require2$__internal = _require2.__internal,
     fetchQuery = _require2$__internal.fetchQuery,
     hasRequestInFlight = _require2$__internal.hasRequestInFlight,
-    createOperationDescriptor = _require2.createOperationDescriptor;
+    createOperationDescriptor = _require2.createOperationDescriptor,
+    getSelector = _require2.getSelector;
 
 function useLoadMoreFunction(args) {
   var direction = args.direction,
       fragmentNode = args.fragmentNode,
+      fragmentRef = args.fragmentRef,
       fragmentIdentifier = args.fragmentIdentifier,
-      fragmentOwner = args.fragmentOwner,
       fragmentData = args.fragmentData,
       connectionPathInFragmentData = args.connectionPathInFragmentData,
       fragmentRefPathInResponse = args.fragmentRefPathInResponse,
@@ -109,10 +110,11 @@ function useLoadMoreFunction(args) {
       };
     }
 
-    var isParentQueryInFlight = fragmentOwner != null && !Array.isArray(fragmentOwner) && hasRequestInFlight(environment, fragmentOwner);
+    var fragmentSelector = getSelector(fragmentNode, fragmentRef);
+    var isParentQueryInFlight = fragmentSelector != null && fragmentSelector.kind !== 'PluralReaderSelector' && hasRequestInFlight(environment, fragmentSelector.owner);
 
-    if (isFetchingRef.current === true || !hasMore || isParentQueryInFlight) {
-      if (fragmentOwner == null) {
+    if (isFetchingRef.current === true || fragmentData == null || isParentQueryInFlight) {
+      if (fragmentSelector == null) {
         process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Unexpected fetch while using a null fragment ref ' + 'for fragment `%s` in `%s`. When fetching more items, we expect ' + "initial fragment data to be non-null. Please make sure you're " + 'passing a valid fragment ref to `%s` before paginating.', fragmentNode.name, componentDisplayName, componentDisplayName) : void 0;
       }
 
@@ -129,9 +131,11 @@ function useLoadMoreFunction(args) {
       };
     }
 
-    !(fragmentOwner != null && !Array.isArray(fragmentOwner)) ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected to be able to find a non-plural fragment owner for ' + "fragment `%s` when using `%s`. If you're seeing this, " + 'this is likely a bug in Relay.', fragmentNode.name, componentDisplayName) : invariant(false) : void 0;
-    var parentVariables = fragmentOwner.variables;
-    var paginationVariables = getPaginationVariables(direction, count, cursor, parentVariables, paginationMetadata); // TODO (T40777961): Tweak output of @refetchable transform to more
+    !(fragmentSelector != null && fragmentSelector.kind !== 'PluralReaderSelector') ? process.env.NODE_ENV !== "production" ? invariant(false, 'Relay: Expected to be able to find a non-plural fragment owner for ' + "fragment `%s` when using `%s`. If you're seeing this, " + 'this is likely a bug in Relay.', fragmentNode.name, componentDisplayName) : invariant(false) : void 0;
+    var parentVariables = fragmentSelector.owner.variables;
+    var fragmentVariables = fragmentSelector.variables;
+    var baseVariables = (0, _objectSpread2["default"])({}, parentVariables, fragmentVariables);
+    var paginationVariables = getPaginationVariables(direction, count, cursor, baseVariables, paginationMetadata); // TODO (T40777961): Tweak output of @refetchable transform to more
     // easily tell if we need an $id in the refetch vars
 
     if (fragmentRefPathInResponse.includes('node')) {
@@ -172,7 +176,7 @@ function useLoadMoreFunction(args) {
   }, // NOTE: We disable react-hooks-deps warning because all values
   // inside paginationMetadata are static
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [environment, dataID, direction, cursor, hasMore, startFetch, disposeFetch, completeFetch, isFetchingRef, fragmentNode.name, fragmentOwner, componentDisplayName]);
+  [environment, dataID, direction, cursor, startFetch, disposeFetch, completeFetch, isFetchingRef, fragmentData, fragmentNode.name, fragmentRef, componentDisplayName]);
   return [loadMore, hasMore, disposeFetch];
 }
 

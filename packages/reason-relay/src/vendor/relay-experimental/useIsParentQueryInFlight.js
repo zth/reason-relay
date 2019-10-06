@@ -21,7 +21,7 @@ var useStaticFragmentNodeWarning = require('./useStaticFragmentNodeWarning');
 var _require = require('relay-runtime'),
     getObservableForRequestInFlight = _require.__internal.getObservableForRequestInFlight,
     getFragment = _require.getFragment,
-    getFragmentOwner = _require.getFragmentOwner;
+    getSelector = _require.getSelector;
 
 var useEffect = React.useEffect,
     useState = React.useState,
@@ -32,15 +32,14 @@ function useIsParentQueryInFlight(fragmentInput, fragmentRef) {
   var fragmentNode = getFragment(fragmentInput);
   useStaticFragmentNodeWarning(fragmentNode, 'first argument of useIsParentQueryInFlight()');
   var observable = useMemo(function () {
-    // $FlowFixMe - TODO T39154660 Use FragmentPointer type instead of mixed
-    var fragmentOwnerOrOwners = getFragmentOwner(fragmentNode, fragmentRef);
+    var selector = getSelector(fragmentNode, fragmentRef);
 
-    if (fragmentOwnerOrOwners == null) {
+    if (selector == null) {
       return null;
     }
 
-    !!Array.isArray(fragmentOwnerOrOwners) ? process.env.NODE_ENV !== "production" ? invariant(false, 'useIsParentQueryInFlight: Plural fragments are not supported.') : invariant(false) : void 0;
-    return getObservableForRequestInFlight(environment, fragmentOwnerOrOwners);
+    !(selector.kind === 'SingularReaderSelector') ? process.env.NODE_ENV !== "production" ? invariant(false, 'useIsParentQueryInFlight: Plural fragments are not supported.') : invariant(false) : void 0;
+    return getObservableForRequestInFlight(environment, selector.owner);
   }, [environment, fragmentNode, fragmentRef]);
 
   var _useState = useState(observable != null),

@@ -28,8 +28,7 @@ var _require = require('react'),
 
 var _require2 = require('relay-runtime'),
     getFragment = _require2.getFragment,
-    getFragmentIdentifier = _require2.getFragmentIdentifier,
-    getFragmentOwner = _require2.getFragmentOwner;
+    getFragmentIdentifier = _require2.getFragmentIdentifier;
 
 function useLegacyPaginationFragment(fragmentInput, parentFragmentRef) {
   var fragmentNode = getFragment(fragmentInput);
@@ -47,15 +46,13 @@ function useLegacyPaginationFragment(fragmentInput, parentFragmentRef) {
       fragmentRef = _useRefetchableFragme.fragmentRef,
       refetch = _useRefetchableFragme.refetch;
 
-  var fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef); // $FlowFixMe - TODO T39154660 Use FragmentPointer type instead of mixed
-
-  var fragmentOwner = getFragmentOwner(fragmentNode, fragmentRef); // Backward pagination
+  var fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef); // Backward pagination
 
   var _useLoadMore = useLoadMore({
     direction: 'backward',
     fragmentNode: fragmentNode,
+    fragmentRef: fragmentRef,
     fragmentIdentifier: fragmentIdentifier,
-    fragmentOwner: fragmentOwner,
     fragmentData: fragmentData,
     connectionPathInFragmentData: connectionPathInFragmentData,
     fragmentRefPathInResponse: fragmentRefPathInResponse,
@@ -72,8 +69,8 @@ function useLegacyPaginationFragment(fragmentInput, parentFragmentRef) {
   var _useLoadMore2 = useLoadMore({
     direction: 'forward',
     fragmentNode: fragmentNode,
+    fragmentRef: fragmentRef,
     fragmentIdentifier: fragmentIdentifier,
-    fragmentOwner: fragmentOwner,
     fragmentData: fragmentData,
     connectionPathInFragmentData: connectionPathInFragmentData,
     fragmentRefPathInResponse: fragmentRefPathInResponse,

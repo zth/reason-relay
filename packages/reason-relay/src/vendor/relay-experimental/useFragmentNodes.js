@@ -35,7 +35,6 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
   var isMountedRef = useRef(false);
 
   var _useState = useState(0),
-      _ = _useState[0],
       forceUpdate = _useState[1];
 
   var fragmentSpecIdentifier = getFragmentSpecIdentifier(fragmentNodes, props); // The values of these React refs are counters that should be incremented
@@ -44,28 +43,17 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
   // should be re-executed.
 
   var mustResubscribeGenerationRef = useRef(0);
-  var shouldUpdateGenerationRef = useRef(0); // We mirror the environment to check if it has changed between renders
-
-  var _useState2 = useState(environment),
-      mirroredEnvironment = _useState2[0],
-      setMirroredEnvironment = _useState2[1];
-
-  var environmentChanged = mirroredEnvironment !== environment; // We mirror the fragmentSpec identifier to check if it has changed between
-  // renders
-
-  var _useState3 = useState(fragmentSpecIdentifier),
-      mirroredFragmentSpecIdentifier = _useState3[0],
-      setMirroredFragmentSpecIdentifier = _useState3[1];
-
-  var fragmentSpecIdentifierChanged = mirroredFragmentSpecIdentifier !== fragmentSpecIdentifier; // If the fragment identifier changes, it means that the variables on the
+  var shouldUpdateGenerationRef = useRef(0);
+  var environmentChanged = useHasChanged(environment);
+  var fragmentSpecIdentifierChanged = useHasChanged(fragmentSpecIdentifier); // If the fragment identifier changes, it means that the variables on the
   // fragment owner changed, or the fragment refs point to different records.
   // In this case, we need to resubscribe to the Relay store.
 
   var mustResubscribe = environmentChanged || fragmentSpecIdentifierChanged; // We mirror the props to check if they have changed between renders
 
-  var _useState4 = useState(props),
-      mirroredProps = _useState4[0],
-      setMirroredProps = _useState4[1]; // `props` contains both fragment refs and regular component
+  var _useState2 = useState(props),
+      mirroredProps = _useState2[0],
+      setMirroredProps = _useState2[1]; // `props` contains both fragment refs and regular component
   // props, so we extract here the props that aren't fragment refs.
   // TODO(T38931859) This can be simplified if we use named fragment refs
 
@@ -96,23 +84,11 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
   var shouldUpdate = mustResubscribe || scalarNonFragmentRefPropsChanged;
 
   if (shouldUpdate) {
-    var _shouldUpdateGenerati;
-
-    shouldUpdateGenerationRef.current = ((_shouldUpdateGenerati = shouldUpdateGenerationRef.current) !== null && _shouldUpdateGenerati !== void 0 ? _shouldUpdateGenerati : 0) + 1;
+    shouldUpdateGenerationRef.current++;
   }
 
   if (mustResubscribe) {
-    var _mustResubscribeGener;
-
-    mustResubscribeGenerationRef.current = ((_mustResubscribeGener = mustResubscribeGenerationRef.current) !== null && _mustResubscribeGener !== void 0 ? _mustResubscribeGener : 0) + 1;
-
-    if (environmentChanged) {
-      setMirroredEnvironment(environment);
-    }
-
-    if (fragmentSpecIdentifierChanged) {
-      setMirroredFragmentSpecIdentifier(fragmentSpecIdentifier);
-    }
+    mustResubscribeGenerationRef.current++;
   } // Since `props` contains both fragment refs and regular props, we need to
   // ensure we keep the mirrored version in sync if non fragment ref props
   // change , to be able to compare them between renders
@@ -140,7 +116,7 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
   }
 
   function handleDataUpdate() {
-    var _shouldUpdateGenerati2;
+    var _shouldUpdateGenerati;
 
     if (isMountedRef.current === false || isListeningForUpdatesRef.current === false) {
       return;
@@ -148,7 +124,7 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
     // consuming component updates.
 
 
-    shouldUpdateGenerationRef.current = ((_shouldUpdateGenerati2 = shouldUpdateGenerationRef.current) !== null && _shouldUpdateGenerati2 !== void 0 ? _shouldUpdateGenerati2 : 0) + 1; // React bails out on noop state updates as an optimization.
+    shouldUpdateGenerationRef.current = ((_shouldUpdateGenerati = shouldUpdateGenerationRef.current) !== null && _shouldUpdateGenerati !== void 0 ? _shouldUpdateGenerati : 0) + 1; // React bails out on noop state updates as an optimization.
     // If we want to force an update via setState, we need to pass an value.
     // The actual value can be arbitrary though, e.g. an incremented number.
 
@@ -192,6 +168,20 @@ function useFragmentNodes(fragmentNodes, props, componentDisplayName) {
     enableStoreUpdates: enableStoreUpdates,
     shouldUpdateGeneration: shouldUpdateGenerationRef.current
   };
+}
+
+function useHasChanged(value) {
+  var _useState3 = useState(value),
+      mirroredValue = _useState3[0],
+      setMirroredValue = _useState3[1];
+
+  var valueChanged = mirroredValue !== value;
+
+  if (valueChanged) {
+    setMirroredValue(value);
+  }
+
+  return valueChanged;
 }
 
 module.exports = RelayProfiler.instrument('useFragmentNodes', useFragmentNodes);

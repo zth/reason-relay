@@ -50,11 +50,13 @@ describe('useLegacyPaginationFragment', function () {
   var gqlQuery;
   var gqlQueryNestedFragment;
   var gqlQueryWithoutID;
+  var gqlQueryWithLiteralArgs;
   var gqlPaginationQuery;
   var gqlFragment;
   var query;
   var queryNestedFragment;
   var queryWithoutID;
+  var queryWithLiteralArgs;
   var paginationQuery;
   var variables;
   var variablesNestedFragment;
@@ -184,7 +186,7 @@ describe('useLegacyPaginationFragment', function () {
         return ConnectionHandler;
       }
     });
-    var generated = generateAndCompile("\n        fragment NestedUserFragment on User {\n          username\n        }\n\n        fragment UserFragment on User\n        @refetchable(queryName: \"UserFragmentPaginationQuery\")\n        @argumentDefinitions(\n          isViewerFriendLocal: {type: \"Boolean\", defaultValue: false}\n          orderby: {type: \"[String]\"}\n        ) {\n          id\n          name\n          friends(\n            after: $after,\n            first: $first,\n            before: $before,\n            last: $last,\n            orderby: $orderby,\n            isViewerFriend: $isViewerFriendLocal\n          ) @connection(key: \"UserFragment_friends\") {\n            edges {\n              node {\n                id\n                name\n                ...NestedUserFragment\n              }\n            }\n          }\n        }\n\n        query UserQuery(\n          $id: ID!\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          node(id: $id) {\n            ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n          }\n        }\n\n        query UserQueryNestedFragment(\n          $id: ID!\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          node(id: $id) {\n            actor {\n              ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n            }\n          }\n        }\n\n        query UserQueryWithoutID(\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          viewer {\n            actor {\n              ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n            }\n          }\n        }\n      ");
+    var generated = generateAndCompile("\n        fragment NestedUserFragment on User {\n          username\n        }\n\n        fragment UserFragment on User\n        @refetchable(queryName: \"UserFragmentPaginationQuery\")\n        @argumentDefinitions(\n          isViewerFriendLocal: {type: \"Boolean\", defaultValue: false}\n          orderby: {type: \"[String]\"}\n        ) {\n          id\n          name\n          friends(\n            after: $after,\n            first: $first,\n            before: $before,\n            last: $last,\n            orderby: $orderby,\n            isViewerFriend: $isViewerFriendLocal\n          ) @connection(key: \"UserFragment_friends\") {\n            edges {\n              node {\n                id\n                name\n                ...NestedUserFragment\n              }\n            }\n          }\n        }\n\n        query UserQuery(\n          $id: ID!\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          node(id: $id) {\n            ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n          }\n        }\n\n        query UserQueryNestedFragment(\n          $id: ID!\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          node(id: $id) {\n            actor {\n              ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n            }\n          }\n        }\n\n        query UserQueryWithoutID(\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          viewer {\n            actor {\n              ...UserFragment @arguments(isViewerFriendLocal: $isViewerFriend, orderby: $orderby)\n            }\n          }\n        }\n\n        query UserQueryWithLiteralArgs(\n          $id: ID!\n          $after: ID\n          $first: Int\n          $before: ID\n          $last: Int\n          $orderby: [String]\n          $isViewerFriend: Boolean\n        ) {\n          node(id: $id) {\n            ...UserFragment @arguments(isViewerFriendLocal: true, orderby: [\"name\"])\n          }\n        }\n      ");
     variablesWithoutID = {
       after: null,
       first: 1,
@@ -202,6 +204,7 @@ describe('useLegacyPaginationFragment', function () {
     gqlQuery = generated.UserQuery;
     gqlQueryNestedFragment = generated.UserQueryNestedFragment;
     gqlQueryWithoutID = generated.UserQueryWithoutID;
+    gqlQueryWithLiteralArgs = generated.UserQueryWithLiteralArgs;
     gqlPaginationQuery = generated.UserFragmentPaginationQuery;
     gqlFragment = generated.UserFragment;
     !(((_gqlFragment$metadata = gqlFragment.metadata) === null || _gqlFragment$metadata === void 0 ? void 0 : (_gqlFragment$metadata2 = _gqlFragment$metadata.refetch) === null || _gqlFragment$metadata2 === void 0 ? void 0 : _gqlFragment$metadata2.operation) === '@@MODULE_START@@UserFragmentPaginationQuery.graphql@@MODULE_END@@') ? process.env.NODE_ENV !== "production" ? invariant(false, 'useRefetchableFragment-test: Expected refetchable fragment metadata to contain operation.') : invariant(false) : void 0; // Manually set the refetchable operation for the test.
@@ -210,6 +213,7 @@ describe('useLegacyPaginationFragment', function () {
     query = createOperationDescriptor(gqlQuery, variables);
     queryNestedFragment = createOperationDescriptor(gqlQueryNestedFragment, variablesNestedFragment);
     queryWithoutID = createOperationDescriptor(gqlQueryWithoutID, variablesWithoutID);
+    queryWithLiteralArgs = createOperationDescriptor(gqlQueryWithLiteralArgs, variables);
     paginationQuery = createOperationDescriptor(gqlPaginationQuery, variables);
     environment.commitPayload(query, {
       node: {
@@ -257,6 +261,30 @@ describe('useLegacyPaginationFragment', function () {
               hasPreviousPage: false,
               startCursor: 'cursor:1'
             }
+          }
+        }
+      }
+    });
+    environment.commitPayload(queryWithLiteralArgs, {
+      node: {
+        __typename: 'User',
+        id: '1',
+        name: 'Alice',
+        friends: {
+          edges: [{
+            cursor: 'cursor:1',
+            node: {
+              __typename: 'User',
+              id: 'node:1',
+              name: 'name:node:1',
+              username: 'username:node:1'
+            }
+          }],
+          pageInfo: {
+            endCursor: 'cursor:1',
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: 'cursor:1'
           }
         }
       }
@@ -622,60 +650,6 @@ describe('useLegacyPaginationFragment', function () {
         expect(warning.mock.calls[1][1].includes('Relay: Unexpected fetch while using a null fragment ref')).toEqual(true);
         expect(environment.execute).toHaveBeenCalledTimes(0);
       });
-      it('does not load more if there are no more items to load and calls onComplete callback', function () {
-        environment.getStore().getSource().clear();
-        environment.commitPayload(query, {
-          node: {
-            __typename: 'User',
-            id: '1',
-            name: 'Alice',
-            friends: {
-              edges: [{
-                cursor: 'cursor:1',
-                node: {
-                  __typename: 'User',
-                  id: 'node:1',
-                  name: 'name:node:1',
-                  username: 'username:node:1'
-                }
-              }],
-              pageInfo: {
-                endCursor: 'cursor:1',
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: 'cursor:1'
-              }
-            }
-          }
-        });
-        var callback = jest.fn();
-        renderFragment();
-        expectFragmentResults([{
-          data: (0, _objectSpread2["default"])({}, initialUser, {
-            friends: (0, _objectSpread2["default"])({}, initialUser.friends, {
-              pageInfo: expect.objectContaining({
-                hasNextPage: false
-              })
-            })
-          }),
-          isLoadingNext: false,
-          isLoadingPrevious: false,
-          hasNext: false,
-          hasPrevious: false
-        }]);
-        TestRenderer.act(function () {
-          loadNext(1, {
-            onComplete: callback
-          });
-        });
-        expect(environment.execute).toBeCalledTimes(0);
-        expect(callback).toBeCalledTimes(0);
-        expect(renderSpy).toBeCalledTimes(0);
-        TestRenderer.act(function () {
-          runScheduledCallback();
-        });
-        expect(callback).toBeCalledTimes(1);
-      });
       it('does not load more if request is already in flight', function () {
         var callback = jest.fn();
         var renderer = renderFragment();
@@ -888,6 +862,97 @@ describe('useLegacyPaginationFragment', function () {
         expect(callback).toBeCalledTimes(0);
         expect(renderSpy).toBeCalledTimes(0);
       });
+      it('attempts to load more even if there are no more items to load', function () {
+        environment.getStore().getSource().clear();
+        environment.commitPayload(query, {
+          node: {
+            __typename: 'User',
+            id: '1',
+            name: 'Alice',
+            friends: {
+              edges: [{
+                cursor: 'cursor:1',
+                node: {
+                  __typename: 'User',
+                  id: 'node:1',
+                  name: 'name:node:1',
+                  username: 'username:node:1'
+                }
+              }],
+              pageInfo: {
+                endCursor: 'cursor:1',
+                hasNextPage: false,
+                hasPreviousPage: false,
+                startCursor: 'cursor:1'
+              }
+            }
+          }
+        });
+        var callback = jest.fn();
+        var renderer = renderFragment();
+        var expectedUser = (0, _objectSpread2["default"])({}, initialUser, {
+          friends: (0, _objectSpread2["default"])({}, initialUser.friends, {
+            pageInfo: expect.objectContaining({
+              hasNextPage: false
+            })
+          })
+        });
+        expectFragmentResults([{
+          data: expectedUser,
+          isLoadingNext: false,
+          isLoadingPrevious: false,
+          hasNext: false,
+          hasPrevious: false
+        }]);
+        TestRenderer.act(function () {
+          loadNext(1, {
+            onComplete: callback
+          });
+        });
+        var paginationVariables = {
+          id: '1',
+          after: 'cursor:1',
+          first: 1,
+          before: null,
+          last: null,
+          isViewerFriendLocal: false,
+          orderby: ['name']
+        };
+        expectFragmentIsLoadingMore(renderer, direction, {
+          data: expectedUser,
+          hasNext: false,
+          hasPrevious: false,
+          paginationVariables: paginationVariables,
+          gqlPaginationQuery: gqlPaginationQuery
+        });
+        expect(callback).toBeCalledTimes(0);
+        environment.mock.resolve(gqlPaginationQuery, {
+          data: {
+            node: {
+              __typename: 'User',
+              id: '1',
+              name: 'Alice',
+              friends: {
+                edges: [],
+                pageInfo: {
+                  startCursor: null,
+                  endCursor: null,
+                  hasNextPage: null,
+                  hasPreviousPage: null
+                }
+              }
+            }
+          }
+        });
+        expectFragmentResults([{
+          data: expectedUser,
+          isLoadingNext: false,
+          isLoadingPrevious: false,
+          hasNext: false,
+          hasPrevious: false
+        }]);
+        expect(callback).toBeCalledTimes(1);
+      });
       it('loads and renders next items in connection', function () {
         var callback = jest.fn();
         var renderer = renderFragment();
@@ -962,6 +1027,121 @@ describe('useLegacyPaginationFragment', function () {
                 id: 'node:2',
                 name: 'name:node:2'
               }, createFragmentRef('node:2', query))
+            }],
+            pageInfo: {
+              endCursor: 'cursor:2',
+              hasNextPage: true,
+              hasPreviousPage: false,
+              startCursor: 'cursor:1'
+            }
+          })
+        });
+        expectFragmentResults([{
+          // First update has updated connection
+          data: expectedUser,
+          isLoadingNext: true,
+          isLoadingPrevious: false,
+          hasNext: true,
+          hasPrevious: false
+        }, {
+          // Second update sets isLoading flag back to false
+          data: expectedUser,
+          isLoadingNext: false,
+          isLoadingPrevious: false,
+          hasNext: true,
+          hasPrevious: false
+        }]);
+        expect(callback).toBeCalledTimes(1);
+      });
+      it('loads more correctly using fragment variables from literal @argument values', function () {
+        var expectedUser = (0, _objectSpread2["default"])({}, initialUser, {
+          friends: (0, _objectSpread2["default"])({}, initialUser.friends, {
+            edges: [{
+              cursor: 'cursor:1',
+              node: (0, _objectSpread2["default"])({
+                __typename: 'User',
+                id: 'node:1',
+                name: 'name:node:1'
+              }, createFragmentRef('node:1', queryWithLiteralArgs))
+            }]
+          })
+        });
+        var callback = jest.fn();
+        var renderer = renderFragment({
+          owner: queryWithLiteralArgs
+        });
+        expectFragmentResults([{
+          data: expectedUser,
+          isLoadingNext: false,
+          isLoadingPrevious: false,
+          hasNext: true,
+          hasPrevious: false
+        }]);
+        TestRenderer.act(function () {
+          loadNext(1, {
+            onComplete: callback
+          });
+        });
+        var paginationVariables = {
+          id: '1',
+          after: 'cursor:1',
+          first: 1,
+          before: null,
+          last: null,
+          isViewerFriendLocal: true,
+          orderby: ['name']
+        };
+        expect(paginationVariables.isViewerFriendLocal).not.toBe(variables.isViewerFriend);
+        expectFragmentIsLoadingMore(renderer, direction, {
+          data: expectedUser,
+          hasNext: true,
+          hasPrevious: false,
+          paginationVariables: paginationVariables,
+          gqlPaginationQuery: gqlPaginationQuery
+        });
+        expect(callback).toBeCalledTimes(0);
+        environment.mock.resolve(gqlPaginationQuery, {
+          data: {
+            node: {
+              __typename: 'User',
+              id: '1',
+              name: 'Alice',
+              friends: {
+                edges: [{
+                  cursor: 'cursor:2',
+                  node: {
+                    __typename: 'User',
+                    id: 'node:2',
+                    name: 'name:node:2',
+                    username: 'username:node:2'
+                  }
+                }],
+                pageInfo: {
+                  startCursor: 'cursor:2',
+                  endCursor: 'cursor:2',
+                  hasNextPage: true,
+                  hasPreviousPage: true
+                }
+              }
+            }
+          }
+        });
+        expectedUser = (0, _objectSpread2["default"])({}, expectedUser, {
+          friends: (0, _objectSpread2["default"])({}, expectedUser.friends, {
+            edges: [{
+              cursor: 'cursor:1',
+              node: (0, _objectSpread2["default"])({
+                __typename: 'User',
+                id: 'node:1',
+                name: 'name:node:1'
+              }, createFragmentRef('node:1', queryWithLiteralArgs))
+            }, {
+              cursor: 'cursor:2',
+              node: (0, _objectSpread2["default"])({
+                __typename: 'User',
+                id: 'node:2',
+                name: 'name:node:2'
+              }, createFragmentRef('node:2', queryWithLiteralArgs))
             }],
             pageInfo: {
               endCursor: 'cursor:2',

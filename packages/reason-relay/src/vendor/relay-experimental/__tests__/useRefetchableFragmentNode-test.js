@@ -2427,7 +2427,38 @@ describe('useRefetchableFragmentNode', function () {
         expect(renderSpy).toBeCalledTimes(0);
         expect(renderer.toJSON()).toEqual('Fallback');
       });
-      it('disposes of ongoing request on unmount', function () {
+      it('disposes of ongoing request on unmount when refetch suspends', function () {
+        var renderer = renderFragment();
+        renderSpy.mockClear();
+        TestRenderer.act(function () {
+          refetch({
+            id: '2'
+          }, {
+            fetchPolicy: fetchPolicy,
+            renderPolicy: renderPolicy
+          });
+        }); // Assert request is started
+
+        var refetchVariables = {
+          id: '2',
+          scale: 16
+        };
+        refetchQuery = createOperationDescriptor(gqlRefetchQuery, refetchVariables);
+        expectFragmentIsRefetching(renderer, {
+          refetchVariables: refetchVariables,
+          refetchQuery: refetchQuery
+        });
+        renderer.unmount(); // Assert request was canceled
+
+        expect(_unsubscribe).toBeCalledTimes(1);
+        expectRequestIsInFlight({
+          inFlight: false,
+          requestCount: 1,
+          gqlRefetchQuery: gqlRefetchQuery,
+          refetchVariables: refetchVariables
+        });
+      });
+      it('disposes of ongoing request on unmount when refetch does not suspend', function () {
         var renderer = renderFragment();
         renderSpy.mockClear();
         TestRenderer.act(function () {
@@ -2464,7 +2495,7 @@ describe('useRefetchableFragmentNode', function () {
         }]);
         renderer.unmount(); // Assert request was canceled
 
-        expect(_unsubscribe).toBeCalledTimes(1);
+        expect(_unsubscribe).toBeCalledTimes(2);
         expectRequestIsInFlight({
           inFlight: false,
           requestCount: 1,
