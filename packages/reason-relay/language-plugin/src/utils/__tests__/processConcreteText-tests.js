@@ -1,4 +1,4 @@
-const processConcreteText = require("../processConcreteText");
+const { processConcreteText } = require("../processConcreteText");
 
 describe("processConcreteText", () => {
   it("replaces require statements correctly", () => {

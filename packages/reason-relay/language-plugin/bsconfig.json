@@ -11,14 +11,18 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
+    "bs-flow-parser",
+    "tablecloth-bucklescript"
   ],
   "warnings": {
     "error" : "+101"
   },
   "refmt": 3,
   "gentypeconfig": {
-    "language": "flow",
-    "shims": {},
+    "language": "typescript",
+    "shims": {
+      "Js": "Js"
+    },
     "debug": {
       "all": false,
       "basic": false

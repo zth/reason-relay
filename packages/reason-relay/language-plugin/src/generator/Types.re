@@ -1,12 +1,29 @@
-[@genType]
-type scalarValues =
+/**
+ * This is information the language plugin needs to supply
+ * in addition to just the Flow types.
+ */
+[@gentype]
+type operationType =
+  | Fragment(string, bool) // Name, isPlural
+  | Mutation(string)
+  | Subscription(string)
+  | Query(string);
+  
+type unionMember = {
+  name: string,
+  shape: object_,
+}
+and union = {
+  members: list(unionMember),
+  atPath: list(string),
+}
+and scalarValues =
   | Int
   | String
   | Float
   | Boolean
   | CustomScalar(string)
   | Any
-[@genType]
 and propType =
   | Scalar(scalarValues)
   | Enum(string)
@@ -14,19 +31,16 @@ and propType =
   | Array(propValue)
   | FragmentRefValue(string)
   | TypeReference(string)
+  | ObjectReference(string)
   | Union(string)
-[@genType]
 and propValue = {
   nullable: bool,
   propType,
 }
-[@genType]
 and propValues =
   | FragmentRef(string)
   | Prop(string, propValue)
-[@genType]
 and object_ = {values: array(propValues)}
-[@genType]
 and rootType =
   | Operation(object_)
   | Fragment(object_)
@@ -34,7 +48,6 @@ and rootType =
   | InputObject(string, object_)
   | PluralFragment(object_);
 
-[@genType]
 type fullEnum = {
   name: string,
   values: array(string),

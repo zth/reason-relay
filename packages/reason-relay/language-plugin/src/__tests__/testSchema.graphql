@@ -1,0 +1,74 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+scalar Color
+
+enum UserRole {
+  Admin
+  User
+}
+
+type Query {
+  me: User!
+  user(id: ID!): User
+  userByLocation(location: LocationBounds!): User
+  participantById(id: ID!): Participant
+}
+
+type Mutation {
+  setUserLocation(input: SetUserLocationInput!): SetUserLocationPayload!
+}
+
+type Subscription {
+  userChanged(input: UserChangedInput!): UserChangedPayload!
+}
+
+input UserChangedInput {
+  clientMutationId: String
+  userId: ID!
+}
+
+type UserChangedPayload {
+  user: User
+}
+
+input SetUserLocationInput {
+  clientMutationId: String
+  userId: ID!
+  location: LocationBounds
+}
+
+type SetUserLocationPayload {
+  clientMutationId: String
+  changedUser: User
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  location: Location!
+  role: UserRole!
+  favoriteColor: Color!
+}
+
+type Observer {
+  id: ID!
+  name: String!
+}
+
+union Participant = User | Observer
+
+type Location {
+  id: ID!
+  lat: Float!
+  lng: Float!
+}
+
+input LocationBounds {
+  lat: Float!
+  lng: Float!
+}

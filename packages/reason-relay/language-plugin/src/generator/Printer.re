@@ -3,23 +3,15 @@ open Types;
 let printQuoted = propName => "\"" ++ propName ++ "\"";
 let printPropName = propName => propName |> printQuoted;
 let printEnumName = name => "enum_" ++ name;
-
-[@genType]
+let getInputObjName = name => "input_" ++ name;
+let getObjName = name => "obj_" ++ name;
 let printWrappedEnumName = name => "SchemaAssets.Enum_" ++ name ++ ".wrapped";
-
-[@genType]
-let printWrappedUnionName = name => "Union_" ++ name ++ ".wrapped";
-
+let printUnionName = name => "Union_" ++ name;
+let printWrappedUnionName = name => "union_" ++ name ++ "_wrapped";
 let printFragmentRef = name => name ++ "_graphql.t";
-
-[@genType]
 let getFragmentRefName = name => "__$fragment_ref__" ++ name;
-
-[@genType]
 let getInputTypeName = name => "input_" ++ name;
-
 let printAnyType = () => "ReasonRelay.any";
-
 let printTypeReference = (typeName: string) => typeName;
 
 type objectOptionalType =
@@ -40,6 +32,7 @@ let rec printPropType = (~propType, ~optType) =>
   switch (propType) {
   | Scalar(scalar) => printScalar(scalar)
   | Object(obj) => printObject(~obj, ~optType)
+  | ObjectReference(objName) => objName |> getObjName |> printTypeReference
   | Array(propValue) => printArray(~propValue, ~optType)
   | Enum(name) => printWrappedEnumName(name)
   | Union(name) => printWrappedUnionName(name)
@@ -116,10 +109,8 @@ let printRootType = rootType =>
 [@genType]
 let printCode = str => str |> Reason.parseRE |> Reason.printRE;
 
-[@genType]
 let makeRootType = rootType => rootType |> printRootType |> printCode;
 
-[@genType]
 let makeEnum = fullEnum => {
   let valuesStr = ref("");
 
@@ -128,3 +119,144 @@ let makeEnum = fullEnum => {
 
   "type " ++ printEnumName(fullEnum.name) ++ " = [ " ++ valuesStr^ ++ " ];";
 };
+
+let makeUnionName = path =>
+  path |> Tablecloth.List.reverse |> Tablecloth.String.join(~sep="_");
+
+let printUnion = (union: union) => {
+  let prefix = "module ";
+  let unionName = union.atPath |> makeUnionName |> printUnionName;
+  let unionWrappedName =
+    union.atPath |> makeUnionName |> printWrappedUnionName;
+
+  let unwrapUnion =
+    "external __unwrap_union: "
+    ++ unionWrappedName
+    ++ " => {. \"__typename\": string } = \"%identity\";";
+
+  let typeDefs = ref("");
+  let addToTypeDefs = Utils.makeAddToStr(typeDefs);
+
+  let unwrappers = ref("");
+  let addToUnwrappers = Utils.makeAddToStr(unwrappers);
+
+  let typeT = ref("type t = [");
+  let addToTypeT = Utils.makeAddToStr(typeT);
+
+  union.members
+  |> List.iter(({name, shape}: Types.unionMember) => {
+       addToTypeDefs(
+         "type type_"
+         ++ name
+         ++ " = "
+         ++ printObject(~obj=shape, ~optType=JsNullable)
+         ++ ";",
+       );
+
+       addToUnwrappers(
+         "external __unwrap_"
+         ++ name
+         ++ ": "
+         ++ unionWrappedName
+         ++ " => type_"
+         ++ name
+         ++ " = \"%identity\";",
+       );
+     });
+
+  union.members
+  |> List.iter(({name}: Types.unionMember) =>
+       addToTypeT(" | `" ++ name ++ "(type_" ++ name ++ ")")
+     );
+
+  addToTypeT(" | `UnmappedUnionMember];");
+
+  let unwrapFnImpl =
+    ref(
+      {|
+  let unwrap = wrapped => {
+    let unwrappedUnion = wrapped |> __unwrap_union;
+    switch (unwrappedUnion##__typename) {
+  |},
+    );
+
+  let addToUnwrapFnImpl = Utils.makeAddToStr(unwrapFnImpl);
+
+  union.members
+  |> List.iter(({name}: Types.unionMember) =>
+       addToUnwrapFnImpl(
+         "| \""
+         ++ name
+         ++ "\" => `"
+         ++ name
+         ++ "(wrapped |> __unwrap_"
+         ++ name
+         ++ ")",
+       )
+     );
+
+  addToUnwrapFnImpl({|
+      | _ => `UnmappedUnionMember
+    };
+  };
+  |});
+
+  prefix
+  ++ unionName
+  ++ ": {"
+  ++ typeDefs^
+  ++ typeT^
+  ++ "let unwrap: "
+  ++ unionWrappedName
+  ++ " => t;"
+  ++ "} = { "
+  ++ unwrapUnion
+  ++ typeDefs^
+  ++ typeT^
+  ++ unwrappers^
+  ++ unwrapFnImpl^
+  ++ "}";
+};
+
+let fragmentRefAssets = fragmentName => {
+  let fref = fragmentName |> getFragmentRefName;
+  {j|
+type t;
+type fragmentRef;
+type fragmentRefSelector('a) = {.. "$fref": t} as 'a;
+external getFragmentRef: fragmentRefSelector('a) => fragmentRef = "%identity";
+|j};
+};
+
+let unionModule = unions => {
+  let unionsText =
+    Tablecloth.(unions |> List.map(~f=printUnion) |> String.join(~sep="\n"));
+  {j|
+    module Unions {
+      $unionsText
+    };
+    |j};
+};
+
+let operationType = (operationType: Types.operationType) => {
+  let opType =
+    switch (operationType) {
+    | Fragment(_) => "fragment"
+    | Query(_) => "query"
+    | Mutation(_) => "mutation"
+    | Subscription(_) => "subscription"
+    };
+
+  "type operationType = ReasonRelay." ++ opType ++ "Node;";
+};
+
+let printType = typeText => {j|type $typeText;|j};
+
+let opaqueUnionType = unions =>
+  Tablecloth.(
+    unions
+    |> List.map(~f=(union: Types.union) =>
+         union.atPath |> makeUnionName |> printWrappedUnionName |> printType
+       )
+    |> String.join(~sep="\n")
+  );
