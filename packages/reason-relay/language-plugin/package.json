@@ -4,8 +4,8 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf lib && yarn bs:clean && yarn bs:build && yarn ts:build && yarn babel",
-    "babel": "babel src --out-dir lib --ignore \"**/__tests__\"",
+    "build": "rm -rf dist && yarn bs:clean && yarn bs:build && yarn ts:build && yarn babel",
+    "babel": "babel src --out-dir dist --ignore \"**/__tests__\"",
     "bs:build": "bsb -make-world",
     "bs:start": "bsb -make-world -w",
     "bs:clean": "bsb -clean-world",

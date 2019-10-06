@@ -29,7 +29,7 @@ cp yarn.lock ../../_release/;
 cp -f scripts/release-postinstall.js ../../_release/postinstall.js
 
 # copy language plugin
-cp -r ./language-plugin/lib ../../_release/language-plugin;
+cp -r ./language-plugin/dist ../../_release/language-plugin;
 
 # copy compiler
 cp -r ./compiler/ ../../_release/compiler;
