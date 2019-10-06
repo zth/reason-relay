@@ -87,6 +87,7 @@ switch (platform) {
       process.exit(1);
     }
 
+    throw new Error("Windows currently not supported.");
     copyPlatformBinaries("windows");
     break;
   }

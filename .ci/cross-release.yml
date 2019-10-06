@@ -14,10 +14,10 @@ steps:
       platform: "macOS"
       folder: "platform-darwin"
 
-  - template: release-ppx-setup.yml
-    parameters:
-      platform: "Windows"
-      folder: "platform-windows"
+  #- template: release-ppx-setup.yml
+  #  parameters:
+  #    platform: "Windows"
+  #    folder: "platform-windows"
 
   - bash: "./build-ci.sh"
     displayName: "Run build script"
