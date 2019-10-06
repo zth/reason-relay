@@ -2,6 +2,7 @@ open BsFlowParser;
 
 exception Missing_typename_field_on_union;
 exception Could_not_map_number;
+exception No_extractable_operations_found;
 
 let parse_options: option(Parser_env.parse_options) =
   Some({
@@ -460,7 +461,15 @@ let printFromFlowTypes = (~content, ~operationType) => {
                Some((
                  _,
                  TypeAlias({
-                   right: (_, Object({properties})),
+                   right: (
+                     _,
+                     // Match regular object, or a $ReadOnlyArray (plural fragments)
+                     Object({properties}) |
+                     Generic({
+                       id: Unqualified((_, "$ReadOnlyArray")),
+                       targs: Some((_, [(_, Object({properties}))])),
+                     }),
+                   ),
                    id: (_, typeName),
                  }),
                )),
@@ -593,6 +602,12 @@ let printFromFlowTypes = (~content, ~operationType) => {
   addToStr("\n\nmodule Unions = {");
   Printer.(unions^ |> List.iter(union => union |> printUnion |> addToStr));
   addToStr("};\n");
+
+  switch (state^) {
+  | {fragment: None, response: None, variables: None} =>
+    raise(No_extractable_operations_found)
+  | _ => ()
+  };
 
   finalStr^;
 };

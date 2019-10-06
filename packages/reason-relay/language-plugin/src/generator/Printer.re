@@ -173,7 +173,7 @@ let printUnion = (union: union) => {
      });
 
   union.members
-  |> List.iter(({name, shape}: Types.unionMember) =>
+  |> List.iter(({name}: Types.unionMember) =>
        addToTypeT(" | `" ++ name ++ "(type_" ++ name ++ ")")
      );
 
@@ -191,7 +191,7 @@ let printUnion = (union: union) => {
   let addToUnwrapFnImpl = Utils.makeAddToStr(unwrapFnImpl);
 
   union.members
-  |> List.iter(({name, shape}: Types.unionMember) =>
+  |> List.iter(({name}: Types.unionMember) =>
        addToUnwrapFnImpl(
          "| \""
          ++ name

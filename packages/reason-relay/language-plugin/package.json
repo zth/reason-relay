@@ -1,34 +1,28 @@
 {
   "name": "relay-compiler-language-reason",
   "version": "1.0.0",
-  "main": "lib/index.js",
-  "files": [
-    "lib"
-  ],
+  "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "relay": "relay-compiler --src ./test --language lib/index.js --schema schema.graphql",
-    "babel": "babel src --out-dir lib",
-    "build": "rm -rf lib && yarn babel && yarn bs:build",
+    "build": "rm -rf lib && yarn bs:clean && yarn bs:build && yarn ts:build && yarn babel",
+    "babel": "babel src --out-dir lib --ignore \"**/__tests__\"",
     "bs:build": "bsb -make-world",
     "bs:start": "bsb -make-world -w",
     "bs:clean": "bsb -clean-world",
-    "test": "jest"
+    "test": "jest src",
+    "ts:check": "yarn tsc --check",
+    "ts:build": "yarn tsc",
+    "ts:watch": "yarn tsc --watch"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/types": "^7.4.4",
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
     "@types/graphql": "14.5.0",
     "@types/node": "^12.7.11",
     "@types/relay-compiler": "^6.0.1",
     "babel-jest": "^24.9.0",
     "babel-plugin-module-resolver": "^3.2.0",
-    "flow-bin": "^0.101.0",
-    "flow-typed": "^2.5.2",
     "gentype": "^2.40.1",
     "jest": "^24.9.0",
     "relay-compiler": "^6.0.0",
@@ -37,8 +31,6 @@
     "relay-test-utils-internal": "^6.0.0"
   },
   "dependencies": {
-    "@babel/generator": "^7.4.4",
-    "@babel/parser": "^7.4.5",
     "bs-flow-parser": "^0.91.0-1",
     "bs-platform": "^5.0.5-beta.1",
     "fbjs": "^1.0.0",

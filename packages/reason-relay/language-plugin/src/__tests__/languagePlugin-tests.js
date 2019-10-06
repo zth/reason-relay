@@ -1,15 +1,3 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @emails oncall+relay
- */
-
-"use strict";
-
 const { buildSchema } = require("graphql");
 const fs = require("fs");
 const path = require("path");
@@ -30,9 +18,11 @@ const testSchema = buildSchema(
   )
 );
 
-import type { TypeGeneratorOptions } from "relay-compiler/lib/RelayLanguagePluginInterface";
+function collapseString(str) {
+  return str.replace(/\r?\n|\r|\t/g, "").replace(/\s+/g, " ");
+}
 
-function generate(text, options?: TypeGeneratorOptions, extraDefs = "") {
+function generate(text, options, extraDefs = "") {
   const schema = transformASTSchema(testSchema, [
     ...RelayIRTransforms.schemaExtensions,
     extraDefs
@@ -297,6 +287,21 @@ describe("Language plugin tests", () => {
             firstName
           }`
         ).includes("type operationType = ReasonRelay.fragmentNode;")
+      ).toBe(true);
+    });
+
+    it("handles plural fragments", () => {
+      let generated = generate(
+        `fragment SomeComponent_user on User @relay(plural: true) {
+          id
+          firstName
+        }`
+      );
+
+      expect(
+        collapseString(generated).includes(
+          `type fragment = array({ . "firstName": string, "id": string, });`
+        )
       ).toBe(true);
     });
 
