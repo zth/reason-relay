@@ -337,7 +337,7 @@ external _useQuery:
     }
   ) =>
   'queryResponse =
-  "useQuery";
+  "useLazyLoadQuery";
 
 module type MakeUseQueryConfig = {
   type response;
