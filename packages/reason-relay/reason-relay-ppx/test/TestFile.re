@@ -1,6 +1,8 @@
 open TestFramework;
 open ReasonRelayPpxLibrary;
 
+exception Operation_format_error;
+
 let makeMockLexingPos = (): Stdlib.Lexing.position => {
   pos_fname: "",
   pos_lnum: 0,
@@ -145,5 +147,151 @@ describe("fragmentHasConnectionNotation", ({test, _}) => {
       ),
     ).
       toBeFalse()
+  );
+
+  test(
+    "it should raise exception when inline fragments exist but has no __typename selection",
+    ({expect}) => {
+      let selectionSet =
+        switch (
+          Util.extractGraphQLOperation(
+            ~loc=makeMockLocObj(),
+            {|
+        fragment SomeFragment_someProp on SomeEntity {
+          id
+          someField {
+            ... on User {
+              id
+            }
+          }
+        }
+        |},
+          )
+        ) {
+        | Fragment({name: _, selection_set}) => selection_set
+        | _ => raise(Operation_format_error)
+        };
+
+      expect.bool(
+        switch (Util.selectionSetHasInlineFragmentAndTypename(selectionSet)) {
+        | exception Util.InlineFragment_without_typename_selection => true
+        | _ => false
+        },
+      ).
+        toBeTrue();
+    },
+  );
+
+  test(
+    "it should not raise error when everything is satisfied",
+    ({expect}) => {
+      let selectionSet =
+        switch (
+          Util.extractGraphQLOperation(
+            ~loc=makeMockLocObj(),
+            {|
+        fragment SomeFragment_someProp on SomeEntity {
+          id
+          someField {
+            __typename
+            ... on User {
+              id
+            }
+          }
+        }
+        |},
+          )
+        ) {
+        | Fragment({name: _, selection_set}) => selection_set
+        | _ => raise(Operation_format_error)
+        };
+
+      expect.bool(
+        switch (Util.selectionSetHasInlineFragmentAndTypename(selectionSet)) {
+        | exception Util.InlineFragment_without_typename_selection => false
+        | _ => true
+        },
+      ).
+        toBeTrue();
+    },
+  );
+
+  test(
+    "it should raise exception when inline fragments exist but has no __typename selection - recursive",
+    ({expect}) => {
+      let selectionSet =
+        switch (
+          Util.extractGraphQLOperation(
+            ~loc=makeMockLocObj(),
+            {|
+        fragment SomeFragment_someProp on SomeEntity {
+          id
+          someField {
+            __typename
+            ... on User {
+              id
+              someOtherField {
+                ... on Person {
+                  id
+                }
+              }
+            }
+          }
+        }
+        |},
+          )
+        ) {
+        | Fragment({name: _, selection_set}) => selection_set
+        | _ => raise(Operation_format_error)
+        };
+
+      expect.bool(
+        switch (Util.selectionSetHasInlineFragmentAndTypename(selectionSet)) {
+        | exception Util.InlineFragment_without_typename_selection => true
+        | _ => false
+        },
+      ).
+        toBeTrue();
+    },
+  );
+
+  test(
+    "it should not raise error when everything is satisfied - recursively",
+    ({expect}) => {
+      let selectionSet =
+        switch (
+          Util.extractGraphQLOperation(
+            ~loc=makeMockLocObj(),
+            {|
+        fragment SomeFragment_someProp on SomeEntity {
+          id
+          someField {
+            __typename
+            ... on User {
+              id
+              someOtherField {
+                __typename
+                ... on Person {
+                  id
+                }
+              }
+            }
+          }
+        }
+        |},
+          )
+        ) {
+        | Fragment({name: _, selection_set}) => selection_set
+        | _ => raise(Operation_format_error)
+        };
+
+      expect.bool(
+        switch (Util.selectionSetHasInlineFragmentAndTypename(selectionSet)) {
+        | exception Util.InlineFragment_without_typename_selection => false
+        | _ => true
+        },
+      ).
+        toBeTrue();
+    },
   );
 });

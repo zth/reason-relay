@@ -23,7 +23,7 @@ let extractGraphQLOperation = (~loc, str) =>
   | Error(err) =>
     Location.raise_errorf(
       ~loc,
-      "[%%relay]-nodes must define a single, valid GraphQL operation. GraphQL error message: %s", 
+      "[%%relay]-nodes must define a single, valid GraphQL operation. GraphQL error message: %s",
       err,
     )
   };
@@ -150,6 +150,58 @@ let rec selectionSetHasConnection = selections =>
   ) {
   | Some(_) => true
   | None => false
+  };
+
+/**
+ * This recursively traverses all selection sets and looks for inline fragments.
+ * If it finds an inline fragment, the parent must also select __typename.
+ *
+ * Selecting __typename is required for ReasonRelay unions to work, and this is
+ * the best place we can enforce it as of now, as we moved to using the Flow types
+ * as source of truth for the type generation (which means we don't know what was
+ * actually selected in the GraphQL operation).
+ */
+
+exception InlineFragment_without_typename_selection;
+
+let rec selectionSetHasInlineFragmentAndTypename = selections =>
+  switch (
+    selections
+    |> List.find_opt(sel =>
+         switch (sel) {
+         | Graphql_parser.InlineFragment({selection_set}) =>
+           switch (
+             selections
+             |> List.find_opt(field =>
+                  switch (field) {
+                  | Graphql_parser.Field({name: "__typename"}) => true
+                  | _ => false
+                  }
+                )
+           ) {
+           | None => raise(InlineFragment_without_typename_selection)
+           | Some(_) =>
+             selectionSetHasInlineFragmentAndTypename(selection_set)
+           }
+         | Graphql_parser.Field({selection_set}) =>
+           selectionSetHasInlineFragmentAndTypename(selection_set)
+         | _ => true
+         }
+       )
+  ) {
+  | Some(_) => true
+  | None => false
+  };
+
+let ensureOperationHasCorrectInlineFragmentDefinitions = (~loc, operationStr) =>
+  switch (operationStr |> extractGraphQLOperation(~loc)) {
+  | Operation({selection_set})
+  | Fragment({selection_set}) =>
+    switch (selection_set |> selectionSetHasInlineFragmentAndTypename) {
+    | exception InlineFragment_without_typename_selection =>
+      Location.raise_errorf(~loc, "All unions must select \"__typename\".")
+    | _ => ()
+    }
   };
 
 // Returns whether a fragment has a @connection annotation or not
