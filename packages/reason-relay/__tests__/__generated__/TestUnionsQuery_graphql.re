@@ -169,7 +169,8 @@ module Internal = {
       );
 };
 
-type queryRef;
+type preloadedQuery;
+type queryRef = ReasonRelay.queryRef(preloadedQuery);
 
 module Utils = {
   external onlineStatus_toString: Types.enum_OnlineStatus => string =
@@ -416,3 +417,13 @@ include ReasonRelay.MakeLoadQuery({
   let query = node;
   let convertVariables = Internal.convertVariables;
 });
+
+type entryPoint;
+
+module EntryPoint: {
+  type t;
+  let make: (~variables: Types.varaibles) => t;
+} = {
+  type t = ReasonRelay.entryPoint(operationType, Types.variables);
+  let make = (~variables) => {parameters: node, variables};
+};

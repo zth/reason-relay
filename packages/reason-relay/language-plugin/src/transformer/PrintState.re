@@ -302,7 +302,8 @@ let getPrintedFullState =
   // Print query assets
   switch (operationType) {
   | Query(_) =>
-    addToStr("type queryRef;");
+    addToStr("type preloadedQuery;\n");
+    addToStr("type queryRef = ReasonRelay.queryRef(preloadedQuery);\n");
     addSpacing();
   | _ => ()
   };

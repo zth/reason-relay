@@ -52,7 +52,7 @@ let make = (~loc, ~moduleName, ~hasRawResponseType) => {
               ReasonRelay.queryNode(
                 [%t typeFromGeneratedModule(["relayOperationNode"])],
               ),
-              'token,
+              [%t typeFromGeneratedModule(["queryRef"])],
               option({. "UNSTABLE_renderPolicy": option(string)})
             ) =>
             [%t typeFromGeneratedModule(["Types", "response"])] =

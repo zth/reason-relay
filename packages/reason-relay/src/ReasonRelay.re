@@ -10,6 +10,13 @@ type fragmentNode('node);
 type mutationNode('node);
 type subscriptionNode('node);
 
+type queryRef('query);
+
+type entryPoint('node, 'variables) = {
+  parameters: queryNode('node),
+  variables: 'variables,
+};
+
 type fragmentRefs('fragments);
 
 type dataId;

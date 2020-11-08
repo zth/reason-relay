@@ -23,7 +23,17 @@ const formatGeneratedModule: FormatModule = ({
     type node = relayOperationNode;
     let query = node;
     let convertVariables = Internal.convertVariables;
-  });`
+  });
+
+  type entryPoint;
+
+  module EntryPoint: {
+    type t;
+    let make: (~variables: Types.varaibles) => t;
+  } = {
+    type t = ReasonRelay.entryPoint(operationType, Types.variables);
+    let make = (~variables) => {parameters: node, variables};
+  };`
       : "";
 
   return printCode(`
