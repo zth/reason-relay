@@ -2,19 +2,6 @@ open Lib;
 
 module GenerateFromFlow = {
   [@deriving yojson]
-  type connection_info = {
-    key: string,
-    at_object_path: array(string),
-    field_name: string,
-  };
-
-  [@deriving yojson]
-  type print_config = {
-    [@default None]
-    connection: option(connection_info),
-  };
-
-  [@deriving yojson]
   type operation_type = {
     operation: string,
     [@default None]
@@ -27,7 +14,9 @@ module GenerateFromFlow = {
   type config = {
     content: string,
     operation_type,
-    print_config,
+    operation_node: string,
+    operation_hash: string,
+    raw_js: string,
   };
 };
 
@@ -71,16 +60,9 @@ let () = {
             exit(1);
           },
         ~config={
-          connection:
-            switch (config.print_config.connection) {
-            | None => None
-            | Some(conn) =>
-              Some({
-                key: conn.key,
-                atObjectPath: conn.at_object_path,
-                fieldName: conn.field_name,
-              })
-            },
+          operation_node: config.operation_node,
+          operation_hash: config.operation_hash,
+          raw_js: config.raw_js,
         },
       )
       |> print_endline

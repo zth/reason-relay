@@ -110,4 +110,8 @@ type fullState = {
   fragment: option(fragment),
 };
 
-type printConfig = {connection: option(connectionInfo)};
+type printConfig = {
+  operation_node: string,
+  operation_hash: string,
+  raw_js: string,
+};

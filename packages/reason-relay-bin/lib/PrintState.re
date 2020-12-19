@@ -318,49 +318,6 @@ let getPrintedFullState =
   state.enums
   |> List.iter(enum => enum |> Printer.printEnumToStringFn |> addToStr);
 
-  // We print a helper for extracting connection nodes whenever there's a connection present.
-  switch (config.connection) {
-  | Some(connection) =>
-    let connPath =
-      connection.atObjectPath
-      |> Tablecloth.Array.to_list
-      |> Tablecloth.List.reverse;
-
-    switch (
-      state.objects
-      |> Tablecloth.List.find(~f=(o: Types.finalizedObj) => {
-           o.atPath == connPath
-         }),
-      state.fragment,
-    ) {
-    | (Some(obj), _) =>
-      obj.definition
-      |> UtilsPrinter.printGetConnectionNodesFunction(
-           ~functionName="getConnectionNodes",
-           ~state,
-           ~connectionLocation=connection.fieldName,
-         )
-      |> addToUtils;
-
-      addSpacingToUtils();
-    | (None, Some({definition: Object(definition)}))
-        when connPath == ["fragment"] =>
-      definition
-      |> UtilsPrinter.printGetConnectionNodesFunction(
-           ~functionName="getConnectionNodes",
-           ~state,
-           ~connectionLocation=connection.fieldName,
-         )
-      |> addToUtils;
-
-      addSpacingToUtils();
-    | (None, Some({definition: Union(_)}))
-    | (None, Some(_))
-    | (None, None) => ()
-    };
-  | None => ()
-  };
-
   // We print maker functions for all input objects
   state.objects
   |> Tablecloth.List.iter(
