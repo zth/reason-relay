@@ -20,16 +20,15 @@ module Types = {
 module Internal = {
   type fragmentRaw;
   let fragmentConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"todosConnection_edges":{"n":"","na":""},"todosConnection_edges_node":{"n":"","f":""}}} |json}
+    {json| {"__root":{"todosConnection_edges_node":{"f":"","n":""},"todosConnection_edges":{"n":"","na":""}}} |json}
   ];
   let fragmentConverterMap = ();
   let convertFragment = v =>
-    v
-    ->ReasonRelay.convertObj(
-        fragmentConverter,
-        fragmentConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      fragmentConverter,
+      fragmentConverterMap,
+      Js.undefined,
+    );
 };
 
 type t;
@@ -38,34 +37,14 @@ external getFragmentRef:
   ReasonRelay.fragmentRefs([> | `TodoList_query]) => fragmentRef =
   "%identity";
 
-module Utils = {
-  open Types;
-  let getConnectionNodes:
-    fragment_todosConnection => array(fragment_todosConnection_edges_node) =
-    connection =>
-      switch (connection.edges) {
-      | None => [||]
-      | Some(edges) =>
-        edges
-        ->Belt.Array.keepMap(edge =>
-            switch (edge) {
-            | None => None
-            | Some(edge) =>
-              switch (edge.node) {
-              | None => None
-              | Some(node) => Some(node)
-              }
-            }
-          )
-      };
-};
+module Utils = {};
 
 type relayOperationNode;
 
 type operationType = ReasonRelay.fragmentNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| {
+  {json|{
   "argumentDefinitions": [
     {
       "defaultValue": "",
@@ -192,5 +171,15 @@ let node: operationType = [%raw
   ],
   "type": "Query",
   "abstractKey": null
-} |json}
+}|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "f137bee8352d39f4745ddaae2ea0dc19";
+}
+})()|}
+];
+

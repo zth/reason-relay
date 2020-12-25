@@ -21,8 +21,9 @@
  * Whew, lots of information... But the only thing you really need to think about is that
  * you _pass along fragment refs by passing the full object the fragment was spread on_.
  */
-module Query = [%relay.query
-  {|
+
+module Query = %relay(
+  `
   query MainQuery {
     siteStatistics {
       ...TopCardsDisplayer_siteStatistics
@@ -30,12 +31,13 @@ module Query = [%relay.query
     ...RecentTickets_query
     ...TodoList_query
   }
-|}
-];
+`
+)
 
-[@react.component]
+@react.component
 let make = () => {
-  /**
+  @ocaml.doc(
+    "
    * The query definition above automatically generates a React hook for making the query
    * and getting the query data. As mentioned in <App />, this is suspense based, so the
    * loading state needs to be taken care of by wrapping this component with a
@@ -44,21 +46,18 @@ let make = () => {
    * There's a few more things you could pass to the hook here, like `fetchPolicy`, which
    * would control how Relay resolves the data, `cacheConfig` and so on. Please see the
    * documentation for more information.
-   */
-  let query = Query.use(~variables=(), ());
+   "
+  )
+  let query = Query.use(~variables=(), ())
 
   <div className="main-panel">
     <div className="content-wrapper">
       <Header />
-      <TopCardsDisplayer siteStatistics={query.siteStatistics.fragmentRefs} />
+      <TopCardsDisplayer siteStatistics=query.siteStatistics.fragmentRefs />
       <div className="row">
-        <div className="col-8 grid-margin">
-          <RecentTickets query={query.fragmentRefs} />
-        </div>
-        <div className="col-4 grid-margin">
-          <TodoList query={query.fragmentRefs} />
-        </div>
+        <div className="col-8 grid-margin"> <RecentTickets query=query.fragmentRefs /> </div>
+        <div className="col-4 grid-margin"> <TodoList query=query.fragmentRefs /> </div>
       </div>
     </div>
-  </div>;
-};
+  </div>
+}

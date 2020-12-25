@@ -24,16 +24,15 @@ module Types = {
 module Internal = {
   type fragmentRaw;
   let fragmentConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"membersConnection":{"n":""},"membersConnection_edges":{"n":"","na":""},"membersConnection_edges_node":{"n":"","f":""}}} |json}
+    {json| {"__root":{"membersConnection_edges":{"n":"","na":""},"membersConnection":{"n":""},"membersConnection_edges_node":{"f":"","n":""}}} |json}
   ];
   let fragmentConverterMap = ();
   let convertFragment = v =>
-    v
-    ->ReasonRelay.convertObj(
-        fragmentConverter,
-        fragmentConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      fragmentConverter,
+      fragmentConverterMap,
+      Js.undefined,
+    );
 };
 
 type t;
@@ -50,7 +49,7 @@ type relayOperationNode;
 type operationType = ReasonRelay.fragmentNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| (function(){
+  {json|(function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -144,5 +143,15 @@ return {
   "type": "WorkingGroup",
   "abstractKey": null
 };
-})() |json}
+})()|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "39417b8a88605f306113f5d7cc7970b3";
+}
+})()|}
+];
+

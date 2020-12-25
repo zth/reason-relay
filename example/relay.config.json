@@ -1,0 +1,13 @@
+{
+  "root": "./",
+  "sources": { "src": "main" },
+  "projects": {
+    "main": {
+      "schema": "schema.graphql",
+      "language": "rescript",
+      "customScalarTypes": {
+        "DateTime": "string"
+      }
+    }
+  }
+}

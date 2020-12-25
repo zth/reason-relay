@@ -1,4 +1,4 @@
-[@react.component]
+@react.component
 let make = () =>
   <div className="page-header">
     <h3 className="page-title">
@@ -7,4 +7,4 @@ let make = () =>
       </span>
       {React.string("Dashboard")}
     </h3>
-  </div>;
+  </div>

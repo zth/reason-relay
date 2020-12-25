@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "start": "yarn bs:clean && yarn bs:build && concurrently \"yarn relay:watch\" \"yarn webpack\" \"yarn bs:watch\"",
+    "start": "yarn bs:clean && yarn bs:build && concurrently \"yarn webpack\" \"yarn bs:watch\"",
     "bs:build": "bsb -make-world",
     "bs:watch": "bsb -make-world -w",
     "bs:clean": "bsb -clean-world",

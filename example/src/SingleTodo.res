@@ -1,15 +1,15 @@
-module TodoFragment = [%relay.fragment
-  {|
+module TodoFragment = %relay(
+  `
   fragment SingleTodo_todoItem on TodoItem {
     id
     text
     completed
   }
-|}
-];
+`
+)
 
-module DeleteMutation = [%relay.mutation
-  {|
+module DeleteMutation = %relay(
+  `
   mutation SingleTodoDeleteMutation(
     $input: DeleteTodoItemInput!
     $connections: [ID!]!
@@ -18,11 +18,11 @@ module DeleteMutation = [%relay.mutation
       deletedTodoItemId @deleteEdge(connections: $connections)
     }
   }
-|}
-];
+`
+)
 
-module UpdateMutation = [%relay.mutation
-  {|
+module UpdateMutation = %relay(
+  `
   mutation SingleTodoUpdateMutation($input: UpdateTodoItemInput!) {
     updateTodoItem(input: $input) {
       updatedTodoItem {
@@ -32,21 +32,19 @@ module UpdateMutation = [%relay.mutation
       }
     }
   }
-|}
-];
+`
+)
 
-[@react.component]
+@react.component
 let make = (~checked, ~todoItem as todoItemRef, ~todosConnectionId) => {
-  let todoItem = TodoFragment.use(todoItemRef);
+  let todoItem = TodoFragment.use(todoItemRef)
 
   <li
-    className={
-      switch (todoItem.completed) {
-      | Some(true) => "completed"
-      | Some(false)
-      | None => ""
-      }
-    }>
+    className={switch todoItem.completed {
+    | Some(true) => "completed"
+    | Some(false)
+    | None => ""
+    }}>
     <div className="form-check">
       <label className="form-check-label">
         <input
@@ -54,32 +52,28 @@ let make = (~checked, ~todoItem as todoItemRef, ~todosConnectionId) => {
           type_="checkbox"
           checked
           onChange={_ => {
-            let completed =
-              !Belt.Option.getWithDefault(todoItem.completed, false);
+            let completed = !Belt.Option.getWithDefault(todoItem.completed, false)
             UpdateMutation.commitMutation(
               ~environment=RelayEnv.environment,
               ~variables={
                 input: {
                   clientMutationId: None,
                   id: todoItem.id,
-                  completed,
+                  completed: completed,
                   text: todoItem.text,
                 },
               },
               ~optimisticResponse={
-                updateTodoItem:
-                  Some({
-                    updatedTodoItem:
-                      Some({
-                        id: todoItem.id,
-                        completed: Some(completed),
-                        text: todoItem.text,
-                      }),
+                updateTodoItem: Some({
+                  updatedTodoItem: Some({
+                    id: todoItem.id,
+                    completed: Some(completed),
+                    text: todoItem.text,
                   }),
+                }),
               },
               (),
-            )
-            |> ignore;
+            ) |> ignore
           }}
         />
         {React.string(todoItem.text)}
@@ -94,17 +88,15 @@ let make = (~checked, ~todoItem as todoItemRef, ~todosConnectionId) => {
               clientMutationId: None,
               id: todoItem.id,
             },
-            connections: [|todosConnectionId->ReasonRelay.dataIdToString|],
+            connections: [todosConnectionId->ReasonRelay.dataIdToString],
           },
           ~optimisticResponse={
             deleteTodoItem: Some({deletedTodoItemId: Some(todoItem.id)}),
           },
           (),
-        )
-        |> ignore
-      }
+        ) |> ignore}
       role="button"
       className="remove mdi mdi-close-circle-outline"
     />
-  </li>;
-};
+  </li>
+}

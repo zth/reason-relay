@@ -18,12 +18,11 @@ module Internal = {
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
-    v
-    ->ReasonRelay.convertObj(
-        responseConverter,
-        responseConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      responseConverter,
+      responseConverterMap,
+      Js.undefined,
+    );
 
   type rawResponseRaw = responseRaw;
   let convertRawResponse = convertResponse;
@@ -33,12 +32,11 @@ module Internal = {
   ];
   let variablesConverterMap = ();
   let convertVariables = v =>
-    v
-    ->ReasonRelay.convertObj(
-        variablesConverter,
-        variablesConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      variablesConverter,
+      variablesConverterMap,
+      Js.undefined,
+    );
 };
 
 module Utils = {};
@@ -48,7 +46,7 @@ type relayOperationNode;
 type operationType = ReasonRelay.subscriptionNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| (function(){
+  {json|(function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -109,11 +107,23 @@ return {
   "params": {
     "cacheID": "baa20f0ef1a4dd4e353ad6c271c455bc",
     "id": null,
-    "metadata": {},
+    "metadata": {
+      "subscriptionName": "siteStatisticsUpdated"
+    },
     "name": "TopCardsDisplayer_currentVisitorsOnline_Subscription",
     "operationKind": "subscription",
     "text": "subscription TopCardsDisplayer_currentVisitorsOnline_Subscription {\n  siteStatisticsUpdated {\n    currentVisitorsOnline\n    id\n  }\n}\n"
   }
 };
-})() |json}
+})()|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "2984ad418eb9ee1f71803def994b7475";
+}
+})()|}
+];
+

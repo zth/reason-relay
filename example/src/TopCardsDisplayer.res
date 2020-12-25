@@ -5,25 +5,26 @@
  * This is a pretty basic fragment, there are more complex ones you can have
  * a look at in other components.
  */
-module SiteStatisticsFragment = [%relay.fragment
-  {|
+
+module SiteStatisticsFragment = %relay(
+  `
   fragment TopCardsDisplayer_siteStatistics on SiteStatistics {
     weeklySales
     weeklyOrders
     currentVisitorsOnline
   }
-|}
-];
+`
+)
 
-module CurrentVisitorsSubscription = [%relay.subscription
-  {|
+module CurrentVisitorsSubscription = %relay(
+  `
   subscription TopCardsDisplayer_currentVisitorsOnline_Subscription {
     siteStatisticsUpdated {
       currentVisitorsOnline
     }
   }
-|}
-];
+`
+)
 
 /**
  * A few things to note about the following component:
@@ -36,34 +37,32 @@ module CurrentVisitorsSubscription = [%relay.subscription
  *   we don't really need to annotate anything here for it to be 100% type safe.
  *
  */
-[@react.component]
+
+@react.component
 let make = (~siteStatistics as siteStatisticsRef) => {
-  let siteStatistics = SiteStatisticsFragment.use(siteStatisticsRef);
+  let siteStatistics = SiteStatisticsFragment.use(siteStatisticsRef)
 
-  let environment = ReasonRelay.useEnvironmentFromContext();
+  let environment = ReasonRelay.useEnvironmentFromContext()
   React.useEffect0(() => {
-    let subscription =
-      CurrentVisitorsSubscription.subscribe(
-        ~environment,
-        ~variables=(),
-        ~onNext=
-          response => {
-            switch (response.siteStatisticsUpdated) {
-            | Some(siteStatisticsUpdated) =>
-              /* Console-logging the response for demo purposes
-                 Note that the store (and thus the UI) gets updated "automatically" */
-              Js.log2(
-                "Subscription response - current visitors online: ",
-                siteStatisticsUpdated.currentVisitorsOnline,
-              )
-            | None => ()
-            }
-          },
-        (),
-      );
+    let subscription = CurrentVisitorsSubscription.subscribe(
+      ~environment,
+      ~variables=(),
+      ~onNext=response =>
+        switch response.siteStatisticsUpdated {
+        | Some(siteStatisticsUpdated) =>
+          /* Console-logging the response for demo purposes
+           Note that the store (and thus the UI) gets updated "automatically" */
+          Js.log2(
+            "Subscription response - current visitors online: ",
+            siteStatisticsUpdated.currentVisitorsOnline,
+          )
+        | None => ()
+        },
+      (),
+    )
 
-    Some(() => ReasonRelay.Disposable.dispose(subscription));
-  });
+    Some(() => ReasonRelay.Disposable.dispose(subscription))
+  })
 
   <div className="row">
     <div className="col-md-4 stretch-card grid-margin">
@@ -90,5 +89,5 @@ let make = (~siteStatistics as siteStatisticsRef) => {
         variant=EmphasizedCard.Green
       />
     </div>
-  </div>;
-};
+  </div>
+}

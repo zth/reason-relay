@@ -1,7 +1,7 @@
 /* @generated */
 
 module Types = {
-  type enum_TicketStatus = pri [> | `Done | `OnHold | `Progress | `Rejected];
+  type enum_TicketStatus = pri [> | `Done | `Progress | `OnHold | `Rejected];
 
   [@ocaml.warning "-30"];
 
@@ -18,12 +18,11 @@ module Internal = {
   ];
   let fragmentConverterMap = ();
   let convertFragment = v =>
-    v
-    ->ReasonRelay.convertObj(
-        fragmentConverter,
-        fragmentConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      fragmentConverter,
+      fragmentConverterMap,
+      Js.undefined,
+    );
 };
 
 type t;
@@ -42,7 +41,7 @@ type relayOperationNode;
 type operationType = ReasonRelay.fragmentNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| {
+  {json|{
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -65,5 +64,15 @@ let node: operationType = [%raw
   ],
   "type": "Ticket",
   "abstractKey": null
-} |json}
+}|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "3d621ea9c976404606a3cca59affa2aa";
+}
+})()|}
+];
+

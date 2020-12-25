@@ -24,16 +24,15 @@ module Types = {
 module Internal = {
   type fragmentRaw;
   let fragmentConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"ticketsConnection_pageInfo_endCursor":{"n":""},"ticketsConnection_edges":{"n":"","na":""},"ticketsConnection_edges_node":{"n":"","f":""}}} |json}
+    {json| {"__root":{"ticketsConnection_edges":{"n":"","na":""},"ticketsConnection_pageInfo_endCursor":{"n":""},"ticketsConnection_edges_node":{"f":"","n":""}}} |json}
   ];
   let fragmentConverterMap = ();
   let convertFragment = v =>
-    v
-    ->ReasonRelay.convertObj(
-        fragmentConverter,
-        fragmentConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      fragmentConverter,
+      fragmentConverterMap,
+      Js.undefined,
+    );
 };
 
 type t;
@@ -42,34 +41,14 @@ external getFragmentRef:
   ReasonRelay.fragmentRefs([> | `RecentTickets_query]) => fragmentRef =
   "%identity";
 
-module Utils = {
-  open Types;
-  let getConnectionNodes:
-    fragment_ticketsConnection => array(fragment_ticketsConnection_edges_node) =
-    connection =>
-      switch (connection.edges) {
-      | None => [||]
-      | Some(edges) =>
-        edges
-        ->Belt.Array.keepMap(edge =>
-            switch (edge) {
-            | None => None
-            | Some(edge) =>
-              switch (edge.node) {
-              | None => None
-              | Some(node) => Some(node)
-              }
-            }
-          )
-      };
-};
+module Utils = {};
 
 type relayOperationNode;
 
 type operationType = ReasonRelay.fragmentNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| (function(){
+  {json|(function(){
 var v0 = [
   "ticketsConnection"
 ];
@@ -199,5 +178,15 @@ return {
   "type": "Query",
   "abstractKey": null
 };
-})() |json}
+})()|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "73c22f99343cf0753a8159f984336625";
+}
+})()|}
+];
+

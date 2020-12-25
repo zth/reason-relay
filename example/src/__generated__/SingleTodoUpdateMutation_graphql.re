@@ -25,29 +25,27 @@ module Types = {
 module Internal = {
   type wrapResponseRaw;
   let wrapResponseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"updateTodoItem":{"n":""},"updateTodoItem_updatedTodoItem":{"n":""},"updateTodoItem_updatedTodoItem_completed":{"n":""}}} |json}
+    {json| {"__root":{"updateTodoItem_updatedTodoItem_completed":{"n":""},"updateTodoItem_updatedTodoItem":{"n":""},"updateTodoItem":{"n":""}}} |json}
   ];
   let wrapResponseConverterMap = ();
   let convertWrapResponse = v =>
-    v
-    ->ReasonRelay.convertObj(
-        wrapResponseConverter,
-        wrapResponseConverterMap,
-        Js.null,
-      );
+    v->ReasonRelay.convertObj(
+      wrapResponseConverter,
+      wrapResponseConverterMap,
+      Js.null,
+    );
 
   type responseRaw;
   let responseConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"updateTodoItem":{"n":""},"updateTodoItem_updatedTodoItem":{"n":""},"updateTodoItem_updatedTodoItem_completed":{"n":""}}} |json}
+    {json| {"__root":{"updateTodoItem_updatedTodoItem_completed":{"n":""},"updateTodoItem_updatedTodoItem":{"n":""},"updateTodoItem":{"n":""}}} |json}
   ];
   let responseConverterMap = ();
   let convertResponse = v =>
-    v
-    ->ReasonRelay.convertObj(
-        responseConverter,
-        responseConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      responseConverter,
+      responseConverterMap,
+      Js.undefined,
+    );
 
   type wrapRawResponseRaw = wrapResponseRaw;
   let convertWrapRawResponse = convertWrapResponse;
@@ -56,16 +54,15 @@ module Internal = {
   let convertRawResponse = convertResponse;
 
   let variablesConverter: Js.Dict.t(Js.Dict.t(Js.Dict.t(string))) = [%raw
-    {json| {"__root":{"input":{"r":"UpdateTodoItemInput"}},"UpdateTodoItemInput":{"clientMutationId":{"n":""}}} |json}
+    {json| {"UpdateTodoItemInput":{"clientMutationId":{"n":""}},"__root":{"input":{"r":"UpdateTodoItemInput"}}} |json}
   ];
   let variablesConverterMap = ();
   let convertVariables = v =>
-    v
-    ->ReasonRelay.convertObj(
-        variablesConverter,
-        variablesConverterMap,
-        Js.undefined,
-      );
+    v->ReasonRelay.convertObj(
+      variablesConverter,
+      variablesConverterMap,
+      Js.undefined,
+    );
 };
 
 module Utils = {
@@ -102,7 +99,7 @@ type relayOperationNode;
 type operationType = ReasonRelay.mutationNode(relayOperationNode);
 
 let node: operationType = [%raw
-  {json| (function(){
+  {json|(function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -187,5 +184,15 @@ return {
     "text": "mutation SingleTodoUpdateMutation(\n  $input: UpdateTodoItemInput!\n) {\n  updateTodoItem(input: $input) {\n    updatedTodoItem {\n      id\n      text\n      completed\n    }\n  }\n}\n"
   }
 };
-})() |json}
+})()|json}
 ];
+
+[%raw
+  {|
+(function() {
+if (__DEV__) {
+  (node/*: any*/).hash = "602b4ffdf71336e8b94ef445051b7e9e";
+}
+})()|}
+];
+
