@@ -112,6 +112,7 @@ type fullState = {
 
 type printConfig = {
   operation_node: string,
-  operation_hash: string,
+  operation_hash: option(string),
+  operation_request_id: option(string),
   raw_js: string,
 };

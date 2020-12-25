@@ -15,7 +15,8 @@ module GenerateFromFlow = {
     content: string,
     operation_type,
     operation_node: string,
-    operation_hash: string,
+    operation_hash: option(string),
+    operation_request_id: option(string),
     raw_js: string,
   };
 };
@@ -39,18 +40,18 @@ let () = {
         ~content=config.content,
         ~operationType=
           switch (config.operation_type) {
-          | {operation: "Query", operation_value: Some(queryName), _} =>
+          | {operation: "query", operation_value: Some(queryName), _} =>
             Query(queryName)
-          | {operation: "Mutation", operation_value: Some(mutationName), _} =>
+          | {operation: "mutation", operation_value: Some(mutationName), _} =>
             Mutation(mutationName)
           | {
-              operation: "Subscription",
+              operation: "subscription",
               operation_value: Some(subscriptionName),
               _,
             } =>
             Subscription(subscriptionName)
           | {
-              operation: "Fragment",
+              operation: "fragment",
               fragment_value: Some((fragmentName, plural)),
               _,
             } =>
@@ -62,6 +63,7 @@ let () = {
         ~config={
           operation_node: config.operation_node,
           operation_hash: config.operation_hash,
+          operation_request_id: config.operation_request_id,
           raw_js: config.raw_js,
         },
       )

@@ -11,6 +11,21 @@ let getPrintedFullState =
 
   let addSpacing = () => addToStr("\n\n\n");
 
+  // For persisted queries
+  switch (config.operation_hash) {
+  | Some(hash) =>
+    let comment = "// @relayHash " ++ hash;
+    addToStr(comment ++ "\n" ++ {|[%raw "$comment"];|});
+  | None => ()
+  };
+
+  switch (config.operation_request_id) {
+  | Some(request_id) =>
+    let comment = "// @relayRequestID " ++ request_id;
+    addToStr(comment ++ "\n" ++ {|[%raw "$comment"];|});
+  | None => ()
+  };
+
   let definitions: ref(list(Types.rootType)) = ref([]);
   let addDefinition = Utils.makeAddToList(definitions);
 
@@ -399,6 +414,21 @@ let getPrintedFullState =
   // runtime representation.
   addToStr(Printer.operationType(operationType));
   addSpacing();
+
+  addToStr({|let node: operationType = [%raw {json||});
+  addToStr(config.operation_node);
+  addToStr("|json}];");
+  addSpacing();
+
+  // TODO: Add load query helper
+
+  addSpacing();
+
+  addToStr({|[%raw {||});
+  addToStr("\n(function() {\n");
+  addToStr(String.trim(config.raw_js));
+  addToStr("\n})()");
+  addToStr("|}]");
 
   switch (state) {
   | {fragment: None, response: None, variables: None} =>
