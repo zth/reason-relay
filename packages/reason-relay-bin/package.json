@@ -10,6 +10,7 @@
   "scripts": {
     "go": "esy x ReasonRelayBin",
     "test": "esy x RunTests.exe",
+    "linux-release-static": "dune build --root . --only-packages '#{self.name}' --ignore-promoted-rules --no-config --profile release-static",
     "format": "esy dune build @fmt --auto-promote"
   },
   "dependencies": {

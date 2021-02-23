@@ -54,6 +54,7 @@
     "start": "esy x ReasonRelayPpxApp.exe",
     "test": "esy x RunReasonRelayPpxTests.exe",
     "doc": "esy dune build @doc",
+    "linux-release-static": "dune build --root . --only-packages '#{self.name}' --ignore-promoted-rules --no-config --profile release-static",
     "doc-path": "esy echo #{self.target_dir}/default/_doc/_html/index.html"
   },
   "dependencies": {

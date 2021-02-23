@@ -3,10 +3,44 @@ name: PPX
 on: [push]
 
 jobs:
+  ppx_linux:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+
+    name: PPX
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        working-directory: packages/reason-relay/reason-relay-ppx
+    container:
+      image: cichocinski/docker-esy:alpine3.8
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: 12.19.0
+        env:
+          CI: true
+      - name: Esy install
+        run: esy install
+      - name: Build PPX
+        run: esy linux-release-static
+      - name: Test PPX
+        run: esy test
+      - name: Copy built PPX file
+        run: |
+          mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ppx-linux
+      - name: Upload PPX artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ppx-${{ matrix.platform }}
+          path: packages/reason-relay/reason-relay-ppx/ppx-*
+          if-no-files-found: error
   ppx:
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
+        platform: [macos-latest]
 
     name: PPX
     runs-on: ${{ matrix.platform }}
@@ -31,7 +65,7 @@ jobs:
         run: esy test
       - name: Copy built PPX file
         run: |
-          mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ${{ fromJson('{ "ubuntu-latest": "ppx-linux", "macos-latest": "ppx-darwin" }')[matrix.platform] }}
+          mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ${{ fromJson('{ "macos-latest": "ppx-darwin" }')[matrix.platform] }}
       - name: Upload PPX artifact
         uses: actions/upload-artifact@v2
         with:
