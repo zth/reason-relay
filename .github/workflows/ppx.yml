@@ -24,10 +24,21 @@ jobs:
           CI: true
       - name: Esy install
         run: esy install
-      - name: Build PPX
-        run: esy linux-release-static
+      - name: Print esy cache
+        id: print_esy_cache
+        run: node $GITHUB_WORKSPACE/.github/workflows/print_esy_cache.js
+      - name: Try to restore dependencies cache
+        uses: actions/cache@v2
+        id: deps-cache
+        with:
+          path: ${{ steps.print_esy_cache.outputs.esy_cache }}
+          key: ${{ matrix.platform }}---${{ hashFiles('**/index.json') }}
+          restore-keys: |
+            ${{ matrix.platform }}---
       - name: Test PPX
         run: esy test
+      - name: Build PPX
+        run: esy linux-release-static
       - name: Copy built PPX file
         run: |
           mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ppx-linux

@@ -3,10 +3,55 @@ name: Bin
 on: [push]
 
 jobs:
-  ppx:
+  bin-linux:
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
+        platform: [ubuntu-latest]
+
+    name: Bin
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        working-directory: packages/reason-relay-bin
+    container:
+      image: cichocinski/docker-esy:alpine3.8
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: 12.19.0
+        env:
+          CI: true
+      - name: Esy install
+        run: esy install
+      - name: Print esy cache
+        id: print_esy_cache
+        run: node $GITHUB_WORKSPACE/.github/workflows/print_esy_cache.js
+      - name: Try to restore dependencies cache
+        uses: actions/cache@v2
+        id: deps-cache
+        with:
+          path: ${{ steps.print_esy_cache.outputs.esy_cache }}
+          key: ${{ matrix.platform }}---${{ hashFiles('**/index.json') }}
+          restore-keys: |
+            ${{ matrix.platform }}---
+      - name: Test ReasonRelayBin
+        run: esy test
+      - name: Build PPX
+        run: esy linux-release-static
+      - name: Copy built ReasonRelayBin file
+        run: |
+          mv ./_esy/default/build/default/bin/ReasonRelayBin.exe bin-linux
+      - name: Upload ReasonRelayBin artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bin-${{ matrix.platform }}
+          path: packages/reason-relay-bin/bin-*
+          if-no-files-found: error
+  bin:
+    strategy:
+      matrix:
+        platform: [macos-latest]
 
     name: Bin
     runs-on: ${{ matrix.platform }}

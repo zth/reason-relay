@@ -37,12 +37,12 @@ jobs:
         run: esy test
       - name: Copy built PPX file
         run: |
-          mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ppx-linux
+          mv ./_esy/default/build/default/bin/ReasonRelayPpxApp.exe ppx-ubuntu-latest
       - name: Upload PPX artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ppx-linux
-          path: packages/reason-relay/reason-relay-ppx/ppx-linux
+          name: ppx-ubuntu-latest
+          path: packages/reason-relay/reason-relay-ppx/ppx-ubuntu-latest
           if-no-files-found: error
 
   build-ppx:
