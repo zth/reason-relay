@@ -1,0 +1,6 @@
+{
+    "schemaPath": "./schema.graphql",
+    "extensions": {
+        "customDirectives": ["directive @test(key: String!) on FIELD"]
+    }
+}

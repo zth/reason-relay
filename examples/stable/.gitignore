@@ -1,0 +1,10 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+
+/node_modules
+/bower_components
+package-lock.json
+*.bs.js
+lib
+dist
+.bsb.lock
+.merlin

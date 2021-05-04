@@ -1,0 +1,317 @@
+
+"""
+Input for adding a todo.
+"""
+input AddTodoItemInput {
+  """
+  The text for the todo.
+  """
+  text: String!
+  clientMutationId: String
+}
+
+"""
+Payload returned when adding a todo item.
+"""
+type AddTodoItemPayload {
+  """
+  The added todo item.
+  """
+  addedTodoItem: TodoItem
+  """
+  The added todo item, as an edge.
+  """
+  addedTodoItemEdge: TodoItemEdge
+  clientMutationId: String
+}
+
+"""
+The entity assigned.
+"""
+union AssigneeType = User | WorkingGroup
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+input DeleteTodoItemInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteTodoItemPayload {
+  deletedTodoItemId: ID
+  clientMutationId: String
+}
+
+type DeleteTodoSimple {
+  deletedTodoItemId: ID!
+}
+
+type Mutation {
+  addTodoItem(input: AddTodoItemInput!): AddTodoItemPayload
+  updateTodoItem(input: UpdateTodoItemInput!): UpdateTodoItemPayload
+  deleteTodoItem(input: DeleteTodoItemInput!): DeleteTodoItemPayload
+  addTodoSimple(text: String!): TodoItem!
+  updateTodoSimple(id: ID!, text: String!, completed: Boolean): TodoItem
+  deleteTodoSimple(id: ID!): DeleteTodoSimple
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
+type Query {
+  """
+  Fetches an object given its ID
+  """
+  node(
+    """
+    The ID of an object
+    """
+    id: ID!
+  ): Node
+  userById(id: ID!): User
+  siteStatistics: SiteStatistics!
+  ticketsConnection(
+    status: TicketStatus
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): TicketConnection!
+  tickets(status: TicketStatus, limit: Int!, offset: Int!): TicketsPaginated!
+  todosConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): TodoItemConnection!
+  todos(limit: Int!, offset: Int!): TodosPaginated!
+  allTodos: [TodoItem!]!
+}
+
+type SiteStatistics implements Node {
+  """
+  The ID of an object
+  """
+  id: ID!
+  weeklySales: Float!
+  weeklyOrders: Int!
+  currentVisitorsOnline: Int!
+}
+
+type Subscription {
+  siteStatisticsUpdated: SiteStatistics
+}
+
+type Ticket implements Node {
+  """
+  The ID of an object
+  """
+  id: ID!
+  dbId: ID!
+  assignee: AssigneeType
+  status: TicketStatus!
+  subject: String!
+  lastUpdated: DateTime
+  trackingId: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type TicketConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [TicketEdge]
+}
+
+"""
+An edge in a connection.
+"""
+type TicketEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Ticket
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type TicketsPaginated {
+  total: Int!
+  hasNextPage: Boolean!
+  results: [Ticket!]!
+}
+
+enum TicketStatus {
+  Done
+  Progress
+  OnHold
+  Rejected
+}
+
+"""
+A todo item.
+"""
+type TodoItem implements Node {
+  """
+  The ID of an object
+  """
+  id: ID!
+  """
+  The database id of this todo item.
+  """
+  dbId: ID!
+  """
+  Whether this todo item is completed or not.
+  """
+  completed: Boolean
+  """
+  The text of the todo item.
+  """
+  text: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type TodoItemConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [TodoItemEdge]
+}
+
+"""
+An edge in a connection.
+"""
+type TodoItemEdge {
+  """
+  The item at the end of the edge
+  """
+  node: TodoItem
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type TodosPaginated {
+  total: Int!
+  hasNextPage: Boolean!
+  results: [TodoItem!]!
+}
+
+input UpdateTodoItemInput {
+  id: ID!
+  text: String!
+  completed: Boolean!
+  clientMutationId: String
+}
+
+type UpdateTodoItemPayload {
+  updatedTodoItem: TodoItem
+  clientMutationId: String
+}
+
+type User implements Node {
+  """
+  The ID of an object
+  """
+  id: ID!
+  dbId: ID!
+  avatarUrl: String
+  fullName: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type UserConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [UserEdge]
+}
+
+"""
+An edge in a connection.
+"""
+type UserEdge {
+  """
+  The item at the end of the edge
+  """
+  node: User
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type WorkingGroup implements Node {
+  """
+  The ID of an object
+  """
+  id: ID!
+  dbId: ID!
+  name: String!
+  membersConnection: UserConnection
+  members(limit: Int!, offset: Int!): [User]
+}

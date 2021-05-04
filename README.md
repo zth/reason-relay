@@ -104,4 +104,6 @@ let make = () => {
 
 ## Examples
 
-- A general example showcasing most available features: https://github.com/zth/rescript-relay/tree/master/example
+- [An experimental example showcasing most available features](examples/experimental)
+
+- [A stable example showcasing most available features](examples/stable)
