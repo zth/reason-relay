@@ -22,6 +22,11 @@ let commonExtension =
           ~extractedConnectionInfo=op |> extractFragmentConnectionInfo(~loc),
           ~hasInlineDirective=op |> fragmentHasInlineDirective(~loc),
           ~loc,
+          ~isOnQuery=
+            switch (op) {
+            | Fragment({type_condition: "Query"}) => true
+            | _ => false
+            },
         );
       | Operation({optype: Query}) =>
         Query.make(

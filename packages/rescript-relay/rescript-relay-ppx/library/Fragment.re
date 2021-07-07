@@ -12,6 +12,7 @@ let make =
       ~refetchableQueryName,
       ~extractedConnectionInfo,
       ~hasInlineDirective,
+      ~isOnQuery,
     ) => {
   let typeFromGeneratedModule = makeTypeAccessor(~loc, ~moduleName);
   let valFromGeneratedModule = makeExprAccessor(~loc, ~moduleName);
@@ -38,6 +39,7 @@ let make =
           ~makeTypeAccessor,
           ~makeExprAccessor,
           ~valFromGeneratedModule,
+          ~fragmentIsOnQuery=isOnQuery,
         ),
         [
           [%stri

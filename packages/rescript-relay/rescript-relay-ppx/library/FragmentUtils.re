@@ -56,6 +56,7 @@ let makeRefetchableAssets =
       ~makeTypeAccessor,
       ~makeExprAccessor,
       ~valFromGeneratedModule,
+      ~fragmentIsOnQuery,
     ) =>
   switch (refetchableQueryName) {
   | None => []
@@ -215,6 +216,45 @@ let makeRefetchableAssets =
           "useRefetchableFragment"
       ],
       [%stri
+        type useQueryConfig = {
+          fetchKey: option(string),
+          fetchPolicy: option(string),
+          networkCacheConfig: option(RescriptRelay.cacheConfig),
+        }
+      ],
+      [%stri
+        %private
+        [@module "react-relay/hooks"]
+        external internal_useRefetchQuery:
+          (
+            RescriptRelay.queryNode(
+              [%t
+                makeTypeAccessor(
+                  ~loc,
+                  ~moduleName=queryName,
+                  ["relayOperationNode"],
+                )
+              ],
+            ),
+            [%t
+              makeTypeAccessor(
+                ~loc,
+                ~moduleName=queryName,
+                ["Types", "variables"],
+              )
+            ],
+            useQueryConfig
+          ) =>
+          [%t
+            makeTypeAccessor(
+              ~loc,
+              ~moduleName=queryName,
+              ["Types", "response"],
+            )
+          ] =
+          "useLazyLoadQuery"
+      ],
+      [%stri
         /**React hook for using a fragment that you want to refetch. Returns a tuple of `(fragmentData, refetchFn)`.
 
 ### Refetching and variables
@@ -269,6 +309,103 @@ There's a helper generated for you to create those diffed variables more easily 
               [|refetchFn|],
             ),
           );
+        }
+      ],
+      fragmentIsOnQuery
+        ? [%stri
+          let%private extractLazyFragment =
+                      (
+                        response: [%t
+                          makeTypeAccessor(
+                            ~loc,
+                            ~moduleName=queryName,
+                            ["Types", "response"],
+                          )
+                        ],
+                      ) =>
+            Some(
+              internal_useFragment(
+                [%e valFromGeneratedModule(["node"])],
+                response.fragmentRefs
+                ->[%e valFromGeneratedModule(["getFragmentRef"])],
+              ),
+            )
+        ]
+        : [%stri
+          let%private extractLazyFragment =
+                      (
+                        response: [%t
+                          makeTypeAccessor(
+                            ~loc,
+                            ~moduleName=queryName,
+                            ["Types", "response"],
+                          )
+                        ],
+                      ) =>
+            switch (response) {
+            | {node: Some(node)} =>
+              Some(
+                internal_useFragment(
+                  [%e valFromGeneratedModule(["node"])],
+                  node.fragmentRefs
+                  ->[%e valFromGeneratedModule(["getFragmentRef"])],
+                ),
+              )
+            | _ => None
+            }
+        ],
+      [%stri
+        let useLazy =
+            (
+              ~variables: [%t
+                 makeTypeAccessor(
+                   ~loc,
+                   ~moduleName=queryName,
+                   ["Types", "variables"],
+                 )
+               ],
+              ~fetchPolicy: option(RescriptRelay.fetchPolicy)=?,
+              ~fetchKey: option(string)=?,
+              ~networkCacheConfig: option(RescriptRelay.cacheConfig)=?,
+              (),
+            )
+            : option([%t typeFromGeneratedModule(["Types", "fragment"])]) => {
+          let data: [%t
+            makeTypeAccessor(
+              ~loc,
+              ~moduleName=queryName,
+              ["Types", "response"],
+            )
+          ] =
+            internal_useRefetchQuery(
+              [%e makeExprAccessor(~loc, ~moduleName=queryName, ["node"])],
+              variables
+              ->[%e
+                  makeExprAccessor(
+                    ~loc,
+                    ~moduleName=queryName,
+                    ["Internal", "convertVariables"],
+                  )
+                ]
+              ->RescriptRelay_Internal.internal_cleanObjectFromUndefinedRaw,
+              {
+                fetchKey,
+                fetchPolicy: fetchPolicy->RescriptRelay.mapFetchPolicy,
+                networkCacheConfig,
+              },
+            );
+
+          RescriptRelay_Internal.internal_useConvertedValue(
+            [%e
+              makeExprAccessor(
+                ~loc,
+                ~moduleName=queryName,
+                ["Internal", "convertResponse"],
+              )
+            ],
+            data,
+          )
+          ->extractLazyFragment;
         }
       ],
     ]
